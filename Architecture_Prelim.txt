@@ -1,0 +1,277 @@
+README:
+The following is a loose architecture written for AC/Pseudocode purposes. It is organized as follows::
+1. General Architecture (*): this will contain all "classes", member variables, and methods of our architecture.
+2. Constraints: this will contain all constraints in pseudocode taken from the document.
+
+* please note that a * to the right of a property indicates it is a user-defined class, not a primitive type. For example, User.location is an instance of Location which we will also create.
+
+* please note that member variables will be in the syntax x.y and member methods will be in the syntax x.y(). We are not worrying about parameters at this phase, just the general abstraction.
+
+
+
+1. GENERAL ARCHITECTURE (classes/entities/methods/member variables):
+-----------------------
+The database:
+
+System 			// this will be used architecturally as the Database in this AC/pseudocode.
+System.Users		// this db table will correspond with the User class
+System.Transactions
+System.Items
+System.Searches
+System.GameTypes	// should be updatable in system/db, but not from GUI per document
+
+The code:
+
+User			// general user
+User.email
+User.password
+User.firstName
+User.lastName
+User.nickName
+User.location*		// used at registration time, not to be confused with searching location
+User.phoneNumber
+User.phoneNumberType	// home, work or mobile
+User.showPhoneNumber	// show phone number on swaps, an option while registering phone#
+User.rating
+User.listedItems[]*	// array or list of type Item
+User.allItems[]*
+User.addItem(Item item)
+User.removeItem(Item item)
+User.updateInfo()	// updating user information
+User.isAvailableForSwap()
+User.isEmailAvailable()	// since an email can only be registered once
+User.isPhoneNumberAvailable()	// phone number can only be registered to one user
+
+Session			// class for managing a persons session while browsing the GUI
+Session.loggedIn	// boolean value true if a person is logged in successfully
+Session.user*
+Session.currentLocation*// can be used for searching, this field will need to be filled in by user
+Session.login()
+Session.register()
+Session.logout()
+Session.mainMenu()
+Session.viewItem()
+Session.listItems()
+Session.myItems()
+Session.searchItems()
+Session.swaps()		// page to accept/reject swaps
+Session.swapDeatils()
+Session.swapHistory()
+Session.updateInfo()
+Session.postMessage()	// this will be used to signal a warning, or any other gui 'message'
+
+
+Location		// a class to organize components of a location in one place
+Location.city
+Location.state
+Location.postalCode
+Location.latitude
+Location.longitude
+
+
+Item
+Item.name
+Item.listingNumber	// System will track/set this, it is ordinal basaed on when item was input
+Item.gameType		// board game, card game, video game, computer game, or jigsaw pizzle
+Item.details		// HashMap<String,String> based on type of game, can have more details
+Item.condition
+Item.description	// optional
+Item.hasPreviousSwap()
+Item.hasSwapPending()
+Item.myHistory*		// array/or list with dates and of type Swap, which then of course has users
+
+
+Search
+Search.user*		// the User conducting the search
+Search.searchType	// keyword, within user's postal code, within x miles of user, within specific postal code
+Search.startingPostal
+Search.searchNumberMilesFromMe()
+Search.searchKeyword()
+
+
+Swap
+Swap.proposalDate	// type Date. needed for swap history
+Swap.finalStatusDate	// type Date. needed for swap history
+Swap.proposer*		// type User
+Swap.counterparty*	// type User
+Swap.proposerItem*	// type Item
+Swap.counterpartyItem*	// type Item
+Swap.finalStatus	// completed or rejected. once completed, we can enable 'onCompleted()'
+Swap.onCompleted()	// when swap is successful, we need to: see contact info for proposer.
+Swap.ratingEnabled()	// if true, users should be able to rate each other from swap history and ..
+
+
+2. CONSTRAINTS (included also, GUI notes (i.e. make text red when rating < x%))
+--------------
+user.setPhoneNumber is optional
+phoneNumber.availableTypes = [{"home", "work", "mobile"}]
+
+given String email:
+if(System.contains(email)) return ERROR;
+
+given String phoneNumber and String userName:
+if(System.contains(phoneNumber)) return ERROR; //TODO: do we need to check anything more specifically here?
+
+item.availableGameTypes = [{"BoardGame","CardGame","VideoGame","ComputerGame","JigsawPuzzle"}]
+item.availableConditionTypes = [{"Mint","LikeNew","LightlyUsed","ModeratelyUsed","HeavilyUsed","Damaged/MissingParts"
+item.setDescription is optional
+
+given int itemListingNumber:
+if(System.contains(itemListingNumber)) return ERROR;
+
+given Item item and an attempted Swap swap:
+if(item.isPending()) return ERROR;
+if(item.hasCompletedSwap()) return ERROR;
+if(swap.counterparty==swap.proposer) return ERROR;	// can't swap with self
+if(swap.accepted()) swap.showProposerContactInfl();
+if(swap.rejected()) swap.disableFutureProposalOfThisType();
+if(swap.completed()) swap.enableRating();
+
+// Logging In / Registering :
+if(login.hasValue && phoneNumber.hasValue) return ERROR 'Please use either email or phone num';
+if(password.isEmpty()) return ERROR 'Please enter pw';
+if(loginButton.clicked()) {
+	boolean errorExists = false;
+	String message = "";
+	if(emailNotRegistered) message += emailNotRegisteredError; errorExists=true;
+	if(phoneNumNotRegistered) message += phoneNumNotRegisteredError; errorExists=true;
+	if(password.isIncorrect()) message += incorrectPwError; errorExists=true;
+	if(errorExists) {
+		Session.showError(message);
+		return ERROR;
+	} else { Session.login(); //successful login
+		Session.showWelcome();
+	}
+}
+
+
+// onced logged in:
+if(me.unacceptedSwaps>0) {
+	if(me.unacceptedSwaps>5 || me.hasSwapOlderThanFiveDays()) {
+		showAcceptReject(warning); }
+	else showAcceptReject();
+}
+
+if(me.unratedSwaps>0) {
+	if(me.unratedSwaps>2) {
+		showRateSwap(warning); }
+	else showRateSwap();
+}
+
+if(me.isEmpty(rating)) gui.showRating("None");
+else me.rating.roundToHundredths();
+
+// listing an item:
+if(me.unratedSwaps>2 || me.unacceptedSwaps>5) {
+	Session.disableNewListing(); //this willl also show the message;
+} else continue...;
+
+switch(item.gameType):
+	case "VideoGame":
+		showDropdown("Title: Platform","Nintendo","Playstation","Xbox");
+		showDropdown("Title: Media","optical disc", "game card", "cartridge");
+	case "ComputerGame":
+		showDropdown("Title: Platform","Linux","macOS","Windows");
+	case "JigsawPuzzle":
+		showDropdown("Piece count");
+	default:
+		break;
+
+if(newListing.saveButtoClicked()) {
+	doErrorChecking;
+	listingNum = System.getNextListingNumber();
+	Item item = new Item(listingNum);
+	Session.currentUser.addItem(thisItem); // this will call User.addItem();
+	Session.showSuccessListingMessage('Your item has been listed! Your num is'+listingNum);
+}
+
+
+// My Items:
+if(descrition.length>100) {
+	gui.setDescription(description.substr(0,100)+"...");
+}
+
+// Searching:
+if(postalCode.isInvalid()) return ERROR;	//i.e. 5 integers
+if(!withinXMiles.isInteger()) return ERROR;
+if(searchResults.isEmpty()) showMessage("Sorry, no results found!");
+// see same constraint with description in "my items" section, applies here too.
+distanceFromUser.roundToTenths();
+if(searchType=="Keyword") {
+	for(String s : Item.description) {
+		if(search.keyword==s) {
+			Gui.description.findWord(s).setBackground("blue");
+		}
+	}
+}
+
+// Viewing items:
+if(item.description.isEmpty()) GUI.hideFieldAltogether();
+
+if(item.getUser()!=me) //display nickname, city, state, postal code, swapper rating (rounded to 100, and "none if nonexistent), distance from user rounded to tenths (unless same postal code)
+
+if(item.getUser()!=me && item.getZip()!=me.getZip()){
+	if(item.distanceFromMe() >0.0 && item.distanceFromMe() <= 25.0) {
+		GUI.highlightDistance("green");
+	else if(item.distanceFromMe() >25.0 && item.distanceFromMe() <=50.0) {
+		GUI.highlightDistance("yellow");
+	else if(item.distanceFromMe() >50.0 && item.distanceFromMe() <= 100.0) {
+		GUI.highlightDistance("orange");
+	else GUI.highlightDistance("red");
+}
+
+if(item.getUser().unratedSwaps()<3 && item.getUser().unacceptedSwaps < 6 && item.available()) {
+	GUI.showProposeSwapOption();
+}
+
+
+// Proposing a swap:
+if(me.cannotProposeSwaps()) return ERROR; //in reality we shouldn't even be able to get here
+
+if(item.getUsers().distanceFromMe()>=100.0) GUI.show100MileWarning();
+if(item.successfulSwapProposed()) GUI.showConfirmation(); GUI.allowReturMainMenu();
+
+if(swap.isAccepted()) {
+	GUI.showProposerInfo();	// this method should check if there is phone number. if not, show "No phone number available"
+	GUI.removeSwapFromListing();
+}
+
+if(swap.isRejected()) {
+	swap.finalStatus="rejected";	//means this swap CAN'T be proposed again.
+}
+
+if(!swap.finalStatus.isEmpty()) // meaning when a swap is completed {
+	GUI.rateSwaps();
+	swap.allowRating(); //0 -5 ordered by acceptance date
+
+}
+if(swap.isRated()) {
+	GUI.rateSwaps().remove(swap);	// once rating complete, remove it from this GUI portion
+}
+
+
+// Swap History :
+user.pctRejected.round(.0%);
+
+if(user.pctRejected > 50.0%) {
+	GUI.highlightPctRejected("red");
+}
+
+if(!swap.isRated() && !swap.finalStatus.isEmpty()) // a completed swap that hasn't been rated yet {
+GUI.showOptionForRating();
+}
+
+
+// Update user info:
+GUI.blankOutUpdatingEmail();
+
+if(user.unapprovedSwaps>0 || user.unratedSwaps>0) {
+	Session.disableUpdatingInfo();
+}
+if(user.changePhoneNumber()) {
+	System.scanForPhoneNubmer();
+	if(found) throw ERROR; GUI.showError();
+}
+
+
+
