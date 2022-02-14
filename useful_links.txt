@@ -1,0 +1,6 @@
+USEFUL LINKS
+------------
+Summary: a location where we can place links to external sources (i.e. Google Sheets) that have info for our project.
+
+- AC/Pseudocode for Phase_1 (Uros Milojkovic)
+link: https://docs.google.com/document/d/1xZeUi_AIrYOwo19aKxFy1QwUsskeGVp_JH1Pkcv7oPI/edit
