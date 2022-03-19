@@ -14,24 +14,23 @@ GRANT ALL PRIVILEGES ON 'CS6400_spr18_team103'.* TO 'admin'@'localhost';
 -- TABLES
 CREATE TABLE User (
     PRIMARY KEY email varchar('255'),
-    firstname varchar('255'),
-    lastname varchar('255'),
-    nickname varchar('255'),
-    password varchar('255'),
-    city varchar('255'),
-    my_rating float,
-
+    user_firstname varchar('255'),
+    user_lastname varchar('255'),
+    user_nickname varchar('255'),
+    user_password varchar('255'),
+    unrated_swaps varchar('255'),
+    unaccepted_swaps varchar('255'),
+    
+    user_rating float,
     -- foreign key(s):
-    key fk_User_unaccepted_Swap_swap_id REFERENCES Swap(SwapId),
-    key fk_User_unrated_Swap_swap_id REFERENCES Swap(SwapId)
+    key fk_User_postalcode_UserAddress_postalcode REFERENCES UserAddress(addr_postal_code)
+    key fk_User_phone_Phone_phone REFERENCES Phone(phone_number)
 
-    -- surrogate key(s):
     
 )
 
 CREATE TABLE UserAddress (
-    KEY fk_UserAddress_email_User_email REFERENCES User(email),
-    PRIMARY KEY addr+postal_code varchar('255'),
+    PRIMARY KEY postalcode varchar('255'),
     addr_city varchar('255'),
     addr_state varchar('255'),
     addr_latitude varchar('255'),
@@ -39,7 +38,6 @@ CREATE TABLE UserAddress (
 )
 
 CREATE TABLE Phone (
-    KEY fk_Phone_email_User_email REFERENCES User(email),
     PRIMARY KEY phone_number varchar('255'),
     phone_share varchar('255'),
     phone_type varchar('255')
@@ -47,13 +45,14 @@ CREATE TABLE Phone (
 
 CREATE TABLE Item (
     KEY fk_Item_email_User_email REFERENCES User(email),
-    PRIMARY KEY item_number int,
+    PRIMARY KEY item_number int,    -- auto gen
     item_title varchar('255'),
     item_condition varchar('255'),
     item_description varchar('255')
 )
 
 CREATE TABLE ItemType (
+    KEY fk_Swap_item_number_Item_item_number REFERENCES Item(item_number),
     itemtype_name varchar('255'),
     itemtype_description varchar('255'),
     itemtype_platform varchar('255'),
@@ -62,20 +61,25 @@ CREATE TABLE ItemType (
 )
 
 CREATE TABLE Swap (
-    PRIMARY KEY swapId int,
+    PRIMARY KEY swapId int, -- auto gen
     swap_counterparty_rating float,
     swap_proposer_rating float,
     swap_date_responded date,
     swap_date_proposed date,
-    swap_status varchar('255')
+    swap_status varchar('255'),
+    KEY fk_Swap_counterparty_User_email REFERENCES User(email),
+    KEY fk_Swap_proposer_User_email REFERENCES User(email),
+    KEY fk_Swap_proposed_item_Item_item_number REFERENCES Item(item_number),
+    KEY fk_Swap_counterparty_item_Item_item_number REFERENCES Item(item_number)
+
 )
 
 -- CONSTRAINTS
--- Foreign Keys : fk_User_unaccepted_Swap_swap_id,
---                fk_User_unrated_Swap_swap_id     
---                fk_UserAddress_email_User_email
---                fk_Phone_email_User_email
---                fk_Item_email_User_email
+-- Foreign Keys : fk_
+--                fk_     
+--                fk_
+--                fk_
+--                fk_
 
 
 
