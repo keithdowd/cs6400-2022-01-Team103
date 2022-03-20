@@ -2,7 +2,7 @@
 
 CREATE USER IF NOT EXISTS team103@localhost IDENTIFIED BY 'gatech123';
 
-DROP DATABASE IF EXISTS 'CS6400_spr22_team103';
+DROP DATABASE IF EXISTS CS6400_spr22_team103;
 SET default_storage_engine='INNODB';
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -34,7 +34,7 @@ CREATE TABLE User (
         REFERENCES UserAddress(postalcode),
     phone_number varchar(255),
     constraint fk_User_phone_number_Phone_phone FOREIGN KEY (phone_number)
-        REFERENCES UserAddress(phone_number),
+        REFERENCES Phone(phone_number),
 
     -- key(s):
     PRIMARY KEY (userID),
@@ -43,17 +43,19 @@ CREATE TABLE User (
 );
 
 CREATE TABLE UserAddress (
-    PRIMARY KEY postalcode varchar(255),
+    postalcode varchar(255),
     addr_city varchar(255),
     addr_state varchar(255),
     addr_latitude varchar(255),
-    addr_longitude varchar(255)
+    addr_longitude varchar(255),
+    PRIMARY KEY (postalcode)
 );
 
 CREATE TABLE Phone (
-    PRIMARY KEY phone_number varchar(255),
+    phone_number varchar(255),
     phone_share varchar(255),
-    phone_type varchar(255)
+    phone_type varchar(255),
+    PRIMARY KEY (phone_number)
 );
 
 CREATE TABLE Item (
