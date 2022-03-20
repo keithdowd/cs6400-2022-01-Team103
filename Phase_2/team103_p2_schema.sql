@@ -16,7 +16,7 @@ GRANT ALL PRIVILEGES ON 'CS6400_spr22_team103'.* TO 'team103'@'localhost';
 FLUSH PRIVILEGES;
 
 -- TABLES
-CREATE TABLE CS6400_spr22_team103.UserAddress IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.UserAddress (
     postalcode varchar(255),
     addr_city varchar(255),
     addr_state varchar(255),
@@ -25,14 +25,14 @@ CREATE TABLE CS6400_spr22_team103.UserAddress IF NOT EXISTS (
     PRIMARY KEY (postalcode)
 );
 
-CREATE TABLE CS6400_spr22_team103.Phone IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Phone (
     phone_number varchar(255),
     phone_share varchar(255),
     phone_type varchar(255),
     PRIMARY KEY (phone_number)
 );
 
-CREATE TABLE CS6400_spr22_team103.User IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.User(
     userID int(16) unsigned NOT NULL AUTO_INCREMENT,
     email varchar(255),
     user_firstname varchar(255),
@@ -57,7 +57,7 @@ CREATE TABLE CS6400_spr22_team103.User IF NOT EXISTS (
 
 );
 
-CREATE TABLE CS6400_spr22_team103.Item IF NOT EXISTS(
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Item (
     itemNumber int(16) unsigned NOT NULL AUTO_INCREMENT ,
     item_title varchar(255),
     item_condition varchar(255),
@@ -78,7 +78,7 @@ CREATE TABLE CS6400_spr22_team103.Item IF NOT EXISTS(
     
 );
 
-CREATE TABLE CS6400_spr22_team103.Swap IF NOT EXISTS(
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Swap(
     swapID int(16) unsigned NOT NULL AUTO_INCREMENT,
     swap_counterparty_rating float,
     swap_proposer_rating float,
