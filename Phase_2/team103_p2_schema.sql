@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Item (
     item_condition varchar(255),
     item_description varchar(255),
     itemtype_name varchar(255),
-    itemtype_description varchar(255),
     itemtype_platform varchar(255),
     itemtype_media varchar(255),
     itemtype_piece_count int,
