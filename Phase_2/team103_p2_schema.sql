@@ -28,6 +28,12 @@ CREATE TABLE User (
     unaccepted_swaps varchar('255'),
     user_rating float,
       
+    -- foreign key(s):
+    constraint fk_User_postalcode_UserAddress_postalcode FOREIGN KEY (postalcode)
+        REFERENCES UserAddress(postalcode),
+    constraint fk_User_phone_Phone_phone FOREIGN KEY (phone_number)
+        REFERENCES UserAddress(phone_number),
+
     -- key(s):
     PRIMARY KEY (userID),
     UNIQUE KEY email (email)
@@ -58,7 +64,11 @@ CREATE TABLE Item (
     itemtype_platform varchar('255'),
     itemtype_media varchar('255'),
     itemtype_piece_count int,
-    
+
+    -- foreign key(s):
+    constraint fk_Item_email_User_email FOREIGN KEY (email)
+        REFERENCES User(email),
+
     -- key(s):
     PRIMARY KEY (itemNumber)
 
@@ -72,16 +82,25 @@ CREATE TABLE Swap (
     swap_date_proposed date,
     swap_status varchar('255'),
     
+    -- foreign key(s):
+    constraint fk_Swap_counterparty_User_email FOREIGN KEY (email)
+        REFERENCES User(email),
+    constraint fk_Swap_proposer_User_email FOREIGN KEY (email)
+        REFERENCES User(email),
+    constraint fk_Swap_counterparty_item_Item_item_number FOREIGN KEY (itemNumber)
+        REFERENCES Item(itemNumber),
+    constraint fk_Swap_proposed_item_Item_item_number FOREIGN KEY (itemNumber)
+        REFERENCES Item(itemNumber),
+
     -- key(s):
     PRIMARY KEY (swapID)
 
 );
 
 -- CONSTRAINTS
--- Foreign Keys : fk_User_postalcode_UserAddress_postalcode
---                fk_User_phone_Phone_phone 
---                fk_Item_email_User_email
---                fk_Swap_item_number_Item_item_number
+-- Foreign Keys : fk_User_postalcode_UserAddress_postalcode 
+--                fk_User_phone_Phone_phone                 
+--                fk_Item_email_User_email                        
 --                fk_Swap_counterparty_User_email
 --                fk_Swap_proposer_User_email
 --                fk_Swap_proposed_item_Item_item_number
