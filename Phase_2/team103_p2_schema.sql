@@ -1,5 +1,3 @@
--- DATABASE
-
 CREATE USER IF NOT EXISTS team103@localhost IDENTIFIED BY 'gatech123';
 
 DROP DATABASE IF EXISTS CS6400_spr22_team103;
@@ -12,11 +10,11 @@ CREATE DATABASE IF NOT EXISTS CS6400_spr22_team103
 USE CS6400_spr22_team103;
 
 GRANT SELECT,INSERT,UPDATE,DELETE,FILE ON *.* TO 'team103'@'localhost';
-GRANT ALL PRIVILEGES ON 'CS6400_spr22_team103'.* TO 'team103'@'localhost';
+GRANT ALL PRIVILEGES ON CS6400_spr22_team103.* TO 'team103'@'localhost';
 FLUSH PRIVILEGES;
 
 -- TABLES
-CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.UserAddress (
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.UserAddress  (
     postalcode varchar(255),
     addr_city varchar(255),
     addr_state varchar(255),
@@ -25,14 +23,14 @@ CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.UserAddress (
     PRIMARY KEY (postalcode)
 );
 
-CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Phone (
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Phone  (
     phone_number varchar(255),
     phone_share varchar(255),
     phone_type varchar(255),
     PRIMARY KEY (phone_number)
 );
 
-CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.User(
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.User  (
     userID int(16) unsigned NOT NULL AUTO_INCREMENT,
     email varchar(255),
     user_firstname varchar(255),
@@ -78,7 +76,7 @@ CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Item (
     
 );
 
-CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Swap(
+CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Swap (
     swapID int(16) unsigned NOT NULL AUTO_INCREMENT,
     swap_counterparty_rating float,
     swap_proposer_rating float,
@@ -95,11 +93,11 @@ CREATE TABLE IF NOT EXISTS CS6400_spr22_team103.Swap(
     constraint fk_Swap_proposer_User_email FOREIGN KEY (proposer_email)
         REFERENCES User(email),
 
-    counterparty_itemNumber int(16),
+    counterparty_itemNumber int(16) unsigned,
     constraint fk_Swap_counterparty_item_Item_item_number FOREIGN KEY (counterparty_itemNumber)
         REFERENCES Item(itemNumber),
 
-    proposer_itemNumber int(16),
+    proposer_itemNumber int(16) unsigned,
     constraint fk_Swap_proposed_item_Item_item_number FOREIGN KEY (proposer_itemNumber)
         REFERENCES Item(itemNumber),
 
