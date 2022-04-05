@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import *
+import global_variables
 
 from tkinter import ttk
 from tkmacosx import Button
@@ -29,6 +30,7 @@ def RegisterWindow():
     RegisterModule.resizable(width=False, height=False)
     RegisterModule.title("Registration")
     v = StringVar()
+    p = StringVar()
     l_email = tk.Label(RegisterModule,  text="Email").place(x=40, y=5)
     EmailTtbx = tk.Entry(RegisterModule,borderwidth=1, relief="solid")
     EmailTtbx.place(width=242, height=35, x=40, y=25)
@@ -89,6 +91,7 @@ def RegisterWindow():
     password_label_error.place(x=170, y=480)
     nickname_label_error = Label(RegisterModule, foreground='red')
     nickname_label_error.place(x=170, y=500)
+    Label(RegisterModule, textvariable=p).place(x=170, y=520)
 
     def checkRegisterValidations():
         email_validated = 0
@@ -101,6 +104,7 @@ def RegisterWindow():
         postal_label_error['text'] = ''
         phno_label_error['text'] = ''
         v.set(" ")
+        p.set(" ")
         emailText = EmailTtbx.get()
         passwordText=PasswordTtbx.get()
         PostalText = PostalCodeTtbx.get()
@@ -179,27 +183,34 @@ def RegisterWindow():
 
             #r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         phno_pattern = r'\b[0-9]{10,10}\b'
-        if re.fullmatch(phno_pattern, PhnoText) is None and PhnoText != ''  :
+        if re.fullmatch(phno_pattern, PhnoText) is None and PhnoText != '' and PhnoText.find('-') ==-1  :
             #PhnoTtbx.delete(0, tk.END)
             #PhnoTtbx.insert(0, (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
             phno_label_error['text'] = 'Please enter a valid phono (enter 10 digits)'
             PhnoTtbx.config(foreground="red")
             phno_validated = 0
         else:
-             if PhnoText != '':
+            phno_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.Phone where phone_number=  " + "'" + (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]) + "'"
+            phono_data = []
+            phno_data = pd.read_sql_query(phno_fetch_query, cnx)
+
+            if int(phno_data['cnt']) == 1:
+                display(PhnoText)
+                display(phno_data)
+                display ((format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
+                display(phno_data['cnt'], "inside:phonenumber")
+                p.set("Phone Number Exists")
+                phno_validated = 0
+
+            else:
                 PhnoTtbx.delete(0, tk.END)
                 PhnoTtbx.insert(0, (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
                 phno_label_error['text'] = ''
+                p.set(" ")
                 PhnoTtbx.config(foreground="black")
                 phno_validated = 1
         if password_validated==1 and email_validated==1 and postal_validated==1 and phno_validated==1 and nickname_validated==1:
             print("insert")
-            register_user_query = "insert into CS6400_spr22_team103.user (email,user_firstname,user_lastname,user_nickname,user_password) values " + "('" + emailText + "','"+ FirstNameTtbx.get() + "','"+ LastNameTtbx.get() + "','"+ NickNameTtbx.get()+ "','"+ PasswordTtbx.get()+ "')"
-            display(register_user_query)
-            mycursor = cnx.cursor()
-            mycursor.execute(register_user_query)
-            cnx.commit()
-            mycursor.close()
             #user_insert_status = pd.read_sql_query(register_user_query, cnx)
             display(PhnoTtbx.get())
             display(cb1.get())
@@ -212,9 +223,17 @@ def RegisterWindow():
                 mycursor.execute(register_phone_query)
                 cnx.commit()
                 mycursor.close()
+            register_user_query = "insert into CS6400_spr22_team103.user (email,user_firstname,user_lastname,user_nickname,user_password,postalcode,phone_number) values " + "('" + emailText + "','" + FirstNameTtbx.get() + "','" + LastNameTtbx.get() + "','" + NickNameTtbx.get() + "','" + PasswordTtbx.get() + "','" + PostalText + "','" + PhnoTtbx.get() + "')"
+            display(register_user_query)
+            mycursor = cnx.cursor()
+            mycursor.execute(register_user_query)
+            cnx.commit()
+            mycursor.close()
+
             registration_complete_status['text'] = 'Registration complete.Kindly close the window and proceed to login'
 
         else:
+            print(v)
             print("insert not done")
 
 
@@ -236,7 +255,6 @@ l.pack()
 EmailTextbox = tk.Entry(master, borderwidth=1, relief="solid")
 EmailTextbox.place(width=250,height=35,x=125,y=75)
 
-Email_var=EmailTextbox.get()
 l = Label(master, text="Password")
 l.config(font=("Courier", 10))
 l.place(x=220,y=150)
@@ -271,6 +289,7 @@ def checkUserExists():
        display(user_data['cnt'])
        if int(user_data['cnt']) == 1:
            master.v.set(" ")
+
        else:
            master.v.set("User Not Exists")
 
@@ -281,6 +300,10 @@ def checkUserExists():
    display(PasswordTextBox.get())
 
    if int(pwd_data['cnt']) == 1:
+       global_variables.email_text = EmailTextbox.get()
+       master.destroy()
+
+       import MainMenu
        master.v.set("Login successful")
 
 
@@ -291,6 +314,9 @@ def checkUserExists():
              master.p.set("Incorrect Password")
 
 
+def getemail():
+    p=master.EmailTextbox.get()
+    return p
 
 
 #Style().configure('white/blue.TLabel', foreground='white', background='blue')
