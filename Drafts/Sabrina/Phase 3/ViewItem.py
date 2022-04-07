@@ -16,16 +16,6 @@ WINDOW_WIDTH = 800
 TABLE_COLUMN_ANCHOR = tk.W
 TABLE_COLUMN_STRETCH = tk.NO
 
-# # Item counts
-# item_counts = {
-#     'Board Games': 0,
-#     'Card Games': 0,
-#     'Computer Games': 0,
-#     'Jigsaw Puzzles': 0,
-#     'Video games': 0,
-#     'Total': 0
-# }
-
 # My items
 items_columns = [
     'Item #',
