@@ -75,6 +75,10 @@ def setup(title='My Window', width=800, height=400):
 window = setup(title=WINDOW_TITLE, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
 
 
+##############################
+# View
+##############################
+
 # Header
 header = tk.Label(window, text='Rate Items', font=(
     LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE, BOLD))
@@ -115,6 +119,7 @@ label_condition.grid(row=2, column=10)
 label_condition = tk.Label(window, text='Rate Item', font=(
     LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
 label_condition.grid(row=2, column=12)
+
 
 for i, row in enumerate(items_data):
     clicked = StringVar()
