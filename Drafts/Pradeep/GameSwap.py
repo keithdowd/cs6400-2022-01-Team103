@@ -247,7 +247,7 @@ def quit(self):
 
 label = Label(master,text="Sign In")
 label.pack(pady=10)
-l = Label(master, text="Email/phone number")
+l = Label(master, text="Email/Phone Number")
 l.config(font=("Courier", 10))
 l.pack()
 #EmailTextbox=Text(master,height=2,width=30,borderwidth=1, relief="solid")
@@ -275,38 +275,37 @@ def checkUserExists():
    PasswordTextBox.config(foreground="black")
    display(emailText)
    pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-   if re.fullmatch(pattern, emailText) is None:
+
+   ''' if re.fullmatch(pattern, emailText) is None:
        master.v.set("Please enter a valid email")
        #master.label_error['text'] = 'Please enter a valid email'
        EmailTextbox.config(foreground ="red")
+'''
+
+   #    master.v.set("Please enter a valid email")
+       #master.label_error['text'] = ''
+   login_fetch_query="Select email,phone_number,count(1) cnt from  CS6400_spr22_team103.user where email=  " + "'" + EmailTextbox.get()+ "' or phone_number=  " + "'" + EmailTextbox.get()+ "' group by email,phone_number"
+   user_data = []
+   user_data = pd.read_sql_query(login_fetch_query, cnx)
+   display(user_data['cnt'])
+   if int(user_data['cnt']) == 1:
+    master.v.set(" ")
 
    else:
-       master.v.set("Please enter a valid email")
-       #master.label_error['text'] = ''
-       login_fetch_query="Select count(1) cnt from  CS6400_spr22_team103.user where email=  " + "'" + EmailTextbox.get()+ "'"
-       user_data = []
-       user_data = pd.read_sql_query(login_fetch_query, cnx)
-       display(user_data['cnt'])
-       if int(user_data['cnt']) == 1:
-           master.v.set(" ")
-
-       else:
            master.v.set("User Not Exists")
 
-   password_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.user where user_password=  " + "'" + PasswordTextBox.get() + "' and email="  + "'" + EmailTextbox.get()+ "'"
+   password_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.user where user_password=  " + "'" + PasswordTextBox.get() + "' and email="  + "'" + EmailTextbox.get()+  "' or phone_number=  " + "'" + EmailTextbox.get()+ "'"
    pwd_data = []
    pwd_data = pd.read_sql_query(password_fetch_query, cnx)
    display(pwd_data['cnt'])
    display(PasswordTextBox.get())
 
    if int(pwd_data['cnt']) == 1:
-       global_variables.email_text = EmailTextbox.get()
+       global_variables.email_text = str(user_data['email'][0])
        master.destroy()
 
        import MainMenu
        master.v.set("Login successful")
-
-
 
    else:
        #master.password_error['text'] = ''
@@ -319,8 +318,7 @@ def getemail():
     return p
 
 
-#Style().configure('white/blue.TLabel', foreground='white', background='blue')
-#Style().configure('white/blue.TButton',  background='blue')
+
 Loginbtn = Button(master,
              text="Login", bg='blue',fg='white', borderless=1,command=checkUserExists)
 Loginbtn.place(x=200,y=240)
