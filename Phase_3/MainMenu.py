@@ -46,7 +46,7 @@ user_data = []
 user_data = pd.read_sql_query(login_fetch_query, cnx)
 print(str(user_data['name']))
 def myitems():
-    os.system('MyItems.py')
+    os.system('my_items.py')
     #import MyItems
 def acceptorrejectswaps():
     if int(user_data['unaccepted_swaps'][0]) > 0:
