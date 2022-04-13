@@ -39,18 +39,6 @@ my_items_columns = [
 
 my_items_data = []
 
-# my_items_data = [
-#   [
-#     23, 'Video game', 'Tetris', 'Lightly used', '', 'Detail'
-#   ],
-#   [
-#     34, 'Board game', 'Monopoly', 'Damaged/Missing parts', 'We used to play this game heavily, and started losing some of the figurines, the cards, and finally...', 'Detail'
-#   ],
-#   [
-#     106, 'Card game', 'UNO', 'Mint', 'Never opened!', 'Detail'
-#   ]
-# ]
-
 ##############################
 # SETUP
 ##############################
