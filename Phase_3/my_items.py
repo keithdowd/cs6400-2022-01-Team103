@@ -12,7 +12,6 @@ WINDOW_SIZE_HEIGHT = 400
 WINDOW_SIZE_WIDTH = 800
 WINDOW_TITLE = 'My Items'
 
-
 # Tables
 TABLE_COLUMN_ANCHOR = tk.W
 TABLE_COLUMN_STRETCH = tk.NO
@@ -38,6 +37,7 @@ my_items_columns = [
 ]
 
 my_items_data = []
+
 
 ##############################
 # SETUP
