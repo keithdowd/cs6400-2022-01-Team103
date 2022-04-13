@@ -1,4 +1,5 @@
 from global_variables import *
+import sql
 
 
 ##############################
@@ -58,15 +59,7 @@ window = setup(title=WINDOW_TITLE, width=WINDOW_SIZE_WIDTH, height=WINDOW_SIZE_H
 
 ########## DATA
 
-q = f'''
-  SELECT 
-        itemtype_name, 
-        count(*) as count
-    FROM {DATABASE}.item
-GROUP BY itemtype_name
-'''
-
-df = pd.read_sql_query(q, cnx)
+df = pd.read_sql_query(sql.my_items__count_of_item_type, cnx)
 
 board_games_cnt = 0 if df[df['itemtype_name'] == 'Board Game'].empty else df[df['itemtype_name'] == 'Board Game']['count'].reset_index(drop=True)[0]
 card_games_cnt = 0 if df[df['itemtype_name'] == 'Card Game'].empty else df[df['itemtype_name'] == 'Card Game']['count'].reset_index(drop=True)[0]
@@ -112,18 +105,7 @@ table_item_counts.pack()
 
 ########## DATA
 
-q = f'''
-  SELECT
-        itemNumber,
-        itemtype_name,
-        item_title,
-        item_condition,
-        item_description
-    FROM {DATABASE}.item
-ORDER BY itemNumber ASC 
-'''
-
-df = pd.read_sql_query(q, cnx)
+df = pd.read_sql_query(sql.my_items__list_of_all_items, cnx)
 
 for index, row in df.iterrows():
     item_number = row['itemNumber']
