@@ -26,14 +26,23 @@ def sql__accept_reject_get_item_name(itemNumberParam):
     '''
   return sql__accept_reject_get_item_name
 
-def sql__accept_reject_get_item_name(itemNumberParam):
-  sql__accept_reject_get_item_name = f'''
+def sql__accept_reject_get_user_name(emailAddr):
+  sql__accept_reject_get_user_name = f'''
     SELECT
-        item_title
-      FROM {DATABASE}.item
-     WHERE {DATABASE}.item.itemNumber={itemNumberParam}
+        user_nickname
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={emailAddr}
     '''
-  return sql__accept_reject_get_item_name
+  return sql__accept_reject_get_user_name
+
+def sql__accept_reject_get_user_rating(emailAddr):
+  sql__accept_reject_get_user_rating = f'''
+    SELECT
+        user_rating
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={emailAddr}
+    '''
+  return sql__accept_reject_get_user_name
 
 ##############################
 # my_items.py
