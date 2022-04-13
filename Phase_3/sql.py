@@ -1,6 +1,41 @@
 from global_variables import DATABASE
 
 ##############################
+# accept_reject_swaps.py
+##############################
+def sql__accept_reject_swaps_all(userEmail):
+  sql__accept_reject_swaps_all = f'''
+    SELECT
+        swapID,
+        counterparty_email,
+        proposer_email,
+        counterparty_itemNumber,
+        proposer_itemNumber,
+        swap_date_proposed
+      FROM {DATABASE}.Swap
+     WHERE counterparty_email={userEmail}
+    '''
+  return sql__accept_reject_swaps_all
+
+def sql__accept_reject_get_item_name(itemNumberParam):
+  sql__accept_reject_get_item_name = f'''
+    SELECT
+        item_title
+      FROM {DATABASE}.item
+     WHERE {DATABASE}.item.itemNumber={itemNumberParam}
+    '''
+  return sql__accept_reject_get_item_name
+
+def sql__accept_reject_get_item_name(itemNumberParam):
+  sql__accept_reject_get_item_name = f'''
+    SELECT
+        item_title
+      FROM {DATABASE}.item
+     WHERE {DATABASE}.item.itemNumber={itemNumberParam}
+    '''
+  return sql__accept_reject_get_item_name
+
+##############################
 # my_items.py
 ##############################
 
