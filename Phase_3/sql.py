@@ -1,4 +1,4 @@
-from global_variables import *
+from global_variables import DATABASE
 
 ##############################
 # my_items.py
