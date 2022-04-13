@@ -4,7 +4,7 @@ from global_variables import DATABASE
 # my_items.py
 ##############################
 
-my_items__count_of_item_type = f'''
+sql__my_items__count_of_item_type = f'''
   SELECT 
         itemtype_name, 
         count(*) as count
@@ -12,7 +12,7 @@ my_items__count_of_item_type = f'''
 GROUP BY itemtype_name
 '''
 
-my_items__list_of_all_items = f'''
+sql__my_items__list_of_all_items = f'''
   SELECT
         itemNumber,
         itemtype_name,
@@ -22,3 +22,20 @@ my_items__list_of_all_items = f'''
     FROM {DATABASE}.item
 ORDER BY itemNumber ASC 
 '''
+
+##############################
+# view_items.py
+##############################
+def sql__view_items__item_details(itemNumber): 
+  sql__view_items__item_details = f'''
+    SELECT
+        itemNumber,
+        item_title,
+        itemtype_name,
+        itemtype_platform,
+        itemtype_media,
+        item_condition
+      FROM {DATABASE}.item
+     WHERE itemNumber={itemNumber}
+    '''
+  return sql__view_items__item_details
