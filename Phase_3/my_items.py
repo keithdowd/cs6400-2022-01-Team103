@@ -6,11 +6,12 @@ from global_variables import *
 ##############################
 
 # Window
-WINDOW_HEIGHT = 400
 WINDOW_PADDING_X = 5
 WINDOW_PADDING_Y = 5
+WINDOW_SIZE_HEIGHT = 400
+WINDOW_SIZE_WIDTH = 800
 WINDOW_TITLE = 'My Items'
-WINDOW_WIDTH = 800
+
 
 # Tables
 TABLE_COLUMN_ANCHOR = tk.W
@@ -60,7 +61,7 @@ def setup(title='My Window', width=800, height=400):
   window.geometry(f'{width}x{height}')
   return window
 
-window = setup(title=WINDOW_TITLE, width=WINDOW_WIDTH, height=WINDOW_HEIGHT)
+window = setup(title=WINDOW_TITLE, width=WINDOW_SIZE_WIDTH, height=WINDOW_SIZE_HEIGHT)
 
 
 ##############################
@@ -111,7 +112,7 @@ table_item_counts['columns'] = tuple(item_counts.keys())
 table_item_counts.column('#0', width=0, stretch=TABLE_COLUMN_STRETCH)
 table_item_counts.heading('#0', text='')
 for column in table_item_counts['columns']:
-  table_item_counts.column(column, anchor=TABLE_COLUMN_ANCHOR, width=int(WINDOW_WIDTH/len(table_item_counts['column']))-2)
+  table_item_counts.column(column, anchor=TABLE_COLUMN_ANCHOR, width=int(WINDOW_SIZE_WIDTH/len(table_item_counts['column']))-2)
   table_item_counts.heading(column, text=column, anchor=TABLE_COLUMN_ANCHOR)
 table_item_counts.insert(parent='', index='end', iid=0, text='', values=tuple(item_counts.values()))
 table_item_counts.pack()
@@ -171,7 +172,7 @@ table_my_items ['columns'] = my_items_columns
 table_my_items.column('#0', width=0, stretch=TABLE_COLUMN_STRETCH)
 table_my_items.heading('#0', text='')
 for column in table_my_items['columns']:
-  table_my_items.column(column, anchor=TABLE_COLUMN_ANCHOR, width=int(WINDOW_WIDTH/len(table_my_items['column']))-2)
+  table_my_items.column(column, anchor=TABLE_COLUMN_ANCHOR, width=int(WINDOW_SIZE_WIDTH/len(table_my_items['column']))-2)
   table_my_items.heading(column, text=column, anchor=TABLE_COLUMN_ANCHOR)
 for i, row in enumerate(my_items_data):
   table_my_items.insert(parent='', index='end', iid=i, text='', values=row)
