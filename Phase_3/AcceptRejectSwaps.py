@@ -74,10 +74,10 @@ def accept_reject_swaps(userEmail):
     # getting from other tables
     index=0
     for swapID_iter in swapID:
-        # desired_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(counterparty_itemNumber),cnx)
-        # proposed_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(proposer_itemNumber),cnx)
-        # proposer_name[index] = pd.read_sql_query(sql__accept_reject_get_user_name(proposer_email),cnx)
-        # rating[index] = pd.read_sql_query(sql__accept_reject_get_user_rating(proposer_email),cnx)
+        desired_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(counterparty_itemNumber),cnx)
+        proposed_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(proposer_itemNumber),cnx)
+        proposer_name[index] = pd.read_sql_query(sql__accept_reject_get_user_name(proposer_email),cnx)
+        rating[index] = pd.read_sql_query(sql__accept_reject_get_user_rating(proposer_email),cnx)
     
         # TODO: need formula here
         # need formula or location
@@ -106,32 +106,29 @@ def accept_reject_swaps(userEmail):
     label_proposedItem.grid(row=0, column=6, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
     label_acceptorreject = tk.Label(master=frame_left, text='', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
     label_acceptorreject.grid(row=0, column=6, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-
-
-
+    
+    index_num=0
     index=0
-    for swapID_iter in swapID:
+    for i,swapID_iter in enumerate(swapID):
         label_date = tk.Label(master=frame_left, text=swap_date_proposed[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
         label_date.grid(row=index+1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-        # label_desiredItem = tk.Label(master=frame_left, text=desired_item[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        # label_desiredItem.grid(row=index+1, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-        # label_proposer = tk.Label(master=frame_left, text=proposer_name[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        # label_proposer.grid(row=index+1, column=2, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-        # label_rating = tk.Label(master=frame_left, text=rating[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        # label_rating.grid(row=index+1, column=3, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-        # label_dist = tk.Label(master=frame_left, text=distance[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        # label_dist.grid(row=index+1, column=4, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-        # label_proposedItem = tk.Label(master=frame_left, text=proposed_item[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        # label_proposedItem.grid(row=index+1, column=6, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_desiredItem = tk.Label(master=frame_left, text=desired_item[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        label_desiredItem.grid(row=index+1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_proposer = tk.Label(master=frame_left, text=proposer_name[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        label_proposer.grid(row=index+1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_rating = tk.Label(master=frame_left, text=rating[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        label_rating.grid(row=index+1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_dist = tk.Label(master=frame_left, text=distance[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        label_dist.grid(row=index+1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_proposedItem = tk.Label(master=frame_left, text=proposed_item[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        label_proposedItem.grid(row=index+1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         
-        btn_accept = tk.Button(master=frame_left, text='Accept',command=accept_swap(index), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        btn_accept.grid(row=index+1, column=7, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-        btn_reject = tk.Button(master=frame_left, text='Reject',command=reject_swap(index), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        btn_reject.grid(row=index+1, column=8, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-
+        btn_accept = tk.Button(master=frame_left, text='Accept',command=lambda index_num=i:accept_swap(index_num), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        btn_accept.grid(row=i+1, column=7, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        btn_reject = tk.Button(master=frame_left, text='Reject',command=lambda index_num=i:accept_swap(index_num), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        btn_reject.grid(row=i+1, column=8, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         index+=1
 
-    
     window.mainloop()
 
 
