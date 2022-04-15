@@ -203,7 +203,10 @@ def RegisterWindow():
         else:
             if PhnoText != '':
               #phno_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.Phone where phone_number=  " + "'" + (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]) + "'"
-              phnopass=(format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1])
+              if PhnoText.find('-') ==-1:
+                  phnopass=(format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1])
+              else:
+                  phnopass = PhnoText
               phno_fetch_query=sql__gameswap__phonenumber_check(phnopass)
               print(phno_fetch_query)
               phono_data = []
