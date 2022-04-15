@@ -1,23 +1,28 @@
-import tkinter as tk
+from global_variables import cnx
+from MainMenu import MainMenuObject
+from sql import sql__gameswap__user_check
+from sql import sql__gameswap__postalcode_check
+from sql import sql__gameswap__getcitystate
+from sql import sql__gameswap__phonenumber_check
+from sql import sql__gameswap__user_password__check
+from sql import sql__gameswap__user_email_phonenumber__check
+import os
+        #global emailtext
 from tkinter import *
-import global_variables
-
+import tkinter as tk
 from tkinter import ttk
 from tkmacosx import Button
 import pandas as pd
 from functools import partial
-
 from IPython.display import display
-import mysql.connector
 
-cnx = mysql.connector.connect(user='team103', password='gatech123',
-                             host='127.0.0.1',
-                              database='CS6400_spr22_team103')
 
-import pandas as pd
+
+
+
 
 # creates a Tk() object
-master = Tk()
+master = tk.Tk()
 master.title("Login")
 master.resizable(width=False, height=False)
 #clickvalue=''
@@ -105,6 +110,7 @@ def RegisterWindow():
         phno_label_error['text'] = ''
         v.set(" ")
         p.set(" ")
+
         emailText = EmailTtbx.get()
         passwordText=PasswordTtbx.get()
         PostalText = PostalCodeTtbx.get()
@@ -124,10 +130,11 @@ def RegisterWindow():
              label_error['text'] = ''
              email_validated = 1
 
-        login_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.user where email=  " + "'" + emailText + "'"
+        login_fetch_query = sql__gameswap__user_check(emailText)
         user_data = []
         user_data = pd.read_sql_query(login_fetch_query, cnx)
-
+        print("from sql file")
+        print(sql__gameswap__user_check(emailText))
 
         if int(user_data['cnt']) == 1:
             #display(user_data['cnt'], "inside:")
@@ -159,7 +166,9 @@ def RegisterWindow():
             postal_label_error['text'] = ''
             PostalCodeTtbx.config(foreground="black")
 
-            postalcode_fetch_query = "Select count(1) cnt from   CS6400_spr22_team103.UserAddress where postalcode=  " + "'" + PostalText + "'"
+            #postalcode_fetch_query = "Select count(1) cnt from   CS6400_spr22_team103.UserAddress where postalcode=  " + "'" + PostalText + "'"
+            postalcode_fetch_query=sql__gameswap__postalcode_check(PostalText)
+            sql__gameswap__postalcode_check(PostalText)
             postal_data = []
             postal_data = pd.read_sql_query(postalcode_fetch_query, cnx)
 
@@ -170,7 +179,8 @@ def RegisterWindow():
 
             else:
                 postal_label_error['text']=(" ")
-                postalcode_fetch_query = "Select addr_City,addr_State  from   CS6400_spr22_team103.UserAddress where postalcode=  " + "'" + PostalText + "'"
+                #postalcode_fetch_query = "Select addr_City,addr_State  from   CS6400_spr22_team103.UserAddress where postalcode=  " + "'" + PostalText + "'"
+                postalcode_fetch_query=sql__gameswap__getcitystate(PostalText)
                 postal_data = []
                 postal_data = pd.read_sql_query(postalcode_fetch_query, cnx)
                 display(postal_data['addr_City'])
@@ -190,11 +200,14 @@ def RegisterWindow():
             PhnoTtbx.config(foreground="red")
             phno_validated = 0
         else:
-            phno_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.Phone where phone_number=  " + "'" + (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]) + "'"
-            phono_data = []
-            phno_data = pd.read_sql_query(phno_fetch_query, cnx)
-
-            if int(phno_data['cnt']) == 1:
+            if PhnoText != '':
+              #phno_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.Phone where phone_number=  " + "'" + (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]) + "'"
+              phnopass=(format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1])
+              phno_fetch_query=sql__gameswap__phonenumber_check(phnopass)
+              print(phno_fetch_query)
+              phono_data = []
+              phno_data = pd.read_sql_query(phno_fetch_query, cnx)
+              if int(phno_data['cnt']) == 1:
                 display(PhnoText)
                 display(phno_data)
                 display ((format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
@@ -202,7 +215,7 @@ def RegisterWindow():
                 p.set("Phone Number Exists")
                 phno_validated = 0
 
-            else:
+              else:
                 PhnoTtbx.delete(0, tk.END)
                 PhnoTtbx.insert(0, (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
                 phno_label_error['text'] = ''
@@ -222,13 +235,19 @@ def RegisterWindow():
                 mycursor = cnx.cursor()
                 mycursor.execute(register_phone_query)
                 cnx.commit()
+                register_user_query = "insert into CS6400_spr22_team103.user (email,user_firstname,user_lastname,user_nickname,user_password,postalcode,phone_number) values " + "('" + emailText + "','" + FirstNameTtbx.get() + "','" + LastNameTtbx.get() + "','" + NickNameTtbx.get() + "','" + PasswordTtbx.get() + "','" + PostalText + "','" + PhnoTtbx.get() + "')"
+                display(register_user_query)
+                mycursor1 = cnx.cursor()
+                mycursor1.execute(register_user_query)
+                cnx.commit()
                 mycursor.close()
-            register_user_query = "insert into CS6400_spr22_team103.user (email,user_firstname,user_lastname,user_nickname,user_password,postalcode,phone_number) values " + "('" + emailText + "','" + FirstNameTtbx.get() + "','" + LastNameTtbx.get() + "','" + NickNameTtbx.get() + "','" + PasswordTtbx.get() + "','" + PostalText + "','" + PhnoTtbx.get() + "')"
-            display(register_user_query)
-            mycursor = cnx.cursor()
-            mycursor.execute(register_user_query)
-            cnx.commit()
-            mycursor.close()
+            else:
+               register_user_query = "insert into CS6400_spr22_team103.user (email,user_firstname,user_lastname,user_nickname,user_password,postalcode) values " + "('" + emailText + "','" + FirstNameTtbx.get() + "','" + LastNameTtbx.get() + "','" + NickNameTtbx.get() + "','" + PasswordTtbx.get() + "','" + PostalText + "')"
+               display(register_user_query)
+               mycursor = cnx.cursor()
+               mycursor.execute(register_user_query)
+               cnx.commit()
+               mycursor.close()
 
             registration_complete_status['text'] = 'Registration complete.Kindly close the window and proceed to login'
 
@@ -255,6 +274,7 @@ l.pack()
 EmailTextbox = tk.Entry(master, borderwidth=1, relief="solid")
 EmailTextbox.place(width=250,height=35,x=125,y=75)
 
+
 l = Label(master, text="Password")
 l.config(font=("Courier", 10))
 l.place(x=220,y=150)
@@ -268,6 +288,7 @@ password_label=Label(master, textvariable=master.p).place(x=170,y=370)
 
 
 def checkUserExists():
+
    master.v.set(" ")
    master.p.set(" ")
    emailText=EmailTextbox.get()
@@ -284,28 +305,35 @@ def checkUserExists():
 
    #    master.v.set("Please enter a valid email")
        #master.label_error['text'] = ''
-   login_fetch_query="Select email,phone_number,count(1) cnt from  CS6400_spr22_team103.user where email=  " + "'" + EmailTextbox.get()+ "' or phone_number=  " + "'" + EmailTextbox.get()+ "' group by email,phone_number"
+   #login_fetch_query="Select email,phone_number,count(1) cnt from  CS6400_spr22_team103.user where email=  " + "'" + EmailTextbox.get()+ "' or phone_number=  " + "'" + EmailTextbox.get()+ "' group by email,phone_number"
+   login_fetch_query=sql__gameswap__user_email_phonenumber__check(EmailTextbox.get())
    user_data = []
    user_data = pd.read_sql_query(login_fetch_query, cnx)
    display(user_data['cnt'])
-   if int(user_data['cnt']) == 1:
-    master.v.set(" ")
+   if user_data['cnt'].empty == False:
+    if int(user_data['cnt'][0]) == 1:
+      master.v.set(" ")
 
+    else:
+           master.v.set("User Not Exists")
    else:
            master.v.set("User Not Exists")
 
-   password_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.user where user_password=  " + "'" + PasswordTextBox.get() + "' and email="  + "'" + EmailTextbox.get()+  "' or phone_number=  " + "'" + EmailTextbox.get()+ "'"
+   #password_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.user where user_password=  " + "'" + PasswordTextBox.get() + "' and email="  + "'" + EmailTextbox.get()+  "' or phone_number=  " + "'" + EmailTextbox.get()+ "'"
+   password_fetch_query=sql__gameswap__user_password__check(EmailTextbox.get(),PasswordTextBox.get())
    pwd_data = []
    pwd_data = pd.read_sql_query(password_fetch_query, cnx)
    display(pwd_data['cnt'])
    display(PasswordTextBox.get())
 
    if int(pwd_data['cnt']) == 1:
-       global_variables.email_text = str(user_data['email'][0])
-       master.destroy()
 
-       import MainMenu
+       #global_variables.email_text = emailText
+       master.destroy()
+       MainMenuObject(emailText)
        master.v.set("Login successful")
+       #master.e=getemail()
+       master.destroy()
 
    else:
        #master.password_error['text'] = ''
@@ -313,9 +341,7 @@ def checkUserExists():
              master.p.set("Incorrect Password")
 
 
-def getemail():
-    p=master.EmailTextbox.get()
-    return p
+
 
 
 
@@ -332,6 +358,7 @@ Registerbtn.place(x=200,y=300)
 
 #label = Label(master,text=" ")
 #label.pack(pady=10)
-
 mainloop()
 cnx.close()
+
+
