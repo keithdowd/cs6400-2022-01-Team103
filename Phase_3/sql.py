@@ -3,6 +3,29 @@ from global_variables import DATABASE
 ##############################
 # accept_reject_swaps.py
 ##############################
+
+#pull all swapID in database.
+#if the user, useremail = counterparty_email, or proser_email
+#add to the list
+def sql_get_swap_history(userEmail):
+  sql__accept_reject_swaps_all = f'''
+    SELECT
+        swapID,
+        swap_counterparty_rating,
+        swap_proposer_rating,
+        swap_date_responded,
+        swap_date_proposed,
+        swap_status,
+        counterparty_email,
+        proposer_email,
+        counterparty_itemNumber,
+        proposer_itemNumber,
+      FROM {DATABASE}.Swap
+     WHERE counterparty_email='{userEmail}' OR proposer_email='{userEmail}'
+     ORDER BY swap_date_proposed DESC
+    '''
+  return sql__accept_reject_swaps_all
+
 def sql__accept_reject_swaps_all(userEmail):
   sql__accept_reject_swaps_all = f'''
     SELECT
@@ -72,16 +95,16 @@ def sql__accept_reject_getmylong(postalCode):
 '''
   return sql__accept_reject_getmylong
 
-  sql__accept_swap(swapID) = f'''
-  SELECT
-        itemNumber,
-        itemtype_name,
-        item_title,
-        item_condition,
-        item_description
-    FROM {DATABASE}.item
-ORDER BY itemNumber ASC 
-'''
+#   sql__accept_swap(swapID) = f'''
+#   SELECT
+#         itemNumber,
+#         itemtype_name,
+#         item_title,
+#         item_condition,
+#         item_description
+#     FROM {DATABASE}.item
+# ORDER BY itemNumber ASC 
+# '''
 
 ##############################
 # my_items.py
