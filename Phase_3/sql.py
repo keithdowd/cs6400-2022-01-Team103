@@ -268,21 +268,41 @@ def sql__itemnumber__fetch(emailAddr):
 ##############################
 def sql_get_my_unrated_swaps(emailAddr):
   sql_get_my_unrated_swaps = f'''
-  SELECT * from {DATABASE}.swap 
-  WHERE (swap_status="accepted" and swap_counterparty_rating is null and proposer_email={emailAddr})
-  OR (swap_status="accepted"  and swap_proposer_rating is null and counterparty_email={emailAddr})
+    SELECT 
+      swapID, 
+      swap_date_proposed, 
+      swap_date_responded, 
+      user_email, 
+      item_number, 
+      item_title, 
+      item_condition, 
+      item_description 
+    FROM
+      (SELECT * 
+      FROM
+        (SELECT swapID, swap_date_proposed, swap_date_responded, counterparty_email as user_email, counterparty_itemNumber as item_number from {DATABASE}.swap
+          WHERE swap_status="accepted" AND swap_counterparty_rating is null AND proposer_email='{emailAddr}') 
+          AS table1 
+        UNION
+        (SELECT swapID, swap_date_proposed, swap_date_responded, proposer_email as user_email, proposer_itemNumber 
+          AS item_number from {DATABASE}.swap
+          WHERE swap_status="accepted" AND swap_proposer_rating is null AND counterparty_email='{emailAddr}')) 
+      AS unrated_swaps 
+      JOIN
+      (SELECT * FROM {DATABASE}.item) 
+      AS items
+    ON item_number = itemNumber;
   '''
-
   return sql_get_my_unrated_swaps
 
 def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
   sql_get_my_unrated_swaps = f'''
   UPDATE {DATABASE}.swap 
   SET swap_counterparty_rating =
-  CASE when proposer_email={emailAddr} then {rating} end,
+  CASE when proposer_email='{emailAddr}' then {rating} end,
 	    swap_proposer_rating =
-  CASE when counterparty_email={emailAddr} then {rating} end
-  where swapID = {swapID}
+  CASE when counterparty_email='{emailAddr}' then {rating} end
+  where swapID = '{swapID}'
   ;
   '''
   return sql_rate_my_unrated_swaps
