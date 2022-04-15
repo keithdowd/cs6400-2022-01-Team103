@@ -70,7 +70,7 @@ ORDER BY itemNumber ASC
 ##############################
 # view_items.py
 ##############################
-def sql__view_items__item_details(itemNumber): 
+def sql__view_items__item_details(itemNumber):
   sql__view_items__item_details = f'''
     SELECT
         itemNumber,
@@ -83,3 +83,44 @@ def sql__view_items__item_details(itemNumber):
      WHERE itemNumber={itemNumber}
     '''
   return sql__view_items__item_details
+##############################
+# GameSwap.py
+##############################
+def sql__gameswap__user_check(emailAddr):
+   sql__gameswap__user_check = f'''
+      Select count(1) cnt from  {DATABASE}.user where email='{emailAddr}'
+'''
+   return sql__gameswap__user_check
+
+
+def sql__gameswap__postalcode_check(postalcode):
+  sql__gameswap__postalcode_check = f'''
+      Select count(1) cnt from   {DATABASE}.UserAddress where postalcode='{postalcode}'
+'''
+  return sql__gameswap__postalcode_check
+
+def sql__gameswap__getcitystate(postalcode):
+  sql__gameswap__getcitystate = f'''
+      Select addr_City,addr_State  from   {DATABASE}.UserAddress where postalcode= '{postalcode}'
+'''
+  return sql__gameswap__getcitystate
+
+def sql__gameswap__phonenumber_check(phonenumber):
+  sql__gameswap__phonenumber_check = f'''
+      Select count(1) cnt from  {DATABASE}.Phone where phone_number='{phonenumber}'
+'''
+  return sql__gameswap__phonenumber_check
+
+
+def sql__gameswap__user_email_phonenumber__check(input):
+  sql__gameswap__user_email_phonenumber__check = f'''
+      Select email,phone_number,count(1) cnt from  CS6400_spr22_team103.user where email='{input}' or phone_number=  '{input}' group by email,phone_number
+'''
+  return sql__gameswap__user_email_phonenumber__check
+
+
+def sql__gameswap__user_password__check(input,password):
+  sql__gameswap__user_password__check = f'''
+      Select email,phone_number,count(1) cnt from  CS6400_spr22_team103.user where user_password=  '{password}' and  (email= '{input}' or phone_number=  '{input}' ) group by email,phone_number
+'''
+  return sql__gameswap__user_password__check
