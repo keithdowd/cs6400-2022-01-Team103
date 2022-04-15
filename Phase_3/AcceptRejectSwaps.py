@@ -1,5 +1,6 @@
 from global_variables import *
 from sql import *
+import math
 
 def accept_swap(index):
     print('accept swap: index :'+str(index))
@@ -8,6 +9,18 @@ def reject_swap(index):
     print('reject swap: index :'+str(index))
     #TBD : Create queries to insert
 
+def haversine(latitude, longitude):
+    #calculate distance between two points
+    #latitude, longitude are expressed in degree
+    #convert degrees to radians
+    R = 6371e3
+    converted_latitude = latitude * math.pi/180
+    converted_longitude = longitude * math.pi/180
+
+    a = ((math.sin*(converted_latitude/2))(math.sin(converted_longitude/2)) + math.cos(converted_latitude)(math.cos(converted_latitude*2))(math.sin(converted_longitude/2))(math.sin(converted_longitude/2)))
+    c = (2 * a(math.tan(math.sqrt(a), math.sqrt(1-a))))
+    d = R * c
+    return d
 
 def accept_reject_swaps(userEmail):
 
@@ -60,9 +73,20 @@ def accept_reject_swaps(userEmail):
     proposer_name = []
     proposer_location = []
     rating=[]
+
+    
     distance=[]
     proposed_item=[]
-    myLocation = 'tbd'
+    myLat = 0
+    myLong = 0
+    their_postal=[]
+    their_lat=[]
+    their_long=[]
+    
+    postal_code=pd.read_sql_query(sql__accept_reject_getmypostalcode(counterparty_email[0]),cnx)
+    myLat = pd.read_sql_query(sql__accept_reject_getmylat(postal_code),cnx)
+    myLong = pd.read_sql_query(sql__accept_reject_getmylong(postal_code),cnx)
+    dist_mine = haversine(myLat,myLong)
 
     swapID=df['swapID'].to_list()
     counterparty_email=df['counterparty_email'].to_list()
@@ -74,15 +98,16 @@ def accept_reject_swaps(userEmail):
     # getting from other tables
     index=0
     for swapID_iter in swapID:
-        desired_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(counterparty_itemNumber),cnx)
-        proposed_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(proposer_itemNumber),cnx)
-        proposer_name[index] = pd.read_sql_query(sql__accept_reject_get_user_name(proposer_email),cnx)
-        rating[index] = pd.read_sql_query(sql__accept_reject_get_user_rating(proposer_email),cnx)
-    
-        # TODO: need formula here
-        # need formula or location
-        # distance[index] = 1*myLocation*proposer_location[index]
-        
+        desired_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(counterparty_itemNumber[index]),cnx)
+        proposed_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(proposer_itemNumber[index]),cnx)
+        proposer_name[index] = pd.read_sql_query(sql__accept_reject_get_user_name(proposer_email[index]),cnx)
+        rating[index] = pd.read_sql_query(sql__accept_reject_get_user_rating(proposer_email[index]),cnx)
+        their_postal[index] = pd.read_sql_query(sql__accept_reject_getmypostalcode(proposer_email[index]),cnx)
+        their_lat[index] = pd.read_sql_query(sql__accept_reject_getmylat(their_postal[index],cnx)
+        their_long[index] = pd.read_sql_query(sql__accept_reject_getmylong(their_postal[index],cnx)
+        temp = 0
+        temp = haversine(their_lat[index],their_long[index])
+        distance[index] = abs(temp-dist_mine)
         index+=1
 
     #
