@@ -6,6 +6,7 @@ from sql import sql__gameswap__getcitystate
 from sql import sql__gameswap__phonenumber_check
 from sql import sql__gameswap__user_password__check
 from sql import sql__gameswap__user_email_phonenumber__check
+from sql import sql__gameswap__email_fetch
 import os
         #global emailtext
 from tkinter import *
@@ -266,7 +267,7 @@ def quit(self):
 
 label = Label(master,text="Sign In")
 label.pack(pady=10)
-l = Label(master, text="Email/Phone Number")
+l = Label(master, text="Email/Phone Number (enter phone number in xxx-xxx-xxxx)")
 l.config(font=("Courier", 10))
 l.pack()
 #EmailTextbox=Text(master,height=2,width=30,borderwidth=1, relief="solid")
@@ -291,10 +292,13 @@ def checkUserExists():
 
    master.v.set(" ")
    master.p.set(" ")
-   emailText=EmailTextbox.get()
+   emailText_fetch_query=sql__gameswap__email_fetch(EmailTextbox.get())
+   emailText_data = []
+   emailText_data = pd.read_sql_query(emailText_fetch_query, cnx)
+   emailtext=emailText_data['email'][0]
    EmailTextbox.config(foreground="black")
    PasswordTextBox.config(foreground="black")
-   display(emailText)
+   display(emailtext)
    pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 
    ''' if re.fullmatch(pattern, emailText) is None:
@@ -324,13 +328,13 @@ def checkUserExists():
    pwd_data = []
    pwd_data = pd.read_sql_query(password_fetch_query, cnx)
    display(pwd_data['cnt'])
-   display(PasswordTextBox.get())
+   display(password_fetch_query)
 
-   if int(pwd_data['cnt']) == 1:
+   if int(pwd_data['cnt'][0]) == 1:
 
        #global_variables.email_text = emailText
        master.destroy()
-       MainMenuObject(emailText)
+       MainMenuObject(emailtext)
        master.v.set("Login successful")
        #master.e=getemail()
        master.destroy()
