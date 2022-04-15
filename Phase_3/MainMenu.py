@@ -1,4 +1,9 @@
 from  additem import additemobject
+from sql import sql__firstlastname__fetch
+from sql import sql__myrating__fetch
+from sql import sql__unacceptedswaps__fetch
+from sql import sql__fivedayoldswap__fetch
+from sql import sql__unratedswaps__fetch
 def MainMenuObject(user_email):
 #if __name__ == '__main__':
     import tkinter as tk
@@ -42,41 +47,31 @@ def MainMenuObject(user_email):
                  text="Logout", bg='blue',fg='white', borderless=1,command=logout)
     logout_button.place(x=400,y=30)
 
-    login_fetch_query="Select concat(user_firstname, ',' , user_lastname) name,unrated_swaps,unaccepted_swaps  from  CS6400_spr22_team103.user where email=  " + "'" + user_email+ "'"
-    user_data = []
-    user_data = pd.read_sql_query(login_fetch_query, cnx)
-    myrating_fetch_query="Select avg(rating) user_rating,email from(Select sum(coalesce(swap_proposer_rating,0)) rating , proposer_email email from CS6400_spr22_team103.swap where proposer_email="+ "'" + user_email+ "'" +"union all Select sum(coalesce(swap_counterparty_rating,0)) , counterparty_email from CS6400_spr22_team103.swap where counterparty_email="+ "'" + user_email+ "'" +") a group by email"
+
+    first_last_name_fetch_query=sql__firstlastname__fetch(user_email)
+    first_last_name_data = []
+    first_last_name_data = pd.read_sql_query(first_last_name_fetch_query, cnx)
+    print(first_last_name_fetch_query)
+    myrating_fetch_query=sql__myrating__fetch(user_email)
     myrating_data = []
     myrating_data = pd.read_sql_query(myrating_fetch_query, cnx)
     print(myrating_fetch_query)
 
 
 
-    myacceptedswaps_fetch_query = 'Select count(1) unaccepted_swaps from (Select 1 from CS6400_spr22_team103.swap where counterparty_email='+ "'" + user_email + "'" +' and swap_date_responded is null) A'
-    myacceptedswaps_data = []
-    myacceptedswaps_data = pd.read_sql_query(myacceptedswaps_fetch_query, cnx)
-    fivedayoldswaps_fetch_query = 'Select count(1) fivedayoldswaps from (Select 1 from CS6400_spr22_team103.swap where counterparty_email='+ "'" + user_email + "'" +' and swap_date_responded is null and current_date-swap_date_proposed >4) A'
+
+    unacceptedswaps_fetch_query=sql__unacceptedswaps__fetch(user_email)
+    unacceptedswaps_data = []
+    unacceptedswaps_data = pd.read_sql_query(unacceptedswaps_fetch_query, cnx)
+    fivedayoldswaps_fetch_query = sql__fivedayoldswap__fetch(user_email)
     fivedayoldswaps_data = []
     fivedayoldswaps_data = pd.read_sql_query(fivedayoldswaps_fetch_query, cnx)
     print(myrating_data)
 
-    myratedswaps_fetch_query = '''
-                               Select count(1) unrated_swaps from (Select swap_date_responded as acceptancedatee, 'Proposer' my_role,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user from CS6400_spr22_team103.swap s join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
-join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
-join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
- where proposer_email='''+ "'" + user_email + "'" +'''
- and swap_status='Accepted'
- and swap_proposer_rating is null  
-Union
-Select swap_date_responded as acceptancedatee, 'Counterparty',p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname from CS6400_spr22_team103.swap s join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
-join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
-join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
- where counterparty_email='''+ "'" +  user_email + "'" +'''
-and swap_counterparty_rating is null and swap_status='Accepted') a
-'''
-    myratedswaps_data = []
-    print(myratedswaps_fetch_query)
-    myratedswaps_data = pd.read_sql_query(myratedswaps_fetch_query, cnx)
+    unratedswaps_fetch_query = sql__unratedswaps__fetch(user_email)
+    unratedswaps_data = []
+    print(unratedswaps_fetch_query)
+    unratedswaps_data = pd.read_sql_query(unratedswaps_fetch_query, cnx)
 
 
 
@@ -90,14 +85,14 @@ and swap_counterparty_rating is null and swap_status='Accepted') a
         os.system('searchitems.py')
 
     def acceptorrejectswaps():
-        if int(myacceptedswaps_data['unaccepted_swaps'][0]) > 0:
+        if int(unacceptedswaps_data['unaccepted_swaps'][0]) > 0:
             os.system('GameSwapIntail.py')
 
     def propose_swaps():
         os.system('propose_swap.py')
 
     def unrated_swaps():
-        if int(myratedswaps_data['unrated_swaps'][0]) > 0:
+        if int(unratedswaps_data['unrated_swaps'][0]) > 0:
             os.system('rateswaps.py')
     def swaphistory():
         os.system('swaphistory.py')
@@ -106,7 +101,7 @@ and swap_counterparty_rating is null and swap_status='Accepted') a
 
 
 
-    label_logged_user = tk.Label(master,text="Welcome " + str(user_data['name'][0]))
+    label_logged_user = tk.Label(master,text="Welcome " + str(first_last_name_data['name'][0]))
     label_logged_user.place(width=300,height=35,x=50,y=125)
     label_logged_user.config(font=("Times Roman", 10,'bold'))
     myrating_text=tk.StringVar()
@@ -123,26 +118,26 @@ and swap_counterparty_rating is null and swap_status='Accepted') a
                  text="List Item", bg='blue',fg='white', borderless=1,height=50,width=150,command=additem)
     listitem_button.place(x=210,y=150)
     unacceptedswaps_text=tk.StringVar()
-    unacceptedswaps_text.set("Unaccepted Swaps-"+str(myacceptedswaps_data['unaccepted_swaps'][0]))
+    unacceptedswaps_text.set("Unaccepted Swaps-"+str(unacceptedswaps_data['unaccepted_swaps'][0]))
     unacceptedswaps_button = Button(master,
                  text=unacceptedswaps_text.get(), bg='white',fg='blue', borderless=1,height=50,width=150,command=acceptorrejectswaps)
     unacceptedswaps_button.place(x=50,y=200)
 
 
-    if myacceptedswaps_data['unaccepted_swaps'][0] > 4 or fivedayoldswaps_data['fivedayoldswaps'][0] >0 :
+    if unacceptedswaps_data['unaccepted_swaps'][0] > 4 or fivedayoldswaps_data['fivedayoldswaps'][0] >0 :
        unacceptedswaps_button.config(fg='red', font=("Courier", 10, 'bold'))
     else:
        unacceptedswaps_button.config(fg='blue', font=("Courier", 10))
     myitems_button = Button(master,text="My Item", bg='blue',fg='white', borderless=1,height=50,width=150,command=myitems)
     myitems_button.place(x=210,y=200)
     unratedswaps_text=tk.StringVar()
-    unratedswaps_text.set("Unrated Swaps-"+str(myratedswaps_data['unrated_swaps'][0]))
+    unratedswaps_text.set("Unrated Swaps-"+str(unratedswaps_data['unrated_swaps'][0]))
     unratedswaps_button = Button(master,
                  text=unratedswaps_text.get(), bg='white',fg='blue', borderless=1,height=50,width=150,command=unrated_swaps)
     unratedswaps_button.place(x=50,y=250)
 
 
-    if myratedswaps_data['unrated_swaps'][0] > 1:
+    if unratedswaps_data['unrated_swaps'][0] > 1:
        unratedswaps_button.config(fg='red',font=("Courier", 10,'bold'))
     else:
        unratedswaps_button.config(fg='blue', font=("Courier", 10))
