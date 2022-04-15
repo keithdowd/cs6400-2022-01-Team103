@@ -83,6 +83,7 @@ def sql__view_items__item_details(itemNumber):
      WHERE itemNumber={itemNumber}
     '''
   return sql__view_items__item_details
+
 ##############################
 # GameSwap.py
 ##############################
@@ -91,6 +92,13 @@ def sql__gameswap__user_check(emailAddr):
       Select count(1) cnt from  {DATABASE}.user where email='{emailAddr}'
 '''
    return sql__gameswap__user_check
+
+
+def sql__gameswap__email_fetch(input):
+  sql__gameswap__email_fetch = f'''
+      Select email  from  {DATABASE}.user where email='{input}' or phone_number=  '{input}' 
+'''
+  return sql__gameswap__email_fetch
 
 
 def sql__gameswap__postalcode_check(postalcode):
@@ -121,6 +129,74 @@ def sql__gameswap__user_email_phonenumber__check(input):
 
 def sql__gameswap__user_password__check(input,password):
   sql__gameswap__user_password__check = f'''
-      Select email,phone_number,count(1) cnt from  CS6400_spr22_team103.user where user_password=  '{password}' and  (email= '{input}' or phone_number=  '{input}' ) group by email,phone_number
+      Select count(1) cnt from  CS6400_spr22_team103.user where user_password=  '{password}' and  (email= '{input}' or phone_number=  '{input}' ) 
 '''
   return sql__gameswap__user_password__check
+
+##############################
+# ManinMenu.py
+##############################
+def sql__firstlastname__fetch(emailAddr):
+   sql__firstlastname__fetch = f'''
+      Select concat(user_firstname, ',' , user_lastname) name from  {DATABASE}.user where email='{emailAddr}'
+'''
+   return sql__firstlastname__fetch
+
+
+def sql__myrating__fetch(emailAddr):
+   sql__myrating__fetch= f'''
+        Select
+    avg(rating)
+    user_rating, email
+    from
+    (Select sum(coalesce(swap_proposer_rating, 0)) rating, proposer_email
+    email
+    from CS6400_spr22_team103.swap where
+    proposer_email = '{emailAddr}'
+    union
+    all
+    Select
+    sum(coalesce(swap_counterparty_rating, 0)), counterparty_email
+    from CS6400_spr22_team103.swap where
+    counterparty_email = '{emailAddr}') a
+    group
+    by
+    email
+         '''
+   return sql__myrating__fetch
+
+
+def sql__unacceptedswaps__fetch(emailAddr):
+  sql__unacceptedswaps__fetch = f'''
+        Select count(1) unaccepted_swaps from (Select 1 from CS6400_spr22_team103.swap where counterparty_email='{emailAddr}' and swap_date_responded is null) A
+         '''
+  return sql__unacceptedswaps__fetch
+
+def sql__fivedayoldswap__fetch(emailAddr):
+  sql__fivedayoldswap__fetch = f'''
+        Select count(1) fivedayoldswaps from (Select 1 from CS6400_spr22_team103.swap where counterparty_email='{emailAddr}' and swap_date_responded is null and current_date-swap_date_proposed >4) A      '''
+  return sql__fivedayoldswap__fetch
+
+def sql__unratedswaps__fetch(emailAddr):
+  sql__unratedswaps__fetch = f'''
+        Select count(1) unrated_swaps from (Select swap_date_responded as acceptancedatee, 'Proposer' my_role,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user from CS6400_spr22_team103.swap s join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
+join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
+join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
+ where proposer_email='{emailAddr}' and swap_status='Accepted' and swap_proposer_rating is null 
+Union
+Select swap_date_responded as acceptancedatee, 'Counterparty',p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname from CS6400_spr22_team103.swap s join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
+join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
+join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
+ where counterparty_email='{emailAddr}'and swap_counterparty_rating is null and swap_status='Accepted') a   '''
+  return sql__unratedswaps__fetch
+
+##############################
+# additem.py
+##############################
+
+def sql__itemnumber__fetch(emailAddr):
+  sql__itemnumber__fetch = f'''
+        Select max(itemnumber) from  CS6400_spr22_team103.item  where email=  '{emailAddr}'
+'''
+  return sql__itemnumber__fetch
+
