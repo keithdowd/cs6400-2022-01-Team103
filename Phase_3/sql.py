@@ -3,29 +3,6 @@ from global_variables import DATABASE
 ##############################
 # accept_reject_swaps.py
 ##############################
-
-#pull all swapID in database.
-#if the user, useremail = counterparty_email, or proser_email
-#add to the list
-def sql_get_swap_history(userEmail):
-  sql__accept_reject_swaps_all = f'''
-    SELECT
-        swapID,
-        swap_counterparty_rating,
-        swap_proposer_rating,
-        swap_date_responded,
-        swap_date_proposed,
-        swap_status,
-        counterparty_email,
-        proposer_email,
-        counterparty_itemNumber,
-        proposer_itemNumber,
-      FROM {DATABASE}.Swap
-     WHERE counterparty_email='{userEmail}' OR proposer_email='{userEmail}'
-     ORDER BY swap_date_proposed DESC
-    '''
-  return sql__accept_reject_swaps_all
-
 def sql__accept_reject_swaps_all(userEmail):
   sql__accept_reject_swaps_all = f'''
     SELECT
@@ -37,7 +14,6 @@ def sql__accept_reject_swaps_all(userEmail):
         swap_date_proposed
       FROM {DATABASE}.Swap
      WHERE counterparty_email={userEmail}
-     ORDER BY swap_date_proposed DESC
     '''
   return sql__accept_reject_swaps_all
 
@@ -68,44 +44,6 @@ def sql__accept_reject_get_user_rating(emailAddr):
     '''
   return sql__accept_reject_get_user_name
 
-def sql__accept_reject_getmypostalcode(emailAddr):
-  sql__accept_reject_getmypostalcode = f''' 
-  SELECT postalcode
-    FROM {DATABASE}.User
-    WHERE {DATABASE}.User.email={emailAddr}
-'''
-  return sql__accept_reject_getmypostalcode
-
-
-def sql__accept_reject_getmylat(postalCode):
-  sql__accept_reject_getmylat = f'''
-  SELECT
-        addr_latitude
-    FROM {DATABASE}.UserAddress
-    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
-'''
-  return sql__accept_reject_getmylat
-
-def sql__accept_reject_getmylong(postalCode):
-  sql__accept_reject_getmylong = f'''
-  SELECT
-        addr_longitude
-    FROM {DATABASE}.UserAddress
-    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
-'''
-  return sql__accept_reject_getmylong
-
-#   sql__accept_swap(swapID) = f'''
-#   SELECT
-#         itemNumber,
-#         itemtype_name,
-#         item_title,
-#         item_condition,
-#         item_description
-#     FROM {DATABASE}.item
-# ORDER BY itemNumber ASC 
-# '''
-
 ##############################
 # my_items.py
 ##############################
@@ -117,15 +55,15 @@ sql__my_items__count_of_item_type = f'''
     FROM {DATABASE}.item
 GROUP BY itemtype_name
 '''
-
-sql__my_items__list_of_all_items = f'''
+def sql__my_items__list_of_all_items(emailAddr):
+   sql__my_items__list_of_all_items = f'''
   SELECT
         itemNumber,
         itemtype_name,
         item_title,
         item_condition,
         item_description
-    FROM {DATABASE}.item
+    FROM {DATABASE}.item where email='{emailAddr}'
 ORDER BY itemNumber ASC 
 '''
 
@@ -195,6 +133,19 @@ def sql__gameswap__user_password__check(input,password):
 '''
   return sql__gameswap__user_password__check
 
+def sql__phonetable__insert(phonenumber,phoneshareflag,phonetype):
+    sql__phonetable__insert = f'''
+    insert into CS6400_spr22_team103.Phone (phone_number,phone_share,phone_type) values  ('{phonenumber},'{phoneshareflag}','{phonetype}')
+    '''
+    return sql__phonetable__insert
+
+def sql__usertable__insert(email,user_firstname,user_lastname,user_nickname,user_password,postalcode,phone_number):
+    sql__usertable__insert = f'''
+    insert into CS6400_spr22_team103.user (email,user_firstname,user_lastname,user_nickname,user_password,postalcode,phone_number) values  ('{email},'{user_firstname}','{user_lastname}','{user_password}','{postalcode}','{phone_number}')
+    '''
+
+    return sql__usertable__insert
+
 ##############################
 # ManinMenu.py
 ##############################
@@ -256,13 +207,20 @@ join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
 # additem.py
 ##############################
 
-def sql__itemnumber__fetch(emailAddr='usr071@gt.edu'):
+def sql__itemnumber__fetch(emailAddr):
   sql__itemnumber__fetch = f'''
-        Select max(itemnumber) from  CS6400_spr22_team103.item  where email=  '{emailAddr}'
+        Select max(itemnumber) itemnumber from  CS6400_spr22_team103.item  where email=  '{emailAddr}'
 '''
   return sql__itemnumber__fetch
 
+def sql__itemtable__insert(item_title, item_condition, item_description, itemtype_name, itemtype_platform,
+                              itemtype_media, itemtype_piece_count, email):
+    sql__itemtable_insert = f'''
+    insert into CS6400_spr22_team103.item(item_title, item_condition, item_description, itemtype_name, itemtype_platform,itemtype_media, itemtype_piece_count, email)
+    values  ('{item_title},'{item_condition}','{item_description}','{itemtype_name}','{itemtype_platform}','{itemtype_media}',{itemtype_piece_count},'{email}')
+    '''
 
+    return sql__itemtable__insert
 ##############################
 # RateSwaps.py
 ##############################
@@ -306,3 +264,6 @@ def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
   ;
   '''
   return sql_rate_my_unrated_swaps
+
+
+
