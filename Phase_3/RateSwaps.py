@@ -6,34 +6,16 @@ from sql import sql_get_my_unrated_swaps
 import pandas as pd
 
 
-def get_unrated_swaps(userEmail):
+def get_unrated_swaps(userEmail='usr071@gt.edu'):
+
     ##############################
     # CONFIGURATION
     ##############################
 
     # Window
     WINDOW_TITLE = 'Propose Swap'
-
     WINDOW_HEIGHT = 400
     WINDOW_WIDTH = 800
-
-    WINDOW_PADDING_X = 5
-    WINDOW_PADDING_X_OFFSET = 42
-    WINDOW_PADDING_Y = 5
-
-    # Font
-    LABEL_FONT_FAMILY = 'Courier'
-    LABEL_FONT_SIZE = 10
-    LABEL_FONT_WEIGHT_LABEL = 'bold'
-    LABEL_FONT_WEIGHT_VALUE = 'normal'
-
-    BUTTON_FONT_FAMILY = 'Courier'
-    BUTTON_FONT_SIZE = 14
-    BUTTON_FONT_WEIGHT = 'bold'
-
-    # Tables
-    TABLE_COLUMN_ANCHOR = tk.W
-    TABLE_COLUMN_STRETCH = tk.NO
 
 
     # ratings
@@ -52,19 +34,22 @@ def get_unrated_swaps(userEmail):
         ''
     ]
 
-    items_data = [
-        [
-            258, '2022-01-21', '2022-01-25', 'usr121@gt.edu', '875', 'Nuclear Strike 64', 'Mint', 'EA'
-        ],
-        [
-            267, '2022-01-25', '2022-01-27', 'usr074@gt.edu', '536', 'Major League Baseball 2K8', 'Like New', 'Sports Kush Games'
-        ]
-    ]
+
+    # items_data = [
+    #     [
+    #         258, '2022-01-21', '2022-01-25', 'usr121@gt.edu', '875', 'Nuclear Strike 64', 'Mint', 'EA'
+    #     ],
+    #     [
+    #         268, '2022-01-25', '2022-01-27', 'usr074@gt.edu', '536', 'Major League Baseball 2K8', 'Like New', 'Sports Kush Games'
+    #     ]
+    # ]
 
 
-    # unrated_items= pd.read_sql_query(sql_get_my_unrated_swaps,cnx)
-    # df=pd.DataFrame(unrated_items,columns=['swapID','counterparty_email','proposer_email','counterparty_itemNumber','proposer_itemNumber','swap_date_proposed'])
-    # print(df)
+    unrated_items= pd.read_sql_query(sql_get_my_unrated_swaps(userEmail),cnx)
+
+    items_data= unrated_items.values.tolist()
+    # print(items_data)
+
 
     ##############################
     # SETUP
@@ -178,5 +163,7 @@ def get_unrated_swaps(userEmail):
     window.mainloop()
 
 
-# def rate_swaps(emailAddr, swapID, rating):
+# # def rate_swaps(emailAddr, swapID, rating):
+# get_unrated_swaps(userEmail='usr071@gt.edu')
+
         
