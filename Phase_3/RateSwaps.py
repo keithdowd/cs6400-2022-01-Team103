@@ -177,9 +177,6 @@ def get_unrated_swaps(userEmail):
     ##############################
     window.mainloop()
 
-    def view_unrated_swaps(emailAddr):
 
-        return 1
-
-    # def rate_swaps(emailAddr, swapID, rating):
+# def rate_swaps(emailAddr, swapID, rating):
         
