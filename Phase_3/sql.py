@@ -256,7 +256,7 @@ join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
 # additem.py
 ##############################
 
-def sql__itemnumber__fetch(emailAddr):
+def sql__itemnumber__fetch(emailAddr='usr071@gt.edu'):
   sql__itemnumber__fetch = f'''
         Select max(itemnumber) from  CS6400_spr22_team103.item  where email=  '{emailAddr}'
 '''
