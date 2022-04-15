@@ -14,6 +14,7 @@ def sql__accept_reject_swaps_all(userEmail):
         swap_date_proposed
       FROM {DATABASE}.Swap
      WHERE counterparty_email={userEmail}
+     ORDER BY swap_date_proposed DESC
     '''
   return sql__accept_reject_swaps_all
 
@@ -43,6 +44,44 @@ def sql__accept_reject_get_user_rating(emailAddr):
      WHERE {DATABASE}.user.email={emailAddr}
     '''
   return sql__accept_reject_get_user_name
+
+def sql__accept_reject_getmypostalcode(emailAddr):
+  sql__accept_reject_getmypostalcode = f''' 
+  SELECT postalcode
+    FROM {DATABASE}.User
+    WHERE {DATABASE}.User.email={emailAddr}
+'''
+  return sql__accept_reject_getmypostalcode
+
+
+def sql__accept_reject_getmylat(postalCode):
+  sql__accept_reject_getmylat = f'''
+  SELECT
+        addr_latitude
+    FROM {DATABASE}.UserAddress
+    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__accept_reject_getmylat
+
+def sql__accept_reject_getmylong(postalCode):
+  sql__accept_reject_getmylong = f'''
+  SELECT
+        addr_longitude
+    FROM {DATABASE}.UserAddress
+    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__accept_reject_getmylong
+
+  sql__accept_swap(swapID) = f'''
+  SELECT
+        itemNumber,
+        itemtype_name,
+        item_title,
+        item_condition,
+        item_description
+    FROM {DATABASE}.item
+ORDER BY itemNumber ASC 
+'''
 
 ##############################
 # my_items.py
@@ -200,3 +239,27 @@ def sql__itemnumber__fetch(emailAddr):
 '''
   return sql__itemnumber__fetch
 
+
+##############################
+# RateSwaps.py
+##############################
+def sql_get_my_unrated_swaps(emailAddr):
+  sql_get_my_unrated_swaps = f'''
+  SELECT * from {DATABASE}.swap 
+  WHERE (swap_status="accepted" and swap_counterparty_rating is null and proposer_email={emailAddr})
+  OR (swap_status="accepted"  and swap_proposer_rating is null and counterparty_email={emailAddr})
+  '''
+
+  return sql_get_my_unrated_swaps
+
+def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
+  sql_get_my_unrated_swaps = f'''
+  UPDATE {DATABASE}.swap 
+  SET swap_counterparty_rating =
+  CASE when proposer_email={emailAddr} then {rating} end,
+	    swap_proposer_rating =
+  CASE when counterparty_email={emailAddr} then {rating} end
+  where swapID = {swapID}
+  ;
+  '''
+  return sql_rate_my_unrated_swaps
