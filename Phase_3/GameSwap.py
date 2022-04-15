@@ -17,6 +17,7 @@ import pandas as pd
 from functools import partial
 from IPython.display import display
 
+import re
 
 
 
