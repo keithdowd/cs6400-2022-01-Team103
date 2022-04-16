@@ -16,7 +16,7 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
     # Window
     WINDOW_TITLE = 'Rate Swap'
     WINDOW_HEIGHT = 400
-    WINDOW_WIDTH = 1050
+    WINDOW_WIDTH = 1000
 
 
     # ratings
@@ -161,10 +161,6 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
     # EVENT LOOP
     ##############################
     window.mainloop()
-
-    # # return rating as a list
-    # print(rating)
-    # return rating
 
 
 def rate_swaps(emailAddr, swapID, rating):
