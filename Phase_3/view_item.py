@@ -1,7 +1,7 @@
 from global_variables import *
 from sql import sql__view_items__item_details
 
-def view_item(item_number):
+def view_item(item_number=1):
 
   ##############################
   # CONFIGURATION
@@ -111,8 +111,8 @@ def view_item(item_number):
   # button_propose_swap = tk.Button(master=frame_right, text='Propose Swap', height=2, font=(BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE, BUTTON_FONT_WEIGHT), fg='white', bg='blue')
   # button_propose_swap.grid(row=4, columnspan=2, pady=25)
 
-##############################
-# EVENT LOOP
-##############################
-# if __name__ == "__main__":
-#   window.mainloop()
+  ##############################
+  # EVENT LOOP
+  ##############################
+  # if __name__ == "__main__":
+  #   window.mainloop()

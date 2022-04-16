@@ -86,24 +86,30 @@ def sql__respond_swap(swapID,response_date,status):
 # my_items.py
 ##############################
 
-sql__my_items__count_of_item_type = f'''
-  SELECT 
-        itemtype_name, 
-        count(*) as count
-    FROM {DATABASE}.item
-GROUP BY itemtype_name
-'''
+def sql__my_items__count_of_item_type(emailAddr):
+  sql__my_items__count_of_item_type = f'''
+    SELECT 
+          itemtype_name, 
+          count(*) as count
+      FROM {DATABASE}.item
+     WHERE email='{emailAddr}'
+  GROUP BY itemtype_name
+  '''
+  return sql__my_items__count_of_item_type
+
 def sql__my_items__list_of_all_items(emailAddr):
-   sql__my_items__list_of_all_items = f'''
+  sql__my_items__list_of_all_items = f'''
   SELECT
         itemNumber,
         itemtype_name,
         item_title,
         item_condition,
         item_description
-    FROM {DATABASE}.item where email='{emailAddr}'
+    FROM {DATABASE}.item
+   WHERE email='{emailAddr}'
 ORDER BY itemNumber ASC 
 '''
+  return sql__my_items__list_of_all_items
 
 ##############################
 # view_items.py
