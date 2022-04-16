@@ -2,29 +2,29 @@ from global_variables import *
 from sql import *
 import math
 
-def accept_swap(index):
-    print('accept swap: index :'+str(index))
-    #TBD : Create queries to insert
-def reject_swap(index):
-    print('reject swap: index :'+str(index))
-    #TBD : Create queries to insert
+def accept_reject_swaps(userEmail):    
 
-def haversine(latitude, longitude):
-    #calculate distance between two points
-    #latitude, longitude are expressed in degree
-    #convert degrees to radians
-    R = 6371e3
-    converted_latitude = latitude * math.pi/180
-    converted_longitude = longitude * math.pi/180
+    def accept_swap(swapID,date):
+        # print('accept swap: index :'+str(index))
+        #TBD : Create queries to insert
+        pd.read_sql_query(sql__respond_swap(swapID,date,"Accepted"), cnx)
 
-    a = ((math.sin*(converted_latitude/2))(math.sin(converted_longitude/2)) + math.cos(converted_latitude)(math.cos(converted_latitude*2))(math.sin(converted_longitude/2))(math.sin(converted_longitude/2)))
-    c = (2 * a(math.tan(math.sqrt(a), math.sqrt(1-a))))
-    d = R * c
-    return d
+    def reject_swap(swapID,date):
+        # print('reject swap: index :'+str(index))
+        #TBD : Create queries to insert
+        pd.read_sql_query(sql__respond_swap(swapID,date,"Rejected"), cnx)
 
-def accept_reject_swaps(userEmail):
+    def haversine(lat1, lat2,long1,long2):
+        R = 6371*1000
+        lat1_conv = lat1*math.pi/180
+        lat2_conv = lat2*math.pi/180
+        chg_lat = (lat2-lat1)*math.pi/180
+        chg_long = (long2-long1)*math.pi/180
+        a=math.sin(chg_lat/2)*math.sin(chg_lat/2)+math.cos(lat1_conv)*math.cos(lat2_conv)*math.sin(chg_long/2)*math.sin(chg_long/2)
+        c = (2 * (math.atan2(math.sqrt(a), math.sqrt(1-a))))
+        d = (R * c) / 1000    # kilometers
+        return d
 
-    
     ##############################
     # CONFIGURATION
     ##############################
@@ -48,18 +48,16 @@ def accept_reject_swaps(userEmail):
   ##############################
 
   ########## DATA
-    data_raw = {(1,'asd@dsa.com','123@dsa.com','11','21','1/1/2020'),
-                (2,'asd@dsa.com','234@dsa.com','12','22','1/11/2020'),
-                (3,'asd@dsa.com','345@dsa.com','13','23','1/21/2020'),
-                (4,'asd@dsa.com','456@dsa.com','14','24','1/31/2020')
-    }
+    # for testing purposes:
+    # data_raw = {(1,'asd@dsa.com','123@dsa.com','11','21','1/1/2020'),
+    #             (2,'asd@dsa.com','234@dsa.com','12','22','1/11/2020'),
+    #             (3,'asd@dsa.com','345@dsa.com','13','23','1/21/2020'),
+    #             (4,'asd@dsa.com','456@dsa.com','14','24','1/31/2020')
+    # }
 
+    data_raw = pd.read_sql_query(sql__view_items__item_details(userEmail), cnx)
     df=pd.DataFrame(data_raw,columns=['swapID','counterparty_email','proposer_email','counterparty_itemNumber','proposer_itemNumber','swap_date_proposed'])
     #query_list=df.values.tolist()
-
-    # df = pd.read_sql_query(sql__view_items__item_details(userEmail), cnx)
-    # query_list=df.values.tolist()
-
         
     # assign to new list
     swapID = []
@@ -71,9 +69,7 @@ def accept_reject_swaps(userEmail):
 
     desired_item = []
     proposer_name = []
-    proposer_location = []
     rating=[]
-
     
     distance=[]
     proposed_item=[]
@@ -86,7 +82,6 @@ def accept_reject_swaps(userEmail):
     postal_code=pd.read_sql_query(sql__accept_reject_getmypostalcode(counterparty_email[0]),cnx)
     myLat = pd.read_sql_query(sql__accept_reject_getmylat(postal_code),cnx)
     myLong = pd.read_sql_query(sql__accept_reject_getmylong(postal_code),cnx)
-    dist_mine = haversine(myLat,myLong)
 
     swapID=df['swapID'].to_list()
     counterparty_email=df['counterparty_email'].to_list()
@@ -98,16 +93,15 @@ def accept_reject_swaps(userEmail):
     # getting from other tables
     index=0
     for swapID_iter in swapID:
-        desired_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(counterparty_itemNumber[index]),cnx)
-        proposed_item[index] = pd.read_sql_query(sql__accept_reject_get_item_name(proposer_itemNumber[index]),cnx)
-        proposer_name[index] = pd.read_sql_query(sql__accept_reject_get_user_name(proposer_email[index]),cnx)
-        rating[index] = pd.read_sql_query(sql__accept_reject_get_user_rating(proposer_email[index]),cnx)
-        their_postal[index] = pd.read_sql_query(sql__accept_reject_getmypostalcode(proposer_email[index]),cnx)
-        their_lat[index] = pd.read_sql_query(sql__accept_reject_getmylat(their_postal[index],cnx)
-        their_long[index] = pd.read_sql_query(sql__accept_reject_getmylong(their_postal[index],cnx)
-        temp = 0
-        temp = haversine(their_lat[index],their_long[index])
-        distance[index] = abs(temp-dist_mine)
+        desired_item[index] = str(pd.read_sql_query(sql__accept_reject_get_item_name(counterparty_itemNumber[index]),cnx))
+        proposed_item[index] = str(pd.read_sql_query(sql__accept_reject_get_item_name(proposer_itemNumber[index]),cnx))
+        proposer_name[index] = str(pd.read_sql_query(sql__accept_reject_get_user_name(proposer_email[index]),cnx))
+        rating[index] = round(float(pd.read_sql_query(sql__accept_reject_get_user_rating(proposer_email[index]),cnx)),2)
+        their_postal[index] = str(pd.read_sql_query(sql__accept_reject_getmypostalcode(proposer_email[index]),cnx))
+        their_lat[index] = float(pd.read_sql_query(sql__accept_reject_getmylat(their_postal[index]),cnx))
+        their_long[index] = float(pd.read_sql_query(sql__accept_reject_getmylong(their_postal[index]),cnx))
+        
+        distance[index] = str(round(float(haversine(abs(myLat-their_lat[index]),abs(myLong-their_long[index]))),1))+' kilometers'
         index+=1
 
     #
@@ -148,9 +142,9 @@ def accept_reject_swaps(userEmail):
         label_proposedItem = tk.Label(master=frame_left, text=proposed_item[index], font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
         label_proposedItem.grid(row=index+1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         
-        btn_accept = tk.Button(master=frame_left, text='Accept',command=lambda index_num=i:accept_swap(index_num), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        btn_accept = tk.Button(master=frame_left, text='Accept',command=lambda index_num=i:accept_swap(swapID[index],"4/19/2022"), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
         btn_accept.grid(row=i+1, column=7, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-        btn_reject = tk.Button(master=frame_left, text='Reject',command=lambda index_num=i:accept_swap(index_num), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+        btn_reject = tk.Button(master=frame_left, text='Reject',command=lambda index_num=i:reject_swap(swapID[index],"4/19/2022"), font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
         btn_reject.grid(row=i+1, column=8, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         index+=1
 
@@ -160,7 +154,8 @@ def accept_reject_swaps(userEmail):
 ##############################
 # MAIN
 ##############################
-if __name__ == "__main__":
-    accept_reject_swaps('asd@dsa.com')
+# if __name__ == "__main__":
+#     #accept_reject_swaps('asd@dsa.com')
+#     print (accept_reject_swaps.haversine(10,20))
     
     #window.mainloop()
