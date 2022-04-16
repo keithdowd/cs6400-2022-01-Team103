@@ -1,20 +1,22 @@
+# import email
+import tkinter as tk
+from tkinter import ttk, StringVar, OptionMenu, Button
+from tkinter.font import BOLD
 from global_variables import *
-def get_unrated_swaps(userEmail):
-    import tkinter as tk
-    from tkinter import ttk, StringVar, OptionMenu, Button
-    from tkinter.font import BOLD
+from sql import sql_get_my_unrated_swaps,sql_rate_my_unrated_swaps
+import pandas as pd
 
-    from sql import sql_get_my_unrated_swaps
-    import pandas as pd
+
+def get_unrated_swaps(userEmail='usr071@gt.edu'):
 
     ##############################
     # CONFIGURATION
     ##############################
 
     # Window
-    WINDOW_TITLE = 'Propose Swap'
+    WINDOW_TITLE = 'Rate Swap'
     WINDOW_HEIGHT = 400
-    WINDOW_WIDTH = 800
+    WINDOW_WIDTH = 1000
 
 
     # ratings
@@ -22,11 +24,11 @@ def get_unrated_swaps(userEmail):
 
     # swaps to be rated
     items_columns = [
-        'Swap #',
-        'Date Proposed',
-        'Date Accepted',
-        'User Email',
-        'Item #',
+        'Swap#',
+        'Date_Proposed',
+        'Date_Accepted',
+        'UserEmail',
+        'Item#',
         'Title',
         'Condition',
         'Description',
@@ -34,20 +36,10 @@ def get_unrated_swaps(userEmail):
     ]
 
 
-    # items_data = [
-    #     [
-    #         258, '2022-01-21', '2022-01-25', 'usr121@gt.edu', '875', 'Nuclear Strike 64', 'Mint', 'EA'
-    #     ],
-    #     [
-    #         268, '2022-01-25', '2022-01-27', 'usr074@gt.edu', '536', 'Major League Baseball 2K8', 'Like New', 'Sports Kush Games'
-    #     ]
-    # ]
-
-
     unrated_items= pd.read_sql_query(sql_get_my_unrated_swaps(userEmail),cnx)
-    print(sql_get_my_unrated_swaps(userEmail))
+
     items_data= unrated_items.values.tolist()
-    print(items_data)
+    # print(items_data)
 
 
     ##############################
@@ -81,80 +73,89 @@ def get_unrated_swaps(userEmail):
     separator.grid(row=1, column=6)
 
     # columns
-    label_item_number = tk.Label(window, text='Swap #', font=(
+    label_swapID = tk.Label(window, text='Swap#', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_item_number.grid(row=2, column=0)
+    label_swapID.grid(row=2, column=0)
 
-    label_title = tk.Label(window, text= 'Date Proposed', font=(
+    label_date_proposed = tk.Label(window, text= 'Propose', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_title.grid(row=2, column=2)
+    label_date_proposed.grid(row=2, column=2)
 
-    label_game_type = tk.Label(window, text= 'Date Accepted', font=(
+    label_date_accepted = tk.Label(window, text= 'Accept', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_game_type.grid(row=2, column=4)
+    label_date_accepted.grid(row=2, column=4)
 
-    label_platform = tk.Label(window, text='User Email', font=(
+    label_user_email = tk.Label(window, text='User_Email', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_platform.grid(row=2, column=6)
+    label_user_email.grid(row=2, column=6)
 
-    label_media = tk.Label(window, text='Item #', font=(
+    label_item_ID = tk.Label(window, text='Item#', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_media.grid(row=2, column=8)
+    label_item_ID.grid(row=2, column=8)
 
     label_title = tk.Label(window, text='Title', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_title .grid(row=2, column=10)
+    label_title.grid(row=2, column=10)
 
     label_condition = tk.Label(window, text='Condition', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
     label_condition.grid(row=2, column=12)
 
-    # label_condition = tk.Label(window, text='Description', font=(
-    #     LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    # label_condition.grid(row=2, column=14)
+    label_rating = tk.Label(window, text='Rating', font=(
+        LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+    label_rating.grid(row=2, column=14)
 
-
+    clicked=[None, None]
+    rating=[None, None]
+    index_num=0
     for i, row in enumerate(items_data):
-        clicked = StringVar()
-        clicked.set("Select Rating")
-        # Create an instance of Menu in the frame
-        drop = OptionMenu(window, clicked, "5", "4",
-                        "3", "2", "1", "0")
 
-        label_item_number_value = tk.Label(window, text=row[0], font=(
+        label_swapID_value = tk.Label(window, text=row[0], font=(
             LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-        label_item_number_value.grid(row=i+3, column=0)
+        label_swapID_value.grid(row=i+3, column=0)
 
-        label_title_value = tk.Label(window, text=row[1], font=(
+        label_date_proposed_value = tk.Label(window, text=row[1], font=(
             LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-        label_title_value.grid(row=i+3, column=2)
+        label_date_proposed_value.grid(row=i+3, column=2)
 
-        label_game_type_value = tk.Label(window, text=row[2], font=(
+        label_date_accepted_value = tk.Label(window, text=row[2], font=(
             LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-        label_game_type_value.grid(row=i+3, column=4)
+        label_date_accepted_value.grid(row=i+3, column=4)
 
-        label_platform_value = tk.Label(window, text=row[3], font=(
+        label_user_email_value = tk.Label(window, text=row[3], font=(
             LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-        label_platform_value.grid(row=i+3, column=6)
+        label_user_email_value.grid(row=i+3, column=6)
 
-        label_media_value = tk.Label(window, text=row[4], font=(
+        label_item_ID_value = tk.Label(window, text=row[4], font=(
             LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-        label_media_value.grid(row=i+3, column=8)
+        label_item_ID_value.grid(row=i+3, column=8)
+
+        label_title_value = tk.Label(window, text=row[5], font=(
+            LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+        label_title_value.grid(row=i+3, column=10)
 
         label_condition_value = tk.Label(window, text=row[5], font=(
             LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-        label_condition_value.grid(row=i+3, column=10)
+        label_condition_value.grid(row=i+3, column=12)
+
+
+        clicked[i] = StringVar()
+        clicked[i].set("Select Rating")
+
+
+        def callback():
+            rating=clicked[i].get()
+            print("rating changed to:", rating)
+            return rating
+        drop = OptionMenu(window, clicked[i], *ratings, command=lambda index_num=i:callback())
 
         drop.grid(row=i+3, column=14)
-
-    # Separator2
-    separator = ttk.Separator(window, orient='horizontal')
-    separator.grid(row=8, column=6)
-
-    submit = Button(window, text="Submit Rating", fg="Black",
-                    bg="Green", font=(
-                        LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE, BOLD))
-    submit.grid(row=9, column=12)
+        
+        submit = Button(window, text="Rate", fg="Black",
+            bg="Green", font=(
+                LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE, BOLD), 
+                command=lambda index_num=i: rate_swaps(rating=callback(),emailAddr=row[4], swapID=row[1] ))
+        submit.grid(row=i+3, column=16)
 
     ##############################
     # EVENT LOOP
@@ -162,5 +163,7 @@ def get_unrated_swaps(userEmail):
     window.mainloop()
 
 
-# # def rate_swaps(emailAddr, swapID, rating):
+def rate_swaps(emailAddr, swapID, rating):
+    sql_rate_my_unrated_swaps(emailAddr, swapID, rating)
+
 # get_unrated_swaps(userEmail='usr071@gt.edu')
