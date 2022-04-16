@@ -1,7 +1,7 @@
 from global_variables import *
 
 
-def search():
+def search(emailAddr):
   ##############################
   # CONFIGURATION
   ##############################
