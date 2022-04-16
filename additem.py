@@ -1,3 +1,4 @@
+from  sql import sql__itemnumber__fetch
 def additemobject(user_email):
     import tkinter as tk
     import sys
@@ -143,7 +144,8 @@ def additemobject(user_email):
     e_description.place(width=300,height=60,x=40, y=585)
     p = tk.StringVar()
     p.set("")
-    tk.Label(master, textvariable=p).place(x=40, y=650)
+    label_title_validate=tk.Label(master, textvariable=p)
+    label_title_validate.place(x=40, y=650)
     def itemadditionpopup():
         win = tk.Toplevel()
         win.geometry("210x100")
@@ -153,7 +155,7 @@ def additemobject(user_email):
 
         l.grid(row=0, column=0)
 
-        listitem_fetch_query = "Select itemnumber from  CS6400_spr22_team103.item  where item_title=  " + "'" + e_title.get() + "'"
+        listitem_fetch_query = sql__itemnumber__fetch(user_email)
         listitem_data = []
         itemmnumber_text=""
         listitem_data = pd.read_sql_query(listitem_fetch_query, cnx)
@@ -165,13 +167,28 @@ def additemobject(user_email):
         l1.grid(row=2, column=0)
         b = ttk.Button(win, text="OK", command=win.destroy)
         b.grid(row=4, column=0)
+
+    def itemtitlenullopup():
+        win = tk.Toplevel()
+        win.geometry("210x100")
+        win.wm_title("Item title ")
+
+        l = tk.Label(win, text="Blank Title not allowed")
+
+        l.grid(row=0, column=0)
+
+        b = ttk.Button(win, text="OK", command=win.destroy)
+        b.grid(row=1, column=0)
+
     def additeminsert():
         display(master.piece_cnt_txt)
         display(master.platformtype_text)
         display(master.video_media_type_txt)
 
         if e_title.get()=="" :
+            print("inside null title")
             p.set("Please enter valid title")
+            itemtitlenullopup()
         else:
             add_item_query = "insert into CS6400_spr22_team103.item (item_title, item_condition, item_description, itemtype_name, itemtype_platform, itemtype_media, itemtype_piece_count, email) values " + "('" + e_title.get() + "','" + option_condition.get() + "','" + e_description.get() + "','" + master.game_type_txt + "','" + master.platformtype_text + "','" + master.video_media_type_txt + "','" + str(
                 master.piece_cnt_txt) + "','" + user_email + "')"
