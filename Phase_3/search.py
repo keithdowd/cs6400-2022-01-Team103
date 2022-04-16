@@ -11,6 +11,7 @@ def search():
   WINDOW_SIZE_WIDTH = 400
   WINDOW_TITLE = 'Search'
 
+
   ##############################
   # SETUP
   ##############################
@@ -24,6 +25,7 @@ def search():
     title=WINDOW_TITLE, 
     width=WINDOW_SIZE_WIDTH, 
     height=WINDOW_SIZE_HEIGHT)
+
 
   ##############################
   # SEARCH
@@ -181,6 +183,7 @@ def search():
     sticky='e') 
 
   # command=lambda item_number=my_item[0]: view_item(item_number)
+
 
 ##############################
 # EVENT LOOP
