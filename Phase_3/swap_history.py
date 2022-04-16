@@ -57,6 +57,29 @@ def swap_history(userEmail):
   # rating = df['item_condition']
 
 
+  for index, row in df.iterrows():
+      proposed_date = row['swap_date_proposed']
+      accepted_rejected_date = row['swap_date_responded']
+      swap_status = row['swap_status']
+      my_role = ['']
+      proposed_item = row['proposer_itemNumber']
+      desired_item = row['counterparty_itemNumber']
+      other_user = row['counterparty_email']
+      
+      arr = [
+          proposed_date,
+          accepted_rejected_date,
+          swap_status,
+          my_role,
+          proposed_item,
+          desired_item,
+          other_user
+      ]
+
+      swap_data.append(arr)
+
+
+
   # Header
   label_item_counts = tk.Label(master=window, text='Swap History')
   label_item_counts.pack(padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, anchor='w')
