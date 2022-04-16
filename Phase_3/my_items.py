@@ -1,3 +1,4 @@
+from tkinter.tix import WINDOW
 from global_variables import *
 from sql import sql__my_items__count_of_item_type
 from sql import sql__my_items__list_of_all_items
@@ -28,7 +29,35 @@ def my_items(emailAddr):
     title=WINDOW_TITLE, 
     width=WINDOW_SIZE_WIDTH, 
     height=WINDOW_SIZE_HEIGHT)
+  
+  # Create scrollable window for my items table
+  container = ttk.Frame(window)
 
+  canvas = tk.Canvas(
+    container, 
+    width=WINDOW_SIZE_WIDTH-50, 
+    height=200)
+
+  scrollbar = ttk.Scrollbar(
+    container, 
+    orient='vertical', 
+    command=canvas.yview)
+    
+  scrollable_frame = ttk.Frame(canvas)
+
+  scrollable_frame.bind(
+    '<Configure>',
+    lambda e: canvas.configure(
+      scrollregion=canvas.bbox('all')
+    )
+  )
+
+  canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
+  canvas.configure(yscrollcommand=scrollbar.set)
+
+  container.grid(row=7, column=0, columnspan=9, sticky='nesw')
+  canvas.grid(row=0, column=0, sticky='nesw')
+  scrollbar.grid(row=0, column=7, sticky='nse')
 
   ##############################
   # ITEM COUNTS
@@ -143,11 +172,12 @@ def my_items(emailAddr):
 
   my_items_data = []
 
-  for index, row in df.iterrows():
+  for _, row in df.iterrows():
       item_number = row['itemNumber']
       item_type_name = row['itemtype_name']
       item_title = row['item_title']
       item_condition = row['item_condition']
+      # Only display first 100 characters of the description text
       item_description = row['item_description'][0:100] + '...' if len(row['item_description']) > 100 else row['item_description']
       
       arr = [
@@ -199,7 +229,7 @@ def my_items(emailAddr):
     # Table (Header)
     for col_index, item_column in enumerate(my_items_columns):
       table_my_items_header = tk.Label(
-        master=window, 
+        master=scrollable_frame, 
         text=item_column, 
         font=(
           LABEL_FONT_FAMILY,
@@ -226,7 +256,7 @@ def my_items(emailAddr):
           anchor = 'w'
 
         table_my_items_value = tk.Label(
-          master=window, 
+          master=scrollable_frame, 
           text=my_item_value, 
           font=(
             LABEL_FONT_FAMILY,
@@ -245,7 +275,7 @@ def my_items(emailAddr):
           sticky='ne'
         )
       table_my_items_details_btn = tk.Button(
-        master=window, 
+        master=scrollable_frame, 
         text='Details',
         font=(
           LABEL_FONT_FAMILY,
@@ -256,11 +286,13 @@ def my_items(emailAddr):
       )
       table_my_items_details_btn.grid(
         row=row_index,
-        column=col_index+1) # add button after (to the right of) the last my items column
+        column=col_index+1, # add button after (to the right of) the last my items column
+        sticky='e'
+        ) 
     
   else: # Show a message instead of the items table if the user has no items
     label_my_items = tk.Label(
-      master=window, 
+      master=scrollable_frame, 
       text='You have no items.', 
       font=(
         LABEL_FONT_FAMILY,
