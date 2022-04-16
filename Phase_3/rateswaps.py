@@ -167,6 +167,6 @@ def rate_swaps(emailAddr, swapID, rating):
     sql_rate_my_unrated_swaps(emailAddr, swapID, rating)
 
 
-get_unrated_swaps(userEmail='usr071@gt.edu')
+# get_unrated_swaps(userEmail='usr071@gt.edu')
 
         
