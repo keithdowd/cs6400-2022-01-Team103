@@ -266,4 +266,28 @@ def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
   return sql_rate_my_unrated_swaps
 
 
+##############################
+# swap_history.py
+#############################
 
+#pull all swapID in database.
+#if the user, useremail = counterparty_email, or proser_email
+#add to the list
+def sql_get_swap_history(userEmail):
+  sql_get_swap_history = f'''
+    SELECT
+        swapID,
+        swap_counterparty_rating,
+        swap_proposer_rating,
+        swap_date_responded,
+        swap_date_proposed,
+        swap_status,
+        counterparty_email,
+        proposer_email,
+        counterparty_itemNumber,
+        proposer_itemNumber,
+      FROM {DATABASE}.swap
+     WHERE counterparty_email='{userEmail}' OR proposer_email='{userEmail}'
+     ORDER BY swap_date_proposed DESC
+    '''
+  return sql_get_swap_history
