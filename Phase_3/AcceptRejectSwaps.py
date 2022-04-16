@@ -39,6 +39,7 @@ def accept_reject_swaps(userEmail):
     def setup(title='My Window', width=800, height=400):
         window = tk.Tk()
         window.title(title)
+        window.geometry("3000x3000")
         window.geometry(f'{width}x{height}')
         return window
 
@@ -141,7 +142,7 @@ def accept_reject_swaps(userEmail):
     label_dist.grid(row=0, column=4, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
     label_proposedItem = tk.Label(master=frame_left, text='Proposed Item',
                                   font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_proposedItem.grid(row=0, column=6, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+    label_proposedItem.grid(row=0, column=5, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
     label_acceptorreject = tk.Label(master=frame_left, text='',
                                     font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
     label_acceptorreject.grid(row=0, column=6, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
@@ -154,19 +155,19 @@ def accept_reject_swaps(userEmail):
         label_date.grid(row=index + 1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         label_desiredItem = tk.Label(master=frame_left, text=desired_item[index],
                                      font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        label_desiredItem.grid(row=index + 1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_desiredItem.grid(row=index + 1, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         label_proposer = tk.Label(master=frame_left, text=proposer_name[index],
                                   font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        label_proposer.grid(row=index + 1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_proposer.grid(row=index + 1, column=2, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         label_rating = tk.Label(master=frame_left, text=rating[index],
                                 font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        label_rating.grid(row=index + 1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_rating.grid(row=index + 1, column=3, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         label_dist = tk.Label(master=frame_left, text=distance[index],
                               font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        label_dist.grid(row=index + 1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_dist.grid(row=index + 1, column=4, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         label_proposedItem = tk.Label(master=frame_left, text=proposed_item[index],
                                       font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-        label_proposedItem.grid(row=index + 1, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+        label_proposedItem.grid(row=index + 1, column=5, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
 
         btn_accept = tk.Button(master=frame_left, text='Accept',
                                command=lambda index_num=i: accept_swap(swapID[index], "4/19/2022"),
