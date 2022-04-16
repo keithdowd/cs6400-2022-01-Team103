@@ -285,7 +285,7 @@ def sql_get_swap_history(userEmail):
         counterparty_email,
         proposer_email,
         counterparty_itemNumber,
-        proposer_itemNumber,
+        proposer_itemNumber
       FROM {DATABASE}.swap
      WHERE counterparty_email='{userEmail}' OR proposer_email='{userEmail}'
      ORDER BY swap_date_proposed DESC
