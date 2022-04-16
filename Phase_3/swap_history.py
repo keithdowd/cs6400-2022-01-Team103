@@ -1,12 +1,6 @@
 from global_variables import *
 from sql import sql_get_swap_history
 
-itemNumber = 0
-item_title = "test"
-itemtype_name = "test name"
-itemtype_platform = "test plat"
-itemtype_media = "test media"
-item_condition = "tes condition"
 
 def view_item(userEmail):
 
@@ -16,6 +10,26 @@ def view_item(userEmail):
 
   # Window
   WINDOW_TITLE = 'Swap History'
+
+
+  TABLE_COLUMN_ANCHOR = tk.W
+  TABLE_COLUMN_STRETCH = tk.NO
+
+  WINDOW_WIDTH = 800
+
+
+  swap_summary_columns = ['My role', 'Total', 'Accepted', 'Rejected', 'Rejected %']
+
+
+  swap_history_columns = ['Proposed Date', 'Accepted/Rejected Date', 'Swap Status', 'My Role', 'Proposed Item', 'Desired Item', 'Other User', 'Rating', '','']
+
+
+  swap_summary_data = [['Proposer', '2', '1', '1', '50.0%'],['CounterParty', '2', '2', '0', '0.0%'] ]
+
+  swap_data = []
+
+  rating_dropdown = ['1', '2', '3', '4', '5']
+
 
   ##############################
   # SETUP
@@ -71,33 +85,6 @@ def view_item(userEmail):
   for i, row in enumerate(swap_summary_data):
       table_items.insert(parent='', index='end', iid=i, text='', values=row)
  
-
-  # Right column
-  # frame_right = tk.Frame(master=window)
-  # frame_right.grid(row=2, column=1, sticky='nw')
-
-  # label_offered_by = tk.Label(master=frame_right, text='Offered by', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-  # label_offered_by.grid(row=0, column=0, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-  # label_offered_by_value = tk.Label(master=frame_right, text=f'{OFFERED_BY}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-  # label_offered_by_value.grid(row=0, column=1, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-
-  # label_location = tk.Label(master=frame_right, text='Location', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-  # label_location.grid(row=1, column=0, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-  # label_location_value = tk.Label(master=frame_right, text=f'{LOCATION}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-  # label_location_value.grid(row=1, column=1, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-
-  # label_rating = tk.Label(master=frame_right, text='Rating', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-  # label_rating.grid(row=2, column=0, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-  # label_rating_value = tk.Label(master=frame_right, text=f'{RATING}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-  # label_rating_value.grid(row=2, column=1, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-
-  # label_distance = tk.Label(master=frame_right, text='Distance', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL), bg='red')
-  # label_distance.grid(row=3, column=0, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-  # label_distance_value = tk.Label(master=frame_right, text=f'{DISTANCE} miles', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE), bg='red')
-  # label_distance_value.grid(row=3, column=1, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
-
-  # button_propose_swap = tk.Button(master=frame_right, text='Propose Swap', height=2, font=(BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE, BUTTON_FONT_WEIGHT), fg='white', bg='blue')
-  # button_propose_swap.grid(row=4, columnspan=2, pady=25)
 
 ##############################
 # EVENT LOOP
