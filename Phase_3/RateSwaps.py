@@ -1,12 +1,11 @@
-import tkinter as tk
-from tkinter import ttk, StringVar, OptionMenu, Button
-from tkinter.font import BOLD
 from global_variables import *
-from sql import sql_get_my_unrated_swaps
-import pandas as pd
+def get_unrated_swaps(userEmail):
+    import tkinter as tk
+    from tkinter import ttk, StringVar, OptionMenu, Button
+    from tkinter.font import BOLD
 
-
-def get_unrated_swaps(userEmail='usr071@gt.edu'):
+    from sql import sql_get_my_unrated_swaps
+    import pandas as pd
 
     ##############################
     # CONFIGURATION
@@ -46,9 +45,9 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
 
 
     unrated_items= pd.read_sql_query(sql_get_my_unrated_swaps(userEmail),cnx)
-
+    print(sql_get_my_unrated_swaps(userEmail))
     items_data= unrated_items.values.tolist()
-    # print(items_data)
+    print(items_data)
 
 
     ##############################
@@ -102,9 +101,9 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
     label_media.grid(row=2, column=8)
 
-    label_condition = tk.Label(window, text='Title', font=(
+    label_title = tk.Label(window, text='Title', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-    label_condition.grid(row=2, column=10)
+    label_title .grid(row=2, column=10)
 
     label_condition = tk.Label(window, text='Condition', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
@@ -146,7 +145,7 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
             LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
         label_condition_value.grid(row=i+3, column=10)
 
-        drop.grid(row=i+3, column=12)
+        drop.grid(row=i+3, column=14)
 
     # Separator2
     separator = ttk.Separator(window, orient='horizontal')
@@ -165,5 +164,3 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
 
 # # def rate_swaps(emailAddr, swapID, rating):
 # get_unrated_swaps(userEmail='usr071@gt.edu')
-
-        
