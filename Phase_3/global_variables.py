@@ -3,6 +3,7 @@ import mysql.connector
 import tkinter as tk
 from tkinter import ttk
 
+
 ##############################
 # DATABASE
 ##############################
@@ -31,7 +32,7 @@ BUTTON_FONT_WEIGHT = 'bold'
 
 # Labels
 LABEL_FONT_FAMILY = 'Courier'
-LABEL_FONT_SIZE = 10
+LABEL_FONT_SIZE = 8
 LABEL_FONT_WEIGHT_LABEL = 'bold'
 LABEL_FONT_WEIGHT_VALUE = 'normal'
 
