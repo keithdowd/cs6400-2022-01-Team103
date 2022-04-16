@@ -47,16 +47,6 @@ def swap_history(userEmail):
     ######### DATA
   df = pd.read_sql_query(sql_get_swap_history(userEmail), cnx)
 
-  proposed_date = df['swap_date_proposed']
-  accepted_rejected_date = df['swap_date_responded']
-  swap_status = df['swap_status']
-  # my_role = df['itemtype_platform'].values[0]
-  proposed_item = df['proposer_itemNumber']
-  desired_item = df['counterparty_itemNumber']
-  other_user = df['counterparty_email']
-  # rating = df['item_condition']
-
-
   for index, row in df.iterrows():
       proposed_date = row['swap_date_proposed']
       accepted_rejected_date = row['swap_date_responded']
