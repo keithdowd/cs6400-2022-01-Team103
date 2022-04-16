@@ -14,6 +14,7 @@ def sql__accept_reject_swaps_all(userEmail):
         swap_date_proposed
       FROM {DATABASE}.Swap
      WHERE counterparty_email={userEmail}
+     ORDER BY swap_date_proposed DESC
     '''
   return sql__accept_reject_swaps_all
 
@@ -43,6 +44,43 @@ def sql__accept_reject_get_user_rating(emailAddr):
      WHERE {DATABASE}.user.email={emailAddr}
     '''
   return sql__accept_reject_get_user_name
+
+def sql__accept_reject_getmypostalcode(emailAddr):
+  sql__accept_reject_getmypostalcode = f''' 
+  SELECT postalcode
+    FROM {DATABASE}.User
+    WHERE {DATABASE}.User.email={emailAddr}
+'''
+  return sql__accept_reject_getmypostalcode
+
+
+def sql__accept_reject_getmylat(postalCode):
+  sql__accept_reject_getmylat = f'''
+  SELECT
+        addr_latitude
+    FROM {DATABASE}.UserAddress
+    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__accept_reject_getmylat
+
+def sql__accept_reject_getmylong(postalCode):
+  sql__accept_reject_getmylong = f'''
+  SELECT
+        addr_longitude
+    FROM {DATABASE}.UserAddress
+    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__accept_reject_getmylong
+
+def sql__respond_swap(swapID,response_date,status):
+  sql__respond_swap  = f'''
+  UPDATE {DATABASE}.Swap
+  SET
+        swap_date_responded={response_date},
+        swap_status={status}
+  WHERE {DATABASE}.swapID={swapID}
+  '''
+  return sql__respond_swap
 
 ##############################
 # my_items.py
