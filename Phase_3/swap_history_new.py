@@ -89,11 +89,26 @@ def my_items(userEmail):
   proposer_rejected_percent = 0 if proposer_accepted_count == 0 else round((proposer_rejected_count/proposer_accepted_count)*100)
   proposer_total = proposer_accepted_count + proposer_rejected_count
 
+
+  counter_accepted_count = 0 if counter['accepted_count'].empty else counter['accepted_count'].reset_index(drop=True)[0]
+  counter_rejected_count = 0 if counter['rejected_count'].empty else counter['rejected_count'].reset_index(drop=True)[0]
+  counter_rejected_percent = 0 if counter_accepted_count == 0 else round((counter_rejected_count/counter_accepted_count)*100)
+  counter_total = counter_accepted_count + counter_rejected_count
+
+  print("REJECT COUNTER HERE")
+  print(counter_rejected_count)
   item_counts['My role'] = 'Proposer'
   item_counts['Total'] = proposer_total
   item_counts['Accepted'] = proposer_accepted_count
   item_counts['Rejected'] = proposer_rejected_count
   item_counts['Rejected %'] = proposer_rejected_percent
+
+
+  counter_item_counts['My role'] = 'Counterparty'
+  counter_item_counts['Total'] = counter_total
+  counter_item_counts['Accepted'] = counter_accepted_count
+  counter_item_counts['Rejected'] = counter_rejected_count
+  counter_item_counts['Rejected %'] = counter_rejected_percent
 
   ########## VIEW
 
@@ -124,7 +139,7 @@ def my_items(userEmail):
     pady=WINDOW_PADDING_Y, 
     sticky='ew')
 
-  # Table (Header)
+  # Table (Header) #Propose
   for col_index, item_column in enumerate(item_counts.keys()):
     table_item_counts_header = tk.Label(
       master=window, 
@@ -141,7 +156,7 @@ def my_items(userEmail):
       pady=WINDOW_PADDING_Y,
       sticky='ew')
 
-  # Table (Values)
+  # Table (Values)#Propose
   for col_index, item_count in enumerate(item_counts.values()):
     table_item_counts_value = tk.Label(
       master=window, 
@@ -157,6 +172,25 @@ def my_items(userEmail):
       padx=1, 
       pady=WINDOW_PADDING_Y,
       sticky='ew')
+  
+
+  # Table (Values)#counter
+  for col_index, item_count in enumerate(counter_item_counts.values()):
+    print(counter_item_counts.values())
+    counter_table_item_counts_value = tk.Label(
+      master=window, 
+      text=item_count, 
+      font=(
+        LABEL_FONT_FAMILY,
+        LABEL_FONT_SIZE,
+        LABEL_FONT_WEIGHT_VALUE),
+    width=10)
+    counter_table_item_counts_value.grid(
+      row=4,
+      column=col_index,
+      padx=5, 
+      pady=10,
+      sticky='ew')
       
 
   ##############################
@@ -167,7 +201,7 @@ def my_items(userEmail):
 
   my_items_columns = [
     'Proposed Date',
-    'Accepeted/Rejected Date',
+    'Accept/Reject DT',
     'Swap Status',
     'My Role',
     'Proposed Item',
@@ -180,10 +214,10 @@ def my_items(userEmail):
   df = pd.read_sql_query(sql_swap_title(userEmail), cnx)
 
   my_items_data = []
-  print(len(df))
+  # print(len(df))
   for index, row in df.iterrows():
-      print("start here")
-      print(row)
+      # print("start here")
+      # print(row)
       proposed_date = row['swap_date_proposed']
       accepted_rejected_date = row['swap_date_responded']
       swap_status = row['swap_status']
@@ -192,6 +226,10 @@ def my_items(userEmail):
         my_role_txt='Proposer'
       else:
         my_role_txt='Counterparty'
+      #if proposer rating is not null then rating_text = row[purposer_rating] else row[counter_party rating]
+      rating_data = row['swap_proposer_rating']
+      # if row['swap_proposer_rating'] != 'null':
+        
       proposed_item = row['proposer_itemNumber']
       proposed_item_text = pd.read_sql_query(sql__pull_itemname(proposed_item), cnx)
       desired_item = row['counterparty_itemNumber']
@@ -204,13 +242,13 @@ def my_items(userEmail):
           accepted_rejected_date,
           swap_status,
           my_role_txt,
-          proposed_item_text['item_title'],
-          desired_item_text['item_title'],
-          counterparty_email_text['user_nickname'],
+          proposed_item_text['item_title'][0],
+          desired_item_text['item_title'][0],
+          counterparty_email_text['user_nickname'][0],
           proposed_date
       ]
       my_items_data.append(arr)
-  print("stop here")
+  # print("stop here")
   ########## VIEW
 
   # Empty row
