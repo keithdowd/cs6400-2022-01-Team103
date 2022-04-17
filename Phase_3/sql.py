@@ -83,6 +83,72 @@ def sql__respond_swap(swapID,response_date,status):
   return sql__respond_swap
 
 ##############################
+# UpdateMyInfo.py
+##############################
+def sql__pull_nick(userEmail):
+  sql__pull_nick = f'''
+      SELECT
+        user_nickname
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_nick
+
+def sql__pull_city(postalCode):
+  sql__pull_city = f'''
+      SELECT
+        addr_city
+      FROM {DATABASE}.UserAddress
+     WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__pull_city
+
+def sql__pull_first_name(userEmail):
+  sql__pull_first_name = f'''
+      SELECT
+        user_firstname
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_first_name
+
+def sql__pull_state(postalCode):
+  sql__pull_state = f'''
+      SELECT
+        addr_state
+      FROM {DATABASE}.UserAddress
+     WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__pull_state
+
+def sql__pull_last_name(userEmail):
+  sql__pull_last_name = f'''
+      SELECT
+        user_lastname
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_last_name
+
+def sql__pull_zip(userEmail):
+  sql__pull_zip = f'''
+      SELECT
+        postalcode
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_zip
+
+def sql__pull_phone(userEmail):
+  sql__pull_phone = f'''
+      SELECT
+        phone_number
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_phone
+
+##############################
 # my_items.py
 ##############################
 
