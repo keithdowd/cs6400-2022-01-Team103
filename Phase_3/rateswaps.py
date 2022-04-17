@@ -7,7 +7,7 @@ from sql import sql_get_my_unrated_swaps,sql_rate_my_unrated_swaps
 import pandas as pd
 
 
-def get_unrated_swaps(userEmail='usr071@gt.edu'):
+def get_unrated_swaps(userEmail):
 
     ##############################
     # CONFIGURATION
@@ -105,9 +105,18 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
     label_rating.grid(row=2, column=14)
 
-    clicked=[None, None]
-    rating=[None, None]
-    index_num=0
+    clicked=[]
+
+    def callback(i):
+        rating=clicked[i].get()
+        print("rating changed to:", rating)
+        return rating
+
+    def buttonclick(emailAddr, userEmail, swapID, rating):
+        window.destroy()
+        rate_swaps(emailAddr, userEmail, swapID, rating)
+
+
     for i, row in enumerate(items_data):
 
         label_swapID_value = tk.Label(window, text=row[0], font=(
@@ -139,31 +148,25 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
         label_condition_value.grid(row=i+3, column=12)
 
 
-        clicked[i] = StringVar()
-        clicked[i].set(5)
+        clicked.append(StringVar(window))
+        # clicked[i].set(5)
 
 
-        def callback():
-            rating=clicked[i].get()
-            print("rating changed to:", rating)
-            return rating
-        drop = OptionMenu(window, clicked[i], *ratings, command=lambda index_num=i:callback())
+        drop = OptionMenu(window, clicked[i], *ratings, command=lambda i=i:callback(i))
 
         drop.grid(row=i+3, column=14)
 
-        # def close_window(self):
-        #     self.master.destroy()
 
         submit = Button(window, text="Rate", fg="Black",
             bg="Green", font=(
                 LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE, BOLD), 
-                command=lambda index_num=i: rate_swaps(rating=callback(),userEmail=userEmail, emailAddr=row[3], swapID=row[0] ))
+                command=lambda i=i: buttonclick(rating=callback(i), userEmail=userEmail, emailAddr=row[3], swapID=row[0] ))
         submit.grid(row=i+3, column=16)
 
     ##############################
     # EVENT LOOP 
     ##############################
-    window.mainloop()
+    # window.mainloop()
 
 
 def rate_swaps(emailAddr, userEmail, swapID, rating):
@@ -174,7 +177,6 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
     cnx.commit()
     mycursor.close()
     get_unrated_swaps(userEmail)
-
 
 
 # get_unrated_swaps(userEmail='usr071@gt.edu')

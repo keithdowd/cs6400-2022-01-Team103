@@ -1,112 +1,146 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import ttk
 from tkmacosx import Button
 import pandas as pd
 from functools import partial
 from IPython.display import display
 import mysql.connector
 from global_variables import *
-from sql import sql__view_items__item_details
+from sql import *
 import pandas as pd
+import re
 
-cnx = mysql.connector.connect(user='team103', password='gatech123',
-                            host='127.0.0.1',
-                             database='CS6400_spr22_team103')
 
-# creates a Tk() object
-master = Tk()
-master.title("Update My Info")
-master.resizable(width=False, height=False)
-#clickvalue=''
-# sets the geometry of main
-# root window
-master.geometry("500x400")
+def update_my_info(userEmail):
 
-def RegisterWindow():
-    RegisterModule = master
-    RegisterModule.geometry("700x700")
-    RegisterModule.resizable(width=False, height=False)
-    RegisterModule.title("Update My Info")
+    # creates a Tk() object
+    window = Tk()
+    window.title("Update My Info")
+    window.resizable(width=False, height=False)
+    window.geometry("500x400")
+    #clickvalue=''
+    # sets the geometry of main
+    # root window
+    
+    nickname_pulled=[]
+    zip_pulled=[]
+    city_pulled=[]
+    first_name_pulled=[]
+    state_pulled=[]
+    last_name_pulled=[]
+    phone_pulled=[]
+
+    zip_pulled= pd.read_sql_query(sql__pull_zip(userEmail), cnx)
+    zip_txt=zip_pulled['postalcode'][0]
+
+    nickname_pulled= pd.read_sql_query(sql__pull_nick(userEmail), cnx)
+    nickname_txt = nickname_pulled['user_nickname'][0]
+
+    city_pulled= pd.read_sql_query(sql__pull_city(zip_txt), cnx)
+    city_text = city_pulled['addr_city'][0]
+
+    first_name_pulled= pd.read_sql_query(sql__pull_first_name(userEmail), cnx)
+    first_name_txt = first_name_pulled['user_firstname'][0]
+
+    state_pulled= pd.read_sql_query(sql__pull_state(zip_txt), cnx)
+    state_txt = state_pulled['addr_state'][0]
+
+    last_name_pulled= pd.read_sql_query(sql__pull_nick(userEmail), cnx)
+    last_name_txt=last_name_pulled['user_lastname'][0]
+
+    phone_pulled= pd.read_sql_query(sql__pull_nick(userEmail), cnx)
+    phone_txt=phone_pulled['user_phone_number'][0]
+
+    update_module = window
+    update_module.geometry("700x700")
+    update_module.resizable(width=False, height=False)
+    update_module.title("Update My Info")
     v = StringVar()
     p = StringVar()
-    l_email = tk.Label(RegisterModule,  text="Email").place(x=40, y=5)
-    EmailTtbx = tk.Entry(RegisterModule,borderwidth=1, relief="solid")
+    l_email = tk.Label(update_module,  text="Email").place(x=40, y=5)
+    EmailTtbx = tk.Entry(update_module,borderwidth=1, relief="solid")
     EmailTtbx.place(width=242, height=35, x=40, y=25)
-    l_nickname = tk.Label(RegisterModule, text="Nickname").place(x=340, y=5)
-    NickNameTtbx = tk.Entry(RegisterModule,borderwidth=1, relief="solid")
+    EmailTtbx.insert('end',userEmail)
+    EmailTtbx.configure(state=DISABLED)
+    
+    l_nickname = tk.Label(update_module, text="Nickname").place(x=340, y=5)
+    NickNameTtbx = tk.Entry(update_module,borderwidth=1, relief="solid")
+    NickNameTtbx.insert('end',nickname_txt)
     NickNameTtbx.place(width=242,height=35,x=340, y=25)
-    l_password = Label(RegisterModule, text="Password").place(x=40, y=65)
-    PasswordTtbx = Entry(RegisterModule,borderwidth=1, relief="solid")
+    l_password = Label(update_module, text="Password").place(x=40, y=65)
+    PasswordTtbx = Entry(update_module,borderwidth=1, relief="solid")
     PasswordTtbx.place(width=242, height=35, x=40, y=85)
-    l_city = Label(RegisterModule, text="City").place(x=340, y=65)
-    CityTtbx = Label(RegisterModule, height=2, width=30,borderwidth=1, relief="solid")
-    CityTtbx.place(x=340, y=85)
-    l_firstName = Label(RegisterModule, text="First Name")
-    l_firstName.place(x=40, y=125)
-    FirstNameTtbx = Entry(RegisterModule, borderwidth=1, relief="solid")
+    l_city = Label(update_module, text="City").place(x=340, y=65)
+    CityTtbx = Entry(update_module,borderwidth=1, relief="solid")
+    CityTtbx.insert('end',city_text)
+    CityTtbx.place(x=340, y=85,height=35,width=242)
+    l_firstName = Label(update_module, text="First Name").place(x=40,y=125)
+    FirstNameTtbx = Entry(update_module, borderwidth=1, relief="solid")
+    FirstNameTtbx.insert('end',first_name_txt)
     FirstNameTtbx.place(width=242,height=35,x=40, y=145)
-    l_state = Label(RegisterModule, text="State").place(x=340, y=125)
-    StateTtbx = Label(RegisterModule, height=2, width=30,borderwidth=1, relief="solid")
-    StateTtbx.place(x=340, y=145)
-    l_lastName = Label(RegisterModule, text="Last Name").place(x=40, y=185)
-    LastNameTtbx = Entry(RegisterModule,borderwidth=1, relief="solid")
+    l_state = Label(update_module, text="State").place(x=340, y=125)
+    StateTtbx = Entry(update_module,borderwidth=1, relief="solid")
+    StateTtbx.insert('end',state_txt)
+    StateTtbx.place(x=340, y=145,height=35,width=242)
+    l_lastName = Label(update_module, text="Last Name").place(x=40, y=185)
+    LastNameTtbx = Entry(update_module,borderwidth=1, relief="solid")
+    LastNameTtbx.insert('end',last_name_txt)
     LastNameTtbx.place(width=242,height=35,x=40, y=205)
-    l_postalcode = Label(RegisterModule, text="Postal Code").place(x=340, y=185)
-    PostalCodeTtbx = Entry(RegisterModule, borderwidth=1, relief="solid")
+    l_postalcode = Label(update_module, text="Postal Code").place(x=340, y=185)
+    PostalCodeTtbx = Entry(update_module, borderwidth=1, relief="solid")
+    PostalCodeTtbx.insert('end',zip_txt)
     PostalCodeTtbx.place(width=242,height=35,x=340, y=205)
-    l_phno = Label(RegisterModule, text="Phone number (optional)").place(x=40, y=265)
-    PhnoTtbx = Entry(RegisterModule, borderwidth=1, relief="solid")
+    l_phno = Label(update_module, text="Phone number (optional)").place(x=40, y=265)
+    PhnoTtbx = Entry(update_module, borderwidth=1, relief="solid")
+    PhnoTtbx.insert('end',phone_txt)
     PhnoTtbx.place(width=242,height=35,x=40, y=285)
     cb1 = IntVar()
-    phflgchckbox=Checkbutton(RegisterModule, text='Show the number in swaps',variable=cb1, onvalue=1, offvalue=0)
+    phflgchckbox=Checkbutton(update_module, text='Show the number in swaps',variable=cb1, onvalue=1, offvalue=0)
     phflgchckbox.place(x=40, y=325)
 
-
-    RegisterModule.clicked = StringVar()
-    RegisterModule.clicked.set("Select the phone type")
-    option_Menu = StringVar(RegisterModule)
+    update_module.clicked = StringVar()
+    update_module.clicked.set("Select the phone type")
+    option_Menu = StringVar(update_module)
     options = [
         "Home",
         "Work",
         "Mobile"
             ]
 
-    l_phno = Label(RegisterModule, text="Type").place(x=340, y=325)
-    drop = OptionMenu(RegisterModule, option_Menu,"Home","Work", "Mobile")
+    l_phno = Label(update_module, text="Type").place(x=340, y=325)
+    drop = OptionMenu(update_module, option_Menu,"Home","Work", "Mobile")
     drop.place(x=340, y=350)
 
-    label_error = Label(RegisterModule, foreground='red')
+    label_error = Label(update_module, foreground='red')
     label_error.place(x=170, y=350)
-    postal_label_error = Label(RegisterModule, foreground='red')
+    postal_label_error = Label(update_module, foreground='red')
     postal_label_error.place(x=170, y=380)
-    phno_label_error = Label(RegisterModule, foreground='red')
+    phno_label_error = Label(update_module, foreground='red')
     phno_label_error.place(x=170, y=400)
-    Label(RegisterModule, textvariable=v).place(x=170, y=420)
-    registration_complete_status = Label(RegisterModule, foreground='green')
+    Label(update_module, textvariable=v).place(x=170, y=420)
+    registration_complete_status = Label(update_module, foreground='green')
     registration_complete_status['text'] = ''
     registration_complete_status.place(x=170, y=440)
-    password_label_error = Label(RegisterModule, foreground='red')
+    password_label_error = Label(update_module, foreground='red')
     password_label_error.place(x=170, y=480)
-    nickname_label_error = Label(RegisterModule, foreground='red')
+    nickname_label_error = Label(update_module, foreground='red')
     nickname_label_error.place(x=170, y=500)
-    Label(RegisterModule, textvariable=p).place(x=170, y=520)
+    Label(update_module, textvariable=p).place(x=170, y=520)
 
-    
-
-    def checkRegisterValidations():
-        email_validated = 0
+    def validate_update():
+        email_validated = 1
         password_validated = 0
         postal_validated = 0
         nickname_validated = 0
-        phno_validated = 1
+        phone_validated = 1
         registration_complete_status['text'] =''
         label_error['text'] = ''
         postal_label_error['text'] = ''
         phno_label_error['text'] = ''
         v.set(" ")
         p.set(" ")
-        emailText = EmailTtbx.get()
+
+        emailText = userEmail
         passwordText=PasswordTtbx.get()
         PostalText = PostalCodeTtbx.get()
         PhnoText = PhnoTtbx.get()
@@ -125,19 +159,23 @@ def RegisterWindow():
              label_error['text'] = ''
              email_validated = 1
 
-        login_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.user where email=  " + "'" + emailText + "'"
-        user_data = []
+        login_fetch_query = sql__gameswap__user_check(emailText)
+        data={'cnt':[1]}
+        user_data = pd.DataFrame(data)
         user_data = pd.read_sql_query(login_fetch_query, cnx)
+        # user_data['cnt']=1
+        
+        # print("from sql file")
+        # print(sql__gameswap__user_check(emailText))
+        
+        # if int(user_data['cnt']) == 1:
+        #     #display(user_data['cnt'], "inside:")
+        #      v.set("User Exists")
+        #      email_validated = 0
 
-
-        if int(user_data['cnt']) == 1:
-            #display(user_data['cnt'], "inside:")
-             v.set("User Exists")
-             email_validated = 0
-
-        else:
-              v.set(" ")
-              email_validated = 1
+        # else:
+        #       v.set(" ")
+        #       email_validated = 1
         password_pattern = r'\b[A-Za-z0-9._%+-@]\b'
         if  passwordText == "":
             password_label_error['text'] = 'Please enter a valid password'
@@ -160,7 +198,8 @@ def RegisterWindow():
             postal_label_error['text'] = ''
             PostalCodeTtbx.config(foreground="black")
 
-            postalcode_fetch_query = "Select count(1) cnt from   CS6400_spr22_team103.UserAddress where postalcode=  " + "'" + PostalText + "'"
+            postalcode_fetch_query=sql__gameswap__postalcode_check(PostalText)
+            sql__gameswap__postalcode_check(PostalText)
             postal_data = []
             postal_data = pd.read_sql_query(postalcode_fetch_query, cnx)
 
@@ -171,7 +210,7 @@ def RegisterWindow():
 
             else:
                 postal_label_error['text']=(" ")
-                postalcode_fetch_query = "Select addr_City,addr_State  from   CS6400_spr22_team103.UserAddress where postalcode=  " + "'" + PostalText + "'"
+                postalcode_fetch_query=sql__gameswap__getcitystate(PostalText)
                 postal_data = []
                 postal_data = pd.read_sql_query(postalcode_fetch_query, cnx)
                 display(postal_data['addr_City'])
@@ -185,32 +224,36 @@ def RegisterWindow():
             #r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         phno_pattern = r'\b[0-9]{10,10}\b'
         if re.fullmatch(phno_pattern, PhnoText) is None and PhnoText != '' and PhnoText.find('-') ==-1  :
-            #PhnoTtbx.delete(0, tk.END)
-            #PhnoTtbx.insert(0, (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
-            phno_label_error['text'] = 'Please enter a valid phono (enter 10 digits)'
+            phno_label_error['text'] = 'Please enter a valid phone number (enter 10 digits)'
             PhnoTtbx.config(foreground="red")
-            phno_validated = 0
+            phone_validated = 0
         else:
-            phno_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.Phone where phone_number=  " + "'" + (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]) + "'"
-            phono_data = []
-            phno_data = pd.read_sql_query(phno_fetch_query, cnx)
-
-            if int(phno_data['cnt']) == 1:
+            if PhnoText != '':
+              #phno_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.Phone where phone_number=  " + "'" + (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]) + "'"
+              if PhnoText.find('-') ==-1:
+                  phnopass=(format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1])
+              else:
+                  phnopass = PhnoText
+              phno_fetch_query=sql__gameswap__phonenumber_check(phnopass)
+              print(phno_fetch_query)
+              phono_data = []
+              phno_data = pd.read_sql_query(phno_fetch_query, cnx)
+              if int(phno_data['cnt']) == 1:
                 display(PhnoText)
                 display(phno_data)
                 display ((format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
                 display(phno_data['cnt'], "inside:phonenumber")
                 p.set("Phone Number Exists")
-                phno_validated = 0
+                phone_validated = 0
 
-            else:
+              else:
                 PhnoTtbx.delete(0, tk.END)
                 PhnoTtbx.insert(0, (format(int(PhnoText[:-1]), ",").replace(",", "-") + PhnoText[-1]))
                 phno_label_error['text'] = ''
                 p.set(" ")
                 PhnoTtbx.config(foreground="black")
-                phno_validated = 1
-        if password_validated==1 and email_validated==1 and postal_validated==1 and phno_validated==1 and nickname_validated==1:
+                phone_validated = 1
+        if password_validated==1 and email_validated==1 and postal_validated==1 and phone_validated==1 and nickname_validated==1:
             print("insert")
             user_insert_status = pd.read_sql_query(register_user_query, cnx)
             display(PhnoTtbx.get())
@@ -223,78 +266,42 @@ def RegisterWindow():
                 mycursor = cnx.cursor()
                 mycursor.execute(register_phone_query)
                 cnx.commit()
+                update_query = "update CS6400_spr22_team103.user set user_firstname="+FirstNameTtbx.get()+",user_lastname="+LastNameTtbx.get()+",user_nickname="+NickNameTtbx.get()+",user_password="+PasswordTtbx.get()+",postalcode="+PostalText+",phone_number="+PhnoTtbx.get()+" where email="+userEmail
+                display(update_query)
+                mycursor1 = cnx.cursor()
+                mycursor1.execute(update_query)
+                cnx.commit()
                 mycursor.close()
-            register_user_query = "insert into CS6400_spr22_team103.user (email,user_firstname,user_lastname,user_nickname,user_password,postalcode,phone_number) values " + "('" + emailText + "','" + FirstNameTtbx.get() + "','" + LastNameTtbx.get() + "','" + NickNameTtbx.get() + "','" + PasswordTtbx.get() + "','" + PostalText + "','" + PhnoTtbx.get() + "')"
-            display(register_user_query)
-            mycursor = cnx.cursor()
-            mycursor.execute(register_user_query)
-            cnx.commit()
-            mycursor.close()
+            else:
+                register_user_query = "update CS6400_spr22_team103.user set user_firstname="+FirstNameTtbx.get()+",user_lastname="+LastNameTtbx.get()+",user_nickname="+NickNameTtbx.get()+",user_password="+PasswordTtbx.get()+",postalcode="+PostalText+",phone_number="+PhnoTtbx.get()+" where email="+userEmail
+                display(update_query)
+                mycursor = cnx.cursor()
+                mycursor.execute(update_query)
+                cnx.commit()
+                mycursor.close()
 
-            registration_complete_status['text'] = 'Updating info complete.Kindly close the window and proceed to home.'
+            registration_complete_status['text'] = 'Update complete. Kindly close the window and proceed to login'
 
         else:
             print(v)
             print("insert not done")
 
+    Registerbtn1 = Button(update_module,text="Update", bg='blue', fg='white', borderless=1,command=validate_update).place(x=40,y=380)
 
-    Registerbtn1 = Button(RegisterModule,text="Update", bg='blue', fg='white', borderless=1,command=checkRegisterValidations).place(x=40,y=380)
-
-global clickvalue
-
-
-def quit(self):
-    self.destroy()
-
-def checkUserExists():
-   master.v.set(" ")
-   master.p.set(" ")
-   emailText=EmailTextbox.get()
-   EmailTextbox.config(foreground="black")
-   PasswordTextBox.config(foreground="black")
-   display(emailText)
-   pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-
-   ''' if re.fullmatch(pattern, emailText) is None:
-       master.v.set("Please enter a valid email")
-       #master.label_error['text'] = 'Please enter a valid email'
-       EmailTextbox.config(foreground ="red")
-'''
-
-   login_fetch_query="Select email,phone_number,count(1) cnt from  CS6400_spr22_team103.user where email=  " + "'" + EmailTextbox.get()+ "' or phone_number=  " + "'" + EmailTextbox.get()+ "' group by email,phone_number"
-   user_data = []
-   user_data = pd.read_sql_query(login_fetch_query, cnx)
-   display(user_data['cnt'])
-   if int(user_data['cnt']) == 1:
-    master.v.set(" ")
-
-   else:
-           master.v.set("User Not Exists")
-
-   password_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.user where user_password=  " + "'" + PasswordTextBox.get() + "' and email="  + "'" + EmailTextbox.get()+  "' or phone_number=  " + "'" + EmailTextbox.get()+ "'"
-   pwd_data = []
-   pwd_data = pd.read_sql_query(password_fetch_query, cnx)
-   display(pwd_data['cnt'])
-   display(PasswordTextBox.get())
-
-   if int(pwd_data['cnt']) == 1:
-       global_variables.email_text = str(user_data['email'][0])
-       master.destroy()
-
-       import MainMenu
-       master.v.set("Login successful")
-
-   else:
-       #master.password_error['text'] = ''
-             PasswordTextBox.config(foreground="red")
-             master.p.set("Incorrect Password")
+    global clickvalue
 
 
-def getemail():
-    p=master.EmailTextbox.get()
-    return p
+    def quit(self):
+        self.destroy()
 
-RegisterWindow()
-mainloop()
+    # update_my_info()
+    mainloop()
+    cnx.close()
 
-cnx.close()
+
+##############################
+# MAIN
+##############################
+# if __name__ == "__main__":
+#     update_my_info()
+    # window.mainloop()

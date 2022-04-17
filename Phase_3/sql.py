@@ -83,6 +83,72 @@ def sql__respond_swap(swapID,response_date,status):
   return sql__respond_swap
 
 ##############################
+# UpdateMyInfo.py
+##############################
+def sql__pull_nick(userEmail):
+  sql__pull_nick = f'''
+      SELECT
+        user_nickname
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_nick
+
+def sql__pull_city(postalCode):
+  sql__pull_city = f'''
+      SELECT
+        addr_city
+      FROM {DATABASE}.UserAddress
+     WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__pull_city
+
+def sql__pull_first_name(userEmail):
+  sql__pull_first_name = f'''
+      SELECT
+        user_firstname
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_first_name
+
+def sql__pull_state(postalCode):
+  sql__pull_state = f'''
+      SELECT
+        addr_state
+      FROM {DATABASE}.UserAddress
+     WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+'''
+  return sql__pull_state
+
+def sql__pull_last_name(userEmail):
+  sql__pull_last_name = f'''
+      SELECT
+        user_lastname
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_last_name
+
+def sql__pull_zip(userEmail):
+  sql__pull_zip = f'''
+      SELECT
+        postalcode
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_zip
+
+def sql__pull_phone(userEmail):
+  sql__pull_phone = f'''
+      SELECT
+        phone_number
+      FROM {DATABASE}.user
+     WHERE {DATABASE}.user.email={userEmail}
+'''
+  return sql__pull_phone
+
+##############################
 # my_items.py
 ##############################
 
@@ -454,3 +520,33 @@ def sql__search_results__get_lat_lon_from_item_number(item_number):
   
   '''
   return sql__search_results__get_lat_lon_from_item_number
+
+def sql_swap_title(userEmail):
+  sql_swap_title = f'''
+select
+    swap_date_proposed, swapID, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, proposer_email, counterparty_itemNumber, proposer_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
+from
+    CS6400_spr22_team103.swap as swap
+inner join
+    CS6400_spr22_team103.item as item
+on
+    swap.proposer_itemNumber = item.itemNumber 
+where counterparty_email ='{userEmail}' or proposer_email = '{userEmail}'
+    '''
+  return sql_swap_title
+
+def sql_rating_count_proposer(userEmail):
+  sql_rating_count_proposer = f'''
+select COUNT(CASE WHEN swap_status="Accepted" or swap_status="Rejected" then 1 end) as total, COUNT(CASE WHEN swap_status = "Accepted" then 1 end) as accepted_count, COUNT(CASE when swap_status="Rejected" then 1 end) as rejected_count
+from CS6400_spr22_team103.swap
+where proposer_email ='{userEmail}'
+    '''
+  return sql_rating_count_proposer
+
+def sql_rating_count_counter(userEmail):
+  sql_rating_count_counter = f'''
+select COUNT(CASE WHEN swap_status="Accepted" or swap_status="Rejected" then 1 end) as total, COUNT(CASE WHEN swap_status = "Accepted" then 1 end) as accepted_count, COUNT(CASE when swap_status="Rejected" then 1 end) as rejected_count
+from CS6400_spr22_team103.swap
+where counterparty_email ='{userEmail}'
+    '''
+  return sql_rating_count_counter
