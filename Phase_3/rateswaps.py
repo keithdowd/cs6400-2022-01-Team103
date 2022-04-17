@@ -7,7 +7,7 @@ from sql import sql_get_my_unrated_swaps,sql_rate_my_unrated_swaps
 import pandas as pd
 
 
-def get_unrated_swaps(userEmail='usr071@gt.edu'):
+def get_unrated_swaps(userEmail):
 
     ##############################
     # CONFIGURATION
@@ -177,6 +177,6 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
 
 
 #test this page
-# get_unrated_swaps(userEmail='usr071@gt.edu')
+get_unrated_swaps(userEmail='usr071@gt.edu')
 
 # rate_swaps('usr121@gt.edu', 258,4)
