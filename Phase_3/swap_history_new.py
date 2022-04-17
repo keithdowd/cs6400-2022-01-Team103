@@ -8,14 +8,14 @@ def my_items(userEmail):
   ##############################
 
   # Window
-  WINDOW_TITLE = 'My Items'
+  WINDOW_TITLE = 'Swap History'
 
 
   ##############################
   # SETUP
   ##############################
 
-  def setup(title='My Window', width=2500, height=400):
+  def setup(title='Swap History', width=2500, height=400):
     window = tk.Tk()
     window.title(title)
     window.geometry(f'{width}x{height}')
@@ -23,7 +23,7 @@ def my_items(userEmail):
 
   window = setup(
     title=WINDOW_TITLE, 
-    width=WINDOW_SIZE_WIDTH, 
+    width=1200, 
     height=WINDOW_SIZE_HEIGHT)
 
   # Create scrollable window for my my items table
@@ -31,7 +31,7 @@ def my_items(userEmail):
 
   canvas = tk.Canvas(
     container, 
-    width=2500-100, 
+    width=1150,
     height=200)
 
   scrollbar = ttk.Scrollbar(
@@ -39,7 +39,7 @@ def my_items(userEmail):
     orient='vertical', 
     command=canvas.yview)
     
-  scrollable_frame = ttk.Frame(canvas)
+  scrollable_frame = ttk.Frame(canvas, width=1200)
 
   scrollable_frame.bind(
     '<Configure>',
@@ -51,7 +51,7 @@ def my_items(userEmail):
   canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
   canvas.configure(yscrollcommand=scrollbar.set)
 
-  container.grid(row=7, column=0, columnspan=9, sticky='nesw')
+  container.grid(row=7, column=0, columnspan=20, sticky='nesw')
   canvas.grid(row=0, column=0, sticky='nesw')
   scrollbar.grid(row=0, column=7, sticky='nse')
 
@@ -71,28 +71,36 @@ def my_items(userEmail):
     'Rejected %': 0,
   }
 
+  counter_item_counts = {
+    'My role': 0,
+    'Total': 0,
+    'Accepted': 0,
+    'Rejected': 0,
+    'Rejected %': 0,
+  }
+
   df = pd.read_sql_query(sql__my_items__count_of_item_type(userEmail), cnx)
+  proposer = pd.read_sql_query(sql_rating_count_proposer(userEmail), cnx)
+  counter = pd.read_sql_query(sql_rating_count_counter(userEmail), cnx)
 
-  board_games_cnt = 0 if df[df['itemtype_name'] == 'Board Game'].empty else df[df['itemtype_name'] == 'Board Game']['count'].reset_index(drop=True)[0]
-  card_games_cnt = 0 if df[df['itemtype_name'] == 'Card Game'].empty else df[df['itemtype_name'] == 'Card Game']['count'].reset_index(drop=True)[0]
-  computer_games_cnt = 0 if df[df['itemtype_name'] == 'Computer Game'].empty else df[df['itemtype_name'] == 'Computer Game']['count'].reset_index(drop=True)[0]
-  jigsaw_puzzles_cnt = 0 if df[df['itemtype_name'] == 'Jigsaw Puzzle'].empty else df[df['itemtype_name'] == 'Jigsaw Puzzle']['count'].reset_index(drop=True)[0]
-  video_games_cnt = 0 if df[df['itemtype_name'] == 'Video Game'].empty else df[df['itemtype_name'] == 'Video Game']['count'].reset_index(drop=True)[0]
-  total = board_games_cnt + card_games_cnt + computer_games_cnt + jigsaw_puzzles_cnt + video_games_cnt
 
-  item_counts['Board Games'] = board_games_cnt
-  item_counts['Card Games'] = card_games_cnt
-  item_counts['Computer Games'] = computer_games_cnt
-  item_counts['Jigsaw Puzzles'] = jigsaw_puzzles_cnt
-  item_counts['Video Games'] = video_games_cnt
-  item_counts['Total'] = total
+  proposer_accepted_count = 0 if proposer['accepted_count'].empty else proposer['accepted_count'].reset_index(drop=True)[0]
+  proposer_rejected_count = 0 if proposer['rejected_count'].empty else proposer['rejected_count'].reset_index(drop=True)[0]
+  proposer_rejected_percent = 0 if proposer_accepted_count == 0 else round((proposer_rejected_count/proposer_accepted_count)*100)
+  proposer_total = proposer_accepted_count + proposer_rejected_count
+
+  item_counts['My role'] = 'Proposer'
+  item_counts['Total'] = proposer_total
+  item_counts['Accepted'] = proposer_accepted_count
+  item_counts['Rejected'] = proposer_rejected_count
+  item_counts['Rejected %'] = proposer_rejected_percent
 
   ########## VIEW
 
   # Header
   label_item_counts = tk.Label(
     master=window, 
-    text='Item Counts', 
+    text='Swap History', 
     font=(
       LABEL_FONT_FAMILY,
       LABEL_FONT_SIZE,
@@ -125,11 +133,11 @@ def my_items(userEmail):
         LABEL_FONT_FAMILY,
         LABEL_FONT_SIZE,
         LABEL_FONT_WEIGHT_LABEL),
-    width=15)
+    width=0)
     table_item_counts_header.grid(
       row=2, 
       column=col_index, 
-      padx=WINDOW_PADDING_X, 
+      padx=1, 
       pady=WINDOW_PADDING_Y,
       sticky='ew')
 
@@ -142,14 +150,14 @@ def my_items(userEmail):
         LABEL_FONT_FAMILY,
         LABEL_FONT_SIZE,
         LABEL_FONT_WEIGHT_VALUE),
-    width=16)
+    width=0)
     table_item_counts_value.grid(
       row=3,
       column=col_index,
-      padx=WINDOW_PADDING_X, 
+      padx=1, 
       pady=WINDOW_PADDING_Y,
       sticky='ew')
-
+      
 
   ##############################
   # MY ITEMS
@@ -188,7 +196,7 @@ def my_items(userEmail):
       proposed_item_text = pd.read_sql_query(sql__pull_itemname(proposed_item), cnx)
       desired_item = row['counterparty_itemNumber']
       desired_item_text = pd.read_sql_query(sql__pull_itemname(desired_item), cnx)
-
+  
       counterparty_email = row['counterparty_email']
       counterparty_email_text = pd.read_sql_query(sql__accept_reject_get_user_name(counterparty_email),cnx)
       arr = [
@@ -199,6 +207,7 @@ def my_items(userEmail):
           proposed_item_text['item_title'],
           desired_item_text['item_title'],
           counterparty_email_text['user_nickname'],
+          proposed_date
       ]
       my_items_data.append(arr)
   print("stop here")
@@ -206,12 +215,12 @@ def my_items(userEmail):
 
   # Empty row
   empty_row = tk.Label(master=window, text='\n')
-  empty_row.grid(row=4, column=0)
+  empty_row.grid(row=4, column=0, columnspan=10)
 
   # Header
   label_my_items = tk.Label(
     master=window, 
-    text='My Items', 
+    text='My Items',
     font=(
       LABEL_FONT_FAMILY,
       LABEL_FONT_SIZE,
@@ -297,7 +306,7 @@ def my_items(userEmail):
       table_my_items_details_btn.grid(
         row=row_index,
         column=col_index+1, # add button after (to the right of) the last my items column
-        sticky='e'
+        sticky='we'
         ) 
     
   else: # Show a message instead of the items table if the user has no items
