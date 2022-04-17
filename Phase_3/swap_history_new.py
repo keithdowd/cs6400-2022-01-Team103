@@ -15,7 +15,7 @@ def my_items(userEmail):
   # SETUP
   ##############################
 
-  def setup(title='My Window', width=1000, height=400):
+  def setup(title='My Window', width=2500, height=400):
     window = tk.Tk()
     window.title(title)
     window.geometry(f'{width}x{height}')
@@ -31,7 +31,7 @@ def my_items(userEmail):
 
   canvas = tk.Canvas(
     container, 
-    width=WINDOW_SIZE_WIDTH-100, 
+    width=2500-100, 
     height=200)
 
   scrollbar = ttk.Scrollbar(
@@ -172,13 +172,10 @@ def my_items(userEmail):
   df = pd.read_sql_query(sql_swap_title(userEmail), cnx)
 
   my_items_data = []
-
+  print(len(df))
   for index, row in df.iterrows():
-      # item_number = row['itemNumber']
-      # item_type_name = row['itemtype_name']
-      # item_title = row['item_title']
-      # item_condition = row['item_condition']
-      # item_description = row['item_description'][0:100] + '...' if len(row['item_description']) > 100 else row['item_description']
+      print("start here")
+      print(row)
       proposed_date = row['swap_date_proposed']
       accepted_rejected_date = row['swap_date_responded']
       swap_status = row['swap_status']
@@ -203,9 +200,8 @@ def my_items(userEmail):
           desired_item_text['item_title'],
           counterparty_email_text['user_nickname'],
       ]
-
       my_items_data.append(arr)
-
+  print("stop here")
   ########## VIEW
 
   # Empty row
