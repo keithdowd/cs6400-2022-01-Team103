@@ -27,20 +27,20 @@ def my_items(emailAddr='usr001@gt.edu'):
     width=WINDOW_SIZE_WIDTH+50, 
     height=WINDOW_SIZE_HEIGHT)
 
-  # Create scrollable window for my my items table
+  # Create scrollable window for my items table
   container = ttk.Frame(window)
 
   canvas = tk.Canvas(
     container, 
-    width=WINDOW_SIZE_WIDTH+50, 
+    width=800, 
     height=200)
 
   scrollbar = ttk.Scrollbar(
     container, 
     orient='vertical', 
     command=canvas.yview)
-    
-  scrollable_frame = ttk.Frame(canvas)
+
+  scrollable_frame = ttk.Frame(canvas, width=800)
 
   scrollable_frame.bind(
     '<Configure>',
@@ -54,7 +54,7 @@ def my_items(emailAddr='usr001@gt.edu'):
 
   container.grid(row=7, column=0, columnspan=9, sticky='nesw')
   canvas.grid(row=0, column=0, sticky='nesw')
-  scrollbar.grid(row=0, column=7, sticky='nse')
+  scrollbar.grid(row=0, column=9, sticky='nse')
 
 
   ##############################
@@ -171,7 +171,7 @@ def my_items(emailAddr='usr001@gt.edu'):
 
   my_items_data = []
 
-  for index, row in df.iterrows():
+  for _, row in df.iterrows():
       item_number = row['itemNumber']
       item_type_name = row['itemtype_name']
       item_title = row['item_title']
@@ -225,7 +225,7 @@ def my_items(emailAddr='usr001@gt.edu'):
     # Table (Header)
     for col_index, item_column in enumerate(my_items_columns):
       table_my_items_header = tk.Label(
-        master=scrollable_frame, 
+        master=scrollable_frame,
         text=item_column, 
         font=(
           LABEL_FONT_FAMILY,
