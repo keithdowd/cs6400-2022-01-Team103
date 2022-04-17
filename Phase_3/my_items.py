@@ -190,8 +190,6 @@ def my_items(emailAddr):
 
       my_items_data.append(arr)
 
-  print(len(my_items_data))
-
   ########## VIEW
 
   # Empty row
@@ -243,7 +241,7 @@ def my_items(emailAddr):
         padx=WINDOW_PADDING_X, 
         pady=WINDOW_PADDING_Y,
         sticky='ew')
-      
+
     # Table (Values)
     for row_index, my_item in enumerate(my_items_data):
       row_index += 8 # layout starts at row 8
