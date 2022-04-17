@@ -111,6 +111,7 @@ def sql__my_items__list_of_all_items(emailAddr):
 ORDER BY itemNumber ASC 
 '''
    return sql__my_items__list_of_all_items
+   
 ##############################
 # UpdateMyInfo.py
 ##############################
@@ -208,7 +209,7 @@ def sql__pull_phone(userEmail):
 ##############################
 # view_items.py
 ##############################
-def sql__view_items__item_details(emailaddr):
+def sql__view_items__item_details(item_number):
   sql__view_items__item_details = f'''
     SELECT
         itemNumber,
@@ -218,7 +219,7 @@ def sql__view_items__item_details(emailaddr):
         itemtype_media,
         item_condition
       FROM {DATABASE}.item
-     WHERE email='{emailaddr}'
+     WHERE itemNumber='{item_number}'
     '''
   return sql__view_items__item_details
 

@@ -1,14 +1,14 @@
 from global_variables import *
 from sql import sql__view_items__item_details
 
-def view_item(item_number=1):
+def view_item(item_number):
 
   ##############################
   # CONFIGURATION
   ##############################
 
   # Window
-  WINDOW_TITLE = 'Propose Swap'
+  WINDOW_TITLE = 'View Item'
 
   ##############################
   # SETUP
