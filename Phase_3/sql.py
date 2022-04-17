@@ -88,13 +88,17 @@ def sql__respond_swap(swapID,response_date,status):
 # my_items.py
 ##############################
 
-sql__my_items__count_of_item_type = f'''
-  SELECT 
-        itemtype_name, 
-        count(*) as count
-    FROM {DATABASE}.item
-GROUP BY itemtype_name
-'''
+def sql__my_items__count_of_item_type(emailAddr):
+  sql__my_items__count_of_item_type = f'''
+    SELECT 
+          itemtype_name, 
+          count(*) as count
+      FROM {DATABASE}.item
+     WHERE email='{emailAddr}'
+  GROUP BY itemtype_name
+  '''
+  return sql__my_items__count_of_item_type
+
 def sql__my_items__list_of_all_items(emailAddr):
    sql__my_items__list_of_all_items = f'''
   SELECT
@@ -106,7 +110,7 @@ def sql__my_items__list_of_all_items(emailAddr):
     FROM {DATABASE}.item where email='{emailAddr}'
 ORDER BY itemNumber ASC 
 '''
-
+   return sql__my_items__list_of_all_items
 ##############################
 # UpdateMyInfo.py
 ##############################
@@ -409,6 +413,9 @@ def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
 #pull all swapID in database.
 #if the user, useremail = counterparty_email, or proser_email
 #add to the list
+#pull all swapID in database.
+#if the user, useremail = counterparty_email, or proser_email
+#add to the list
 def sql_get_swap_history(userEmail):
   sql_get_swap_history = f'''
     SELECT
@@ -427,7 +434,6 @@ def sql_get_swap_history(userEmail):
      ORDER BY swap_date_proposed DESC
     '''
   return sql_get_swap_history
-
 ##############################
 # search.py
 ##############################
@@ -553,14 +559,16 @@ def sql__search_results__get_lat_lon_from_item_number(item_number):
 def sql_swap_title(userEmail):
     sql_swap_title = f'''
 select
-    swap_date_proposed, swapID, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, counterparty_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
+    swap_date_proposed, user_nickname, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, counterparty_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
 from
     CS6400_spr22_team103.swap as swap
 inner join
     CS6400_spr22_team103.item as item
+inner join 
+	  CS6400_spr22_team103.user as user
 on
-    swap.proposer_itemNumber = item.itemNumber
-where counterparty_email = '{userEmail}' or proposer_email = '{userEmail}' ORDER by swap_date_proposed DESC
+    swap.proposer_itemNumber = item.itemNumber 
+where counterparty_email ='{userEmail}' or proposer_email = '{userEmail}'
     '''
     return sql_swap_title
 
@@ -581,13 +589,3 @@ from CS6400_spr22_team103.swap
 where counterparty_email ='{userEmail}'
     '''
     return sql_rating_count_counter
-
-
-def sql__pull_itemname(itemNum):
-  sql__pull_itemname = f'''
-      SELECT
-        item_title
-      FROM {DATABASE}.Item
-     WHERE itemNumber='{itemNum}'
-'''
-  return sql__pull_itemname
