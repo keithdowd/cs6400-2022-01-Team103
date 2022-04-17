@@ -1,79 +1,229 @@
+from haversine import haversine
 from global_variables import *
+from sql import sql__search_results__get_item_data_from_item_numbers
+from sql import sql__search__get_lat_lon_by_postal_code
 
-keyword = 'tech'
+def search_results(emailAddr, item_numbers, selection, context):
 
-##############################
-# CONFIGURATION
-##############################
+  ##############################
+  # CONFIGURATION
+  ##############################
 
-# Window
-WINDOW_SIZE_HEIGHT = 400
-WINDOW_SIZE_WIDTH = 600
-WINDOW_TITLE = 'Search Results'
-
-
-##############################
-# SETUP
-##############################
-def setup(title='My Window', width=800, height=400):
-  window = tk.Tk()
-  window.title(title)
-  window.geometry(f'{width}x{height}')
-  return window
-
-window = setup(
-  title=WINDOW_TITLE, 
-  width=WINDOW_SIZE_WIDTH, 
-  height=WINDOW_SIZE_HEIGHT)
+  # Window
+  WINDOW_SIZE_HEIGHT = 400
+  WINDOW_SIZE_WIDTH = 900
+  WINDOW_TITLE = 'Search Results'
 
 
-##############################
-# SEARCH RESULTS
-##############################
+  ##############################
+  # SETUP
+  ##############################
+  def setup(title='My Window', width=800, height=400):
+    window = tk.Tk()
+    window.title(title)
+    window.geometry(f'{width}x{height}')
+    return window
 
-########## DATA
+  window = setup(
+    title=WINDOW_TITLE, 
+    width=WINDOW_SIZE_WIDTH, 
+    height=WINDOW_SIZE_HEIGHT)
 
-columns = [
-    'Item #',
-    'Game Type',
-    'Title',
-    'Condition',
-    'Description',
-    'Distance'
-  ]
+  # Create scrollable window for my search results table
+  container = ttk.Frame(window)
 
-########## VIEW
+  canvas = tk.Canvas(
+    container, 
+    width=WINDOW_SIZE_WIDTH-50, 
+    height=350)
 
-# Header
-header = tk.Label(
-  master=window, 
-  text=f'Search results: keyword "{keyword}"', 
-  font=(
-    LABEL_FONT_FAMILY, 
-    LABEL_FONT_SIZE, 
-    LABEL_FONT_WEIGHT_VALUE))
-header.grid(
-  row=0, 
-  column=0, 
-  padx=WINDOW_PADDING_X, 
-  pady=WINDOW_PADDING_Y, 
-  sticky='w')
+  scrollbar = ttk.Scrollbar(
+    container, 
+    orient='vertical', 
+    command=canvas.yview)
+    
+  scrollable_frame = ttk.Frame(canvas)
 
-# Separator
-separator = ttk.Separator(
-  master=window,
-  orient='horizontal')
-separator.grid(
-  row=1, 
-  padx=WINDOW_PADDING_X, 
-  pady=WINDOW_PADDING_Y, 
-  sticky='ew')
+  scrollable_frame.bind(
+    '<Configure>',
+    lambda e: canvas.configure(
+      scrollregion=canvas.bbox('all')
+    )
+  )
 
-# Results table
+  canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
+  canvas.configure(yscrollcommand=scrollbar.set)
+
+  container.grid(row=7, column=0, columnspan=9, sticky='nesw')
+  canvas.grid(row=0, column=0, sticky='nesw')
+  scrollbar.grid(row=0, column=7, sticky='nse')
+
+
+  ##############################
+  # SEARCH RESULTS
+  ##############################
+
+  ########## DATA
+
+  print(item_numbers, selection, context)
+
+  # Convert selection and context to a human-readable string
+  def selection_to_context(selection, context):
+    if selection == 1:
+      return f'keyword "{context}"'
+    elif selection == 2:
+      return f'my postal code "{context}"'
+    elif selection == 3:
+      return f'with "{context}" miles of me'
+    elif selection == 4:
+      return f'other postal code "{context}"'
+    return 'error'
+
+  selection_to_context_str = selection_to_context(selection, context)
+
+  def compute_distance(item_number):
+    # Get users lat, lon
+    # Get item numbers lat, lon
+    # Compute distance
+    # Return distance
+    pass
+
+  # Get item data from item numbers
+  # TODO: Refactor match my_items.py and adjust description
+  def get_item_data_from_item_numbers(item_numbers):
+    item_data = []
+    for item_number in item_numbers:
+      query = sql__search_results__get_item_data_from_item_numbers(item_number)
+      df = pd.read_sql_query(query, cnx)
+      item = df.values[0].tolist()
+      item.append(999)
+      item_data.append(item)
+    return item_data
+
+  item_data = get_item_data_from_item_numbers(item_numbers)
+
+  search_results_table_columns = [
+      'Item #',
+      'Game Type',
+      'Title',
+      'Condition',
+      'Description',
+      'Distance'
+    ]
+
+  ########## VIEW
+
+  # Header
+  header = tk.Label(
+    master=window, 
+    text=f'Search results: {selection_to_context_str}', 
+    font=(
+      LABEL_FONT_FAMILY, 
+      LABEL_FONT_SIZE, 
+      LABEL_FONT_WEIGHT_VALUE))
+  header.grid(
+    row=0, 
+    column=0,
+    columnspan=10, 
+    padx=WINDOW_PADDING_X, 
+    pady=WINDOW_PADDING_Y, 
+    sticky='w')
+
+  # Separator
+  separator = ttk.Separator(
+    master=window,
+    orient='horizontal')
+  separator.grid(
+    row=1, 
+    columnspan=10,
+    padx=WINDOW_PADDING_X, 
+    pady=WINDOW_PADDING_Y, 
+    sticky='ew')
+
+  if len(item_data) > 0: # Show table view if the user has at least one item
+    # Results table (header)
+    for col_index, column_name in enumerate(search_results_table_columns):
+      search_results_table_header = tk.Label(
+        master=scrollable_frame, 
+        text=column_name, 
+        font=(
+          LABEL_FONT_FAMILY,
+          LABEL_FONT_SIZE,
+          LABEL_FONT_WEIGHT_LABEL
+        ),
+        width=16)
+      search_results_table_header.grid(
+        row=2, 
+        column=col_index, 
+        padx=WINDOW_PADDING_X, 
+        pady=WINDOW_PADDING_Y,
+        sticky='w')
+
+    # Table (Values)
+    for row_index, my_item in enumerate(item_data):
+      row_index += 3 # layout starts at row 3
+      
+      for col_index, my_item_value in enumerate(my_item):
+        # center item number distance and left justify all other fields
+        if col_index == 0 or col_index == 5:
+          anchor = 'center'
+        else:
+          anchor = 'w'
+
+        table_my_items_value = tk.Label(
+          master=scrollable_frame,
+          text=my_item_value, 
+          font=(
+            LABEL_FONT_FAMILY,
+            LABEL_FONT_SIZE,
+            LABEL_FONT_WEIGHT_VALUE     
+          ), 
+          width=16,
+          wraplength=125,
+          anchor=anchor,
+          justify='left')
+        table_my_items_value.grid(
+          row=row_index,
+          column=col_index,
+          padx=WINDOW_PADDING_X,
+          pady=WINDOW_PADDING_Y,
+          sticky='ne'
+        )
+      table_my_items_details_btn = tk.Button(
+        master=scrollable_frame, 
+        text='Details',
+        font=(
+          LABEL_FONT_FAMILY,
+          LABEL_FONT_SIZE,
+          LABEL_FONT_WEIGHT_VALUE,
+        ),
+        # command=lambda item_number=my_item[0]: view_item(item_number)
+      )
+      table_my_items_details_btn.grid(
+        row=row_index,
+        column=col_index+1, # add button after (to the right of) the last my items column
+        sticky='e'
+      )
+
+  else: # Show a message instead of the items table if the user has no items
+    label_my_items = tk.Label(
+      master=scrollable_frame,
+      text='No items were returned by your search criteria.', 
+      font=(
+        LABEL_FONT_FAMILY,
+        LABEL_FONT_SIZE,
+        LABEL_FONT_WEIGHT_VALUE
+    ))
+    label_my_items.grid(
+      row=7, 
+      column=0, 
+      padx=WINDOW_PADDING_X, 
+      pady=WINDOW_PADDING_Y, 
+      sticky='w')
 
 
 ##############################
 # EVENT LOOP
 ##############################
-if __name__ == "__main__":
-  window.mainloop()
+# if __name__ == "__main__":
+#   window.mainloop()

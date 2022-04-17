@@ -1,14 +1,22 @@
+from haversine import haversine
 from global_variables import *
+from search_results import search_results
+from sql import sql__search__get_postal_code_by_email
+from sql import sql__search__items_by_keyword
+from sql import sql__search__get_lat_lon_by_postal_code
+from sql import sql__search__items_by_my_postal_code
+from sql import sql__search__items_by_other_postal_code
+from sql import sql__search__get_all_postal_codes_lat_lon
 
 
-def search(emailAddr):
+def search(emailAddr='usr117@gt.edu'):
   ##############################
   # CONFIGURATION
   ##############################
 
   # Window
   WINDOW_SIZE_HEIGHT = 275
-  WINDOW_SIZE_WIDTH = 400
+  WINDOW_SIZE_WIDTH = 450
   WINDOW_TITLE = 'Search'
 
 
@@ -30,6 +38,125 @@ def search(emailAddr):
   ##############################
   # SEARCH
   ##############################
+
+  ########## DATA
+
+  # Variables for input modals
+  selection_rb_var = tk.IntVar(window)
+  keyword_entry_var = tk.StringVar(window)
+  miles_sb_var = tk.StringVar(window)
+  other_postal_code_entry_var = tk.StringVar(window)
+  
+  # Getters for for input modal variables
+  def get_selection_rb_var():
+    return selection_rb_var.get()
+
+  def get_keyword_entry_var():
+    return keyword_entry_var.get()
+
+  def get_miles_sb_var():
+    return miles_sb_var.get()
+
+  def get_other_postal_code_entry_var():
+    return other_postal_code_entry_var.get()
+
+  # Identify appropriate query for search results
+  def get_search_query():
+  
+    # Get radio button selection
+    selection = get_selection_rb_var()
+    
+    if selection == 1:
+      # Keyword search
+      keyword = get_keyword_entry_var()
+      query = sql__search__items_by_keyword(keyword)
+      return (query, selection)
+      
+    elif selection == 2:
+      # My postal code search
+      query = sql__search__items_by_my_postal_code(emailAddr)
+      return (query, selection)
+
+    elif selection == 3:
+      # Within X miles
+
+      # Get miles search criteria
+      miles = get_miles_sb_var()
+      
+      # Get users postal code
+      df_user_postal_code = pd.read_sql_query(sql__search__get_postal_code_by_email(emailAddr), cnx)
+      user_postal_code = df_user_postal_code['postalcode'].values[0]
+
+      # Get lat, lon of users postal code
+      df_user_lat_lon = pd.read_sql_query(sql__search__get_lat_lon_by_postal_code(user_postal_code), cnx)
+      user_lat_lon = (float(df_user_lat_lon['addr_latitude'].values[0]), float(df_user_lat_lon['addr_longitude'].values[0]))
+      
+      # Get lat, lon of all other postal codes
+      df_all_postal_codes_lat_lon = pd.read_sql_query(sql__search__get_all_postal_codes_lat_lon(), cnx)
+
+      # Compute distance between user lat, lon and all other lat, lon
+      postal_codes_distances = {}
+      for _, row in df_all_postal_codes_lat_lon.iterrows():
+        other_postal_code = row['postalcode']
+        other_lat_lon = (float(row['addr_latitude']), float(row['addr_longitude']))
+        distance = haversine(user_lat_lon[0], other_lat_lon[0], user_lat_lon[1], other_lat_lon[1])
+        postal_codes_distances[other_postal_code] = distance
+
+      # Pull out postal codes that meet search criteria
+      postal_codes_match = []
+      for postal_code, distance in postal_codes_distances.items():
+        if distance <= int(miles):
+          postal_codes_match.append(postal_code)
+      
+      # Get all item numbers from postal codes that meet search criterria
+      query = sql__search__items_by_other_postal_code(','.join(postal_codes_match))
+
+      return(query, selection)
+
+    elif selection == 4:
+      # Other postal code
+      postal_code = get_other_postal_code_entry_var()
+      query = sql__search__items_by_other_postal_code(postal_code)
+      return (query, selection)
+    
+    # Return false if no query is generated (no selection is made)
+    return (False, 0)
+  
+  def process_search_query_for_item_numbers(query):
+    df = pd.read_sql_query(query, cnx)
+    item_numbers = df['itemNumber'].to_list()
+    return item_numbers
+  
+  def search_results_exec():
+    # Generate the correct query based on search criteria (also pull back selection, e.g., keyword, miles, etc.)
+    query, selection = get_search_query()
+
+    if selection > 0:
+      # Query for item numbers
+      item_numbers = process_search_query_for_item_numbers(query)
+
+      # Get user selection value
+      selection = get_selection_rb_var()
+
+      if selection == 1:
+        # Keyword search
+        context = get_keyword_entry_var()
+
+      elif selection == 2:
+        # My postal code search
+        df = pd.read_sql_query(sql__search__get_postal_code_by_email(emailAddr), cnx)
+        context = df['postalcode'].values[0]
+
+      elif selection == 3:
+        # Within X miles
+        context = get_miles_sb_var()
+
+      elif selection == 4:
+        # Other postal code
+        context = get_other_postal_code_entry_var()
+
+      search_results(emailAddr, item_numbers, selection, context)
+
 
   ########## VIEW
 
@@ -59,8 +186,6 @@ def search(emailAddr):
     sticky='ew')
 
   # Content
-  selection_rb = tk.IntVar()
-
   keyword_rb = tk.Radiobutton(
     master=window,
     text='By keyword:',
@@ -68,7 +193,7 @@ def search(emailAddr):
       LABEL_FONT_FAMILY, 
       LABEL_FONT_SIZE, 
       LABEL_FONT_WEIGHT_VALUE),
-    variable=selection_rb,
+    variable=selection_rb_var,
     value=1
   ).grid(
     row=2,
@@ -78,9 +203,15 @@ def search(emailAddr):
     sticky='w'
   )
 
-  keyword_entry = tk.Entry(
-    master=window
-  ).grid(
+  keyword_entry = ttk.Entry(
+    master=window,
+    font=(
+      LABEL_FONT_FAMILY, 
+      LABEL_FONT_SIZE, 
+      LABEL_FONT_WEIGHT_VALUE),
+    textvariable=keyword_entry_var
+  )
+  keyword_entry.grid(
     row=2,
     column=0,
     padx=110,
@@ -95,7 +226,7 @@ def search(emailAddr):
       LABEL_FONT_FAMILY, 
       LABEL_FONT_SIZE, 
       LABEL_FONT_WEIGHT_VALUE),
-    variable=selection_rb,
+    variable=selection_rb_var,
     value=2
   ).grid(
     row=3,
@@ -107,12 +238,12 @@ def search(emailAddr):
 
   miles_rb = tk.Radiobutton(
     master=window,
-    text='Within X miles of me:',
+    text='Within 0-999 miles of me:',
     font=(
       LABEL_FONT_FAMILY, 
       LABEL_FONT_SIZE, 
       LABEL_FONT_WEIGHT_VALUE),
-    variable=selection_rb,
+    variable=selection_rb_var,
     value=3
   ).grid(
     row=4,
@@ -122,15 +253,20 @@ def search(emailAddr):
     sticky='w'
   )
 
-  miles_sb = tk.Spinbox(
+  miles_sb = ttk.Spinbox(
     master=window,
+    textvariable=miles_sb_var,
+    font=(
+      LABEL_FONT_FAMILY, 
+      LABEL_FONT_SIZE, 
+      LABEL_FONT_WEIGHT_VALUE),
     width=3,
     from_=0,
     to=999
   ).grid(
     row=4,
     column=0,
-    padx=180,
+    padx=210,
     pady=WINDOW_PADDING_Y,  
     sticky='w'
   )
@@ -142,7 +278,7 @@ def search(emailAddr):
       LABEL_FONT_FAMILY, 
       LABEL_FONT_SIZE, 
       LABEL_FONT_WEIGHT_VALUE),
-    variable=selection_rb,
+    variable=selection_rb_var,
     value=4
   ).grid(
     row=5,
@@ -152,8 +288,13 @@ def search(emailAddr):
     sticky='w'
   )
 
-  other_postal_code_entry = tk.Entry(
-    master=window
+  other_postal_code_entry = ttk.Entry(
+    master=window,
+    font=(
+      LABEL_FONT_FAMILY, 
+      LABEL_FONT_SIZE, 
+      LABEL_FONT_WEIGHT_VALUE),
+      textvariable=other_postal_code_entry_var
   ).grid(
     row=5,
     column=0,
@@ -174,15 +315,14 @@ def search(emailAddr):
       LABEL_FONT_FAMILY,
       LABEL_FONT_SIZE,
       LABEL_FONT_WEIGHT_VALUE,
-    ))
+    ),
+    command=search_results_exec)
   search_button.grid(
     row=7, 
     columnspan=10,
     padx=20, 
     pady=WINDOW_PADDING_Y,  
     sticky='e') 
-
-  # command=lambda item_number=my_item[0]: view_item(item_number)
 
 
 ##############################
