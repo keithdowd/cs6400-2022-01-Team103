@@ -1,5 +1,6 @@
+from ntpath import join
 from global_variables import *
-from sql import sql_get_swap_history
+from sql import sql_swap_title, sql_rating_count_proposer,sql_rating_count_counter
 
 
 
@@ -23,7 +24,7 @@ def swap_history(userEmail):
   swap_history_columns = ['Proposed Date', 'Accepted/Rejected Date', 'Swap Status', 'My Role', 'Proposed Item', 'Desired Item', 'Other User', 'Rating', '','']
 
 
-  swap_summary_data = [['Proposer', '2', '1', '1', '50.0%'],['CounterParty', '2', '2', '0', '0.0%'] ]
+  swap_summary_data = []
 
   swap_data = []
 
@@ -42,20 +43,38 @@ def swap_history(userEmail):
     window.geometry(f'{width}x{height}')
     return window
 
-  window = setup(title=WINDOW_TITLE, width=WINDOW_SIZE_WIDTH, height=WINDOW_SIZE_HEIGHT)
+  window = setup(title=WINDOW_TITLE, width=1000, height=WINDOW_SIZE_HEIGHT)
 
     ######### DATA
-  df = pd.read_sql_query(sql_get_swap_history(userEmail), cnx)
+  df = pd.read_sql_query(sql_swap_title(userEmail), cnx)
+  proposer = pd.read_sql_query(sql_rating_count_proposer(userEmail), cnx)
+  counter = pd.read_sql_query(sql_rating_count_counter(userEmail), cnx)
+  #proposed/desire item most show title
+  #try joining swap and item together
+  for index, row in proposer.iterrows():
+    total_counter = row['total']
+    accepted_counter = row['accepted_count']
+    rejected_counter = row['rejected_count']
+    percentage = float(rejected_counter/total_counter)
+    store = ['Proposer', total_counter, accepted_counter, rejected_counter, percentage * 100]
+    swap_summary_data.append(store)
 
+  for index, row in counter.iterrows():
+    total_counter = row['total']
+    accepted_counter = row['accepted_count']
+    rejected_counter = row['rejected_count']
+    percentage = rejected_counter/total_counter
+    store = ['Counter', total_counter, accepted_counter, rejected_counter, percentage * 100]
+    swap_summary_data.append(store)
+      
   for index, row in df.iterrows():
       proposed_date = row['swap_date_proposed']
       accepted_rejected_date = row['swap_date_responded']
       swap_status = row['swap_status']
       my_role = ['']
-      proposed_item = row['proposer_itemNumber']
-      desired_item = row['counterparty_itemNumber']
-      other_user = row['counterparty_email']
-      
+      proposed_item = row['item_title']
+      desired_item = row['item_title']
+      other_user = row['counterparty_email']      
       arr = [
           proposed_date,
           accepted_rejected_date,
@@ -64,9 +83,10 @@ def swap_history(userEmail):
           proposed_item,
           desired_item,
           other_user
-      ]
+          ]
 
       swap_data.append(arr)
+
 
 
 
