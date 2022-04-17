@@ -7,7 +7,7 @@ from sql import sql_get_my_unrated_swaps,sql_rate_my_unrated_swaps
 import pandas as pd
 
 
-def get_unrated_swaps(userEmail='usr071@gt.edu'):
+def get_unrated_swaps(userEmail):
 
     ##############################
     # CONFIGURATION
@@ -140,7 +140,7 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
 
 
         clicked[i] = StringVar()
-        clicked[i].set("Select Rating")
+        clicked[i].set(5)
 
 
         def callback():
@@ -150,20 +150,33 @@ def get_unrated_swaps(userEmail='usr071@gt.edu'):
         drop = OptionMenu(window, clicked[i], *ratings, command=lambda index_num=i:callback())
 
         drop.grid(row=i+3, column=14)
-        
+
+        # def close_window(self):
+        #     self.master.destroy()
+
         submit = Button(window, text="Rate", fg="Black",
             bg="Green", font=(
                 LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE, BOLD), 
-                command=lambda index_num=i: rate_swaps(rating=callback(),emailAddr=row[4], swapID=row[1] ))
+                command=lambda index_num=i: rate_swaps(rating=callback(),userEmail=userEmail, emailAddr=row[3], swapID=row[0] ))
         submit.grid(row=i+3, column=16)
 
     ##############################
-    # EVENT LOOP
+    # EVENT LOOP 
     ##############################
     window.mainloop()
 
 
-def rate_swaps(emailAddr, swapID, rating):
-    sql_rate_my_unrated_swaps(emailAddr, swapID, rating)
+def rate_swaps(emailAddr, userEmail, swapID, rating):
+    mycursor = cnx.cursor()
+    query=sql_rate_my_unrated_swaps(emailAddr, swapID, rating)
+    print(query)
+    mycursor.execute(query)
+    cnx.commit()
+    mycursor.close()
+    get_unrated_swaps(userEmail)
 
-# get_unrated_swaps(userEmail='usr071@gt.edu')
+
+#test this page
+get_unrated_swaps(userEmail='usr071@gt.edu')
+
+# rate_swaps('usr121@gt.edu', 258,4)
