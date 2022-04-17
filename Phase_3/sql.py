@@ -207,6 +207,62 @@ def sql__pull_phone(userEmail):
   return sql__pull_phone
 
 ##############################
+# propose_swap.py
+##############################
+def sql__propose_swap__item_details(emailAddr, item_number):
+  sql__propose_swap__item_details = f'''
+  SELECT
+    item.itemNumber,
+    item.item_title,
+    item.itemtype_name,
+    item.itemtype_platform,
+    item.itemtype_media,
+    item.item_condition,
+    CONCAT(user.user_firstname, ' ', SUBSTRING(user.user_lastname, 1, 1), '.') AS offered_by,
+    CONCAT(useraddress.addr_city, ', ', useraddress.addr_state, ' ', useraddress.postalcode) AS location,
+    user.user_rating as other_rating,
+    useraddress.addr_latitude AS other_addr_lat,
+    useraddress.addr_longitude AS other_addr_lon,
+    (
+      SELECT 
+            useraddress.addr_latitude
+        FROM 
+            {DATABASE}.user AS user 
+  INNER JOIN 
+            {DATABASE}.useraddress AS useraddress
+          ON
+            user.postalcode = useraddress.postalcode
+       WHERE
+            user.email = '{emailAddr}'
+    ) AS user_addr_lat,
+    (
+      SELECT 
+            useraddress.addr_longitude
+        FROM 
+            {DATABASE}.user AS user 
+ INNER JOIN 
+            {DATABASE}.useraddress AS useraddress
+         ON
+            user.postalcode = useraddress.postalcode
+      WHERE
+            user.email = '{emailAddr}'
+    ) AS user_addr_lon  
+  FROM
+    {DATABASE}.item AS item
+INNER JOIN
+    {DATABASE}.user AS user
+    ON
+    item.email = user.email
+INNER JOIN
+    {DATABASE}.useraddress AS useraddress
+    ON
+    user.postalcode = useraddress.postalcode
+ WHERE
+    item.itemNumber={item_number}
+  '''
+  return sql__propose_swap__item_details
+
+##############################
 # view_items.py
 ##############################
 def sql__view_items__item_details(item_number):

@@ -1,5 +1,6 @@
 from haversine import haversine
 from global_variables import *
+from propose_swap import propose_swap
 from sql import sql__search_results__get_item_data_from_item_numbers
 from sql import sql__search__get_lat_lon_by_postal_code
 
@@ -110,6 +111,9 @@ def search_results(emailAddr, item_numbers, selection, context):
       'Description',
       'Distance'
     ]
+  
+  def propose_swap_exec(emailAddr, item_number):
+    propose_swap(emailAddr, item_number)
 
   ########## VIEW
 
@@ -197,7 +201,7 @@ def search_results(emailAddr, item_numbers, selection, context):
           LABEL_FONT_SIZE,
           LABEL_FONT_WEIGHT_VALUE,
         ),
-        # command=lambda item_number=my_item[0]: view_item(item_number)
+        command=lambda item_number=my_item[0]: propose_swap_exec(emailAddr, item_number)
       )
       table_my_items_details_btn.grid(
         row=row_index,
