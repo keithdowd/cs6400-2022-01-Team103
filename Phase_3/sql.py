@@ -334,3 +334,123 @@ def sql_get_swap_history(userEmail):
      ORDER BY swap_date_proposed DESC
     '''
   return sql_get_swap_history
+
+##############################
+# search.py
+##############################
+def sql__search__items_by_keyword(keyword):
+  sql__search__items_by_keyword = f'''
+    SELECT
+      itemNumber
+      FROM {DATABASE}.item
+     WHERE 
+      item_title like '%{keyword}%'
+      OR lower(item_description) like '%{keyword}%'
+  '''
+  return sql__search__items_by_keyword
+
+def sql__search__get_postal_code_by_email(email):
+  sql__search__get_postal_code_by_email = f'''
+    SELECT 
+      DISTINCT postalcode 
+      FROM {DATABASE}.user
+     WHERE email = '{email}'
+  '''
+  return sql__search__get_postal_code_by_email
+
+def sql__search__items_by_my_postal_code(email):
+  sql__search__items_by_my_postal_code = f'''
+    WITH a as (
+	    SELECT
+		    email
+	      FROM {DATABASE}.user
+	     WHERE 
+          postalcode = (
+		        SELECT 
+              DISTINCT postalcode 
+              FROM {DATABASE}.user
+             WHERE email = '{email}'
+	        )
+          AND email <> '{email}'
+    ),
+    b as (
+	        SELECT
+            itemNumber
+	          FROM {DATABASE}.item as z
+      INNER JOIN a
+              ON a.email = z.email
+    )
+    SELECT itemNumber 
+      FROM b;
+  '''
+  return sql__search__items_by_my_postal_code
+
+def sql__search__get_lat_lon_by_postal_code(postal_code):
+  sql__search__get_lat_lon_by_postal_code = f''' 
+    SELECT
+      addr_latitude,
+      addr_longitude
+      FROM
+        {DATABASE}.useraddress
+     WHERE
+      postalcode = {postal_code}
+  '''
+  return sql__search__get_lat_lon_by_postal_code
+
+def sql__search__items_by_other_postal_code(postal_code):
+  sql__search__items_by_other_postal_code = f'''
+    SELECT
+	    itemNumber
+      FROM
+        {DATABASE}.item
+     WHERE
+      email IN (
+        SELECT
+	        email
+          FROM
+	          {DATABASE}.user 
+         WHERE
+          postalcode in ({postal_code})
+      )
+  '''
+  return sql__search__items_by_other_postal_code
+
+def sql__search__get_all_postal_codes_lat_lon():
+  sql__search__get_all_postal_codes_lat_lon = f'''
+     SELECT
+      postalcode,
+      addr_latitude,
+      addr_longitude
+        FROM
+        {DATABASE}.useraddress
+    ORDER BY
+      postalcode asc
+  '''
+  return sql__search__get_all_postal_codes_lat_lon
+
+##############################
+# search_results.py
+##############################
+
+# This function return all necessary fields except distance
+# Distance must be computed separately
+def sql__search_results__get_item_data_from_item_numbers(item_number):
+  sql__search_results__get_item_data_from_item_numbers = f'''
+    SELECT
+	    itemNumber,
+      itemtype_name,
+      item_title,
+      item_condition,
+      item_description
+      FROM
+        {DATABASE}.item
+     WHERE
+      itemNumber = {item_number}
+  '''
+  return sql__search_results__get_item_data_from_item_numbers
+
+def sql__search_results__get_lat_lon_from_item_number(item_number):
+  sql__search_results__get_lat_lon_from_item_number = f'''
+  
+  '''
+  return sql__search_results__get_lat_lon_from_item_number
