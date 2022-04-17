@@ -24,7 +24,7 @@ def my_items(emailAddr='usr001@gt.edu'):
 
   window = setup(
     title=WINDOW_TITLE, 
-    width=WINDOW_SIZE_WIDTH, 
+    width=WINDOW_SIZE_WIDTH+50, 
     height=WINDOW_SIZE_HEIGHT)
 
   # Create scrollable window for my my items table
@@ -32,7 +32,7 @@ def my_items(emailAddr='usr001@gt.edu'):
 
   canvas = tk.Canvas(
     container, 
-    width=WINDOW_SIZE_WIDTH-50, 
+    width=WINDOW_SIZE_WIDTH+50, 
     height=200)
 
   scrollbar = ttk.Scrollbar(
@@ -144,7 +144,7 @@ def my_items(emailAddr='usr001@gt.edu'):
         LABEL_FONT_FAMILY,
         LABEL_FONT_SIZE,
         LABEL_FONT_WEIGHT_VALUE),
-    width=16)
+    width=15)
     table_item_counts_value.grid(
       row=3,
       column=col_index,
@@ -232,7 +232,7 @@ def my_items(emailAddr='usr001@gt.edu'):
           LABEL_FONT_SIZE,
           LABEL_FONT_WEIGHT_LABEL
         ),
-        width=16)
+        width=18)
       table_my_items_header.grid(
         row=7, 
         column=col_index, 
@@ -259,7 +259,7 @@ def my_items(emailAddr='usr001@gt.edu'):
             LABEL_FONT_SIZE,
             LABEL_FONT_WEIGHT_VALUE     
           ), 
-          width=16,
+          width=18,
           wraplength=125,
           anchor=anchor,
           justify='left')
@@ -283,7 +283,7 @@ def my_items(emailAddr='usr001@gt.edu'):
       table_my_items_details_btn.grid(
         row=row_index,
         column=col_index+1, # add button after (to the right of) the last my items column
-        sticky='e'
+        sticky='ew'
         ) 
     
   else: # Show a message instead of the items table if the user has no items
