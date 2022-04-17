@@ -1,5 +1,6 @@
+from tkinter import *
 from global_variables import *
-from sql import sql_swap_title, sql_rating_count_proposer,sql_rating_count_counter
+from sql import *
 
 
 
@@ -28,9 +29,16 @@ def swap_history(userEmail):
   swap_data = []
 
   rating_dropdown = ['1', '2', '3', '4', '5']
+  clicked=[]
+  ratings = [5, 4, 3, 2, 1, 0]
+
+  def callback(i):
+    rating=clicked[i].get()
+    print("rating changed to:", rating)
+    return rating
 
 
-
+  
 
 
   ##############################
@@ -43,6 +51,7 @@ def swap_history(userEmail):
     return window
 
   window = setup(title=WINDOW_TITLE, width=1000, height=WINDOW_SIZE_HEIGHT)
+  name_var = tk.StringVar()
 
     ######### DATA
   df = pd.read_sql_query(sql_swap_title(userEmail), cnx)
@@ -57,6 +66,7 @@ def swap_history(userEmail):
     percentage = (rejected_counter/total_counter)
     store = ['Proposer', total_counter, accepted_counter, rejected_counter, percentage * 100]
     swap_summary_data.append(store)
+    
 
   for index, row in counter.iterrows():
     total_counter = row['total']
@@ -70,21 +80,39 @@ def swap_history(userEmail):
       proposed_date = row['swap_date_proposed']
       accepted_rejected_date = row['swap_date_responded']
       swap_status = row['swap_status']
-      my_role = ['']
-      proposed_item = row['item_title']
-      desired_item = row['item_title']
-      other_user = row['user_nickname']      
+      proposer_email = row['proposer_email']
+      if(proposer_email==userEmail):
+        my_role_txt='Proposer'
+      else:
+        my_role_txt='Counterparty'
+
+      my_role = my_role_txt
+
+      proposed_item = row['proposer_itemNumber']
+      proposed_item_text = pd.read_sql_query(sql__pull_itemname(proposed_item), cnx)
+      desired_item = row['counterparty_itemNumber']
+      desired_item_text = pd.read_sql_query(sql__pull_itemname(desired_item), cnx)
+
+
+      counterparty_email = row['counterparty_email']
+      counterparty_email_text = pd.read_sql_query(sql__accept_reject_get_user_name(counterparty_email),cnx)
+
       arr = [
           proposed_date,
           accepted_rejected_date,
           swap_status,
-          my_role,
-          proposed_item,
-          desired_item,
-          other_user
+          my_role_txt,
+          proposed_item_text['item_title'],
+          desired_item_text['item_title'],
+          counterparty_email_text['user_nickname'],
+          OptionMenu(window, name_var, *ratings, command=lambda i=row:callback(i))
           ]
 
       swap_data.append(arr)
+      
+
+
+  # ratings
 
 
   # Header
