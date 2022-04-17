@@ -1,5 +1,6 @@
 from global_variables import DATABASE
 
+
 ##############################
 # accept_reject_swaps.py
 ##############################
@@ -13,7 +14,8 @@ def sql__accept_reject_swaps_all(userEmail):
         proposer_itemNumber,
         swap_date_proposed
       FROM {DATABASE}.Swap
-     WHERE counterparty_email={userEmail}
+     WHERE counterparty_email='{userEmail}'
+     and swap_date_responded is null
      ORDER BY swap_date_proposed DESC
     '''
   return sql__accept_reject_swaps_all
@@ -23,7 +25,7 @@ def sql__accept_reject_get_item_name(itemNumberParam):
     SELECT
         item_title
       FROM {DATABASE}.item
-     WHERE {DATABASE}.item.itemNumber={itemNumberParam}
+     WHERE itemNumber={itemNumberParam}
     '''
   return sql__accept_reject_get_item_name
 
@@ -32,7 +34,7 @@ def sql__accept_reject_get_user_name(emailAddr):
     SELECT
         user_nickname
       FROM {DATABASE}.user
-     WHERE {DATABASE}.user.email={emailAddr}
+     WHERE {DATABASE}.user.email='{emailAddr}'
     '''
   return sql__accept_reject_get_user_name
 
@@ -41,7 +43,7 @@ def sql__accept_reject_get_user_rating(emailAddr):
     SELECT
         user_rating
       FROM {DATABASE}.user
-     WHERE {DATABASE}.user.email={emailAddr}
+     WHERE {DATABASE}.user.email='{emailAddr}'
     '''
   return sql__accept_reject_get_user_name
 
@@ -49,7 +51,7 @@ def sql__accept_reject_getmypostalcode(emailAddr):
   sql__accept_reject_getmypostalcode = f''' 
   SELECT postalcode
     FROM {DATABASE}.User
-    WHERE {DATABASE}.User.email={emailAddr}
+    WHERE email='{emailAddr}'
 '''
   return sql__accept_reject_getmypostalcode
 
@@ -59,7 +61,7 @@ def sql__accept_reject_getmylat(postalCode):
   SELECT
         addr_latitude
     FROM {DATABASE}.UserAddress
-    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+    WHERE postalcode={postalCode}
 '''
   return sql__accept_reject_getmylat
 
@@ -68,7 +70,7 @@ def sql__accept_reject_getmylong(postalCode):
   SELECT
         addr_longitude
     FROM {DATABASE}.UserAddress
-    WHERE {DATABASE}.UserAddress.postalcode={postalCode}
+    WHERE postalcode={postalCode}
 '''
   return sql__accept_reject_getmylong
 
@@ -76,11 +78,34 @@ def sql__respond_swap(swapID,response_date,status):
   sql__respond_swap  = f'''
   UPDATE {DATABASE}.Swap
   SET
-        swap_date_responded={response_date},
-        swap_status={status}
-  WHERE {DATABASE}.swapID={swapID}
+        swap_date_responded=current_date,
+        swap_status='{status}'
+  WHERE swapID={swapID}
   '''
   return sql__respond_swap
+
+##############################
+# my_items.py
+##############################
+
+sql__my_items__count_of_item_type = f'''
+  SELECT 
+        itemtype_name, 
+        count(*) as count
+    FROM {DATABASE}.item
+GROUP BY itemtype_name
+'''
+def sql__my_items__list_of_all_items(emailAddr):
+   sql__my_items__list_of_all_items = f'''
+  SELECT
+        itemNumber,
+        itemtype_name,
+        item_title,
+        item_condition,
+        item_description
+    FROM {DATABASE}.item where email='{emailAddr}'
+ORDER BY itemNumber ASC 
+'''
 
 ##############################
 # UpdateMyInfo.py
@@ -90,17 +115,26 @@ def sql__pull_nick(userEmail):
       SELECT
         user_nickname
       FROM {DATABASE}.user
-     WHERE {DATABASE}.user.email={userEmail}
+     WHERE email='{userEmail}'
 '''
   return sql__pull_nick
 
 def sql__pull_city(postalCode):
-  sql__pull_city = f'''
+  if {postalCode} !={None}:
+      print({postalCode})
+      sql__pull_city = f'''
       SELECT
         addr_city
       FROM {DATABASE}.UserAddress
-     WHERE {DATABASE}.UserAddress.postalcode={postalCode}
-'''
+     WHERE postalcode={postalCode} 
+     '''
+  else:
+      sql__pull_city = f'''
+           SELECT
+             addr_city
+           FROM {DATABASE}.UserAddress
+          WHERE 1=2 
+          '''
   return sql__pull_city
 
 def sql__pull_first_name(userEmail):
@@ -108,25 +142,44 @@ def sql__pull_first_name(userEmail):
       SELECT
         user_firstname
       FROM {DATABASE}.user
-     WHERE {DATABASE}.user.email={userEmail}
+     WHERE email='{userEmail}'
 '''
   return sql__pull_first_name
 
 def sql__pull_state(postalCode):
-  sql__pull_state = f'''
-      SELECT
-        addr_state
-      FROM {DATABASE}.UserAddress
-     WHERE {DATABASE}.UserAddress.postalcode={postalCode}
-'''
-  return sql__pull_state
+    if {postalCode} != {None}:
+        print({postalCode})
+        sql__pull_state = f'''
+        SELECT
+          addr_state
+        FROM {DATABASE}.UserAddress
+       WHERE postalcode={postalCode} 
+       '''
+    else:
+        sql__pull_state = f'''
+             SELECT
+               addr_state
+             FROM {DATABASE}.UserAddress
+            WHERE 1=2 
+            '''
+    return sql__pull_state
+
 
 def sql__pull_last_name(userEmail):
   sql__pull_last_name = f'''
       SELECT
         user_lastname
       FROM {DATABASE}.user
-     WHERE {DATABASE}.user.email={userEmail}
+     WHERE email='{userEmail}'
+'''
+  return sql__pull_last_name
+
+def sql__pull_password(userEmail):
+  sql__pull_last_name = f'''
+      SELECT
+        user_password
+      FROM {DATABASE}.user
+     WHERE email='{userEmail}'
 '''
   return sql__pull_last_name
 
@@ -135,7 +188,7 @@ def sql__pull_zip(userEmail):
       SELECT
         postalcode
       FROM {DATABASE}.user
-     WHERE {DATABASE}.user.email={userEmail}
+     WHERE email='{userEmail}'
 '''
   return sql__pull_zip
 
@@ -144,43 +197,14 @@ def sql__pull_phone(userEmail):
       SELECT
         phone_number
       FROM {DATABASE}.user
-     WHERE {DATABASE}.user.email={userEmail}
+     WHERE email='{userEmail}'
 '''
   return sql__pull_phone
 
 ##############################
-# my_items.py
-##############################
-
-def sql__my_items__count_of_item_type(emailAddr):
-  sql__my_items__count_of_item_type = f'''
-    SELECT 
-          itemtype_name, 
-          count(*) as count
-      FROM {DATABASE}.item
-     WHERE email='{emailAddr}'
-  GROUP BY itemtype_name
-  '''
-  return sql__my_items__count_of_item_type
-
-def sql__my_items__list_of_all_items(emailAddr):
-  sql__my_items__list_of_all_items = f'''
-  SELECT
-        itemNumber,
-        itemtype_name,
-        item_title,
-        item_condition,
-        item_description
-    FROM {DATABASE}.item
-   WHERE email='{emailAddr}'
-ORDER BY itemNumber ASC 
-'''
-  return sql__my_items__list_of_all_items
-
-##############################
 # view_items.py
 ##############################
-def sql__view_items__item_details(itemNumber):
+def sql__view_items__item_details(emailaddr):
   sql__view_items__item_details = f'''
     SELECT
         itemNumber,
@@ -190,7 +214,7 @@ def sql__view_items__item_details(itemNumber):
         itemtype_media,
         item_condition
       FROM {DATABASE}.item
-     WHERE itemNumber={itemNumber}
+     WHERE email='{emailaddr}'
     '''
   return sql__view_items__item_details
 
@@ -236,7 +260,11 @@ def sql__gameswap__user_email_phonenumber__check(input):
 '''
   return sql__gameswap__user_email_phonenumber__check
 
-
+def sql__gameswap__phonenumber_withemail_check(input):
+  sql__gameswap__phonenumber_withemail_check = f'''
+      Select phone_number from  CS6400_spr22_team103.user where email='{input}'
+'''
+  return sql__gameswap__phonenumber_withemail_check
 def sql__gameswap__user_password__check(input,password):
   sql__gameswap__user_password__check = f'''
       Select count(1) cnt from  CS6400_spr22_team103.user where user_password=  '{password}' and  (email= '{input}' or phone_number=  '{input}' ) 
@@ -374,7 +402,6 @@ def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
   '''
   return sql_rate_my_unrated_swaps
 
-
 ##############################
 # swap_history.py
 #############################
@@ -501,7 +528,7 @@ def sql__search__get_all_postal_codes_lat_lon():
 # This function return all necessary fields except distance
 # Distance must be computed separately
 def sql__search_results__get_item_data_from_item_numbers(item_number):
-  sql__search_results__get_item_data_from_item_numbers = f'''
+    sql__search_results__get_item_data_from_item_numbers = f'''
     SELECT
 	    itemNumber,
       itemtype_name,
@@ -513,16 +540,18 @@ def sql__search_results__get_item_data_from_item_numbers(item_number):
      WHERE
       itemNumber = {item_number}
   '''
-  return sql__search_results__get_item_data_from_item_numbers
+    return sql__search_results__get_item_data_from_item_numbers
+
 
 def sql__search_results__get_lat_lon_from_item_number(item_number):
-  sql__search_results__get_lat_lon_from_item_number = f'''
-  
+    sql__search_results__get_lat_lon_from_item_number = f'''
+
   '''
-  return sql__search_results__get_lat_lon_from_item_number
+    return sql__search_results__get_lat_lon_from_item_number
+
 
 def sql_swap_title(userEmail):
-  sql_swap_title = f'''
+    sql_swap_title = f'''
 select
     swap_date_proposed, user_nickname, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, counterparty_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
 from
@@ -535,20 +564,22 @@ on
     swap.proposer_itemNumber = item.itemNumber 
 where counterparty_email ='{userEmail}' or proposer_email = '{userEmail}'
     '''
-  return sql_swap_title
+    return sql_swap_title
+
 
 def sql_rating_count_proposer(userEmail):
-  sql_rating_count_proposer = f'''
+    sql_rating_count_proposer = f'''
 select COUNT(CASE WHEN swap_status="Accepted" or swap_status="Rejected" then 1 end) as total, COUNT(CASE WHEN swap_status = "Accepted" then 1 end) as accepted_count, COUNT(CASE when swap_status="Rejected" then 1 end) as rejected_count
 from CS6400_spr22_team103.swap
 where proposer_email ='{userEmail}'
     '''
-  return sql_rating_count_proposer
+    return sql_rating_count_proposer
+
 
 def sql_rating_count_counter(userEmail):
-  sql_rating_count_counter = f'''
+    sql_rating_count_counter = f'''
 select COUNT(CASE WHEN swap_status="Accepted" or swap_status="Rejected" then 1 end) as total, COUNT(CASE WHEN swap_status = "Accepted" then 1 end) as accepted_count, COUNT(CASE when swap_status="Rejected" then 1 end) as rejected_count
 from CS6400_spr22_team103.swap
 where counterparty_email ='{userEmail}'
     '''
-  return sql_rating_count_counter
+    return sql_rating_count_counter
