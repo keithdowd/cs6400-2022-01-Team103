@@ -1,4 +1,3 @@
-from ntpath import join
 from global_variables import *
 from sql import sql_swap_title, sql_rating_count_proposer,sql_rating_count_counter
 
@@ -21,7 +20,7 @@ def swap_history(userEmail):
   swap_summary_columns = ['My role', 'Total', 'Accepted', 'Rejected', 'Rejected %']
 
 
-  swap_history_columns = ['Proposed Date', 'Accepted/Rejected Date', 'Swap Status', 'My Role', 'Proposed Item', 'Desired Item', 'Other User', 'Rating', '','']
+  swap_history_columns = ['Proposed Date', 'Accepted/Rejected Date', 'Swap Status', 'My Role', 'Proposed Item', 'Desired Item', 'Other User', 'Rating', '']
 
 
   swap_summary_data = []
@@ -55,7 +54,7 @@ def swap_history(userEmail):
     total_counter = row['total']
     accepted_counter = row['accepted_count']
     rejected_counter = row['rejected_count']
-    percentage = float(rejected_counter/total_counter)
+    percentage = (rejected_counter/total_counter)
     store = ['Proposer', total_counter, accepted_counter, rejected_counter, percentage * 100]
     swap_summary_data.append(store)
 
@@ -74,7 +73,7 @@ def swap_history(userEmail):
       my_role = ['']
       proposed_item = row['item_title']
       desired_item = row['item_title']
-      other_user = row['counterparty_email']      
+      other_user = row['user_nickname']      
       arr = [
           proposed_date,
           accepted_rejected_date,
@@ -88,11 +87,13 @@ def swap_history(userEmail):
       swap_data.append(arr)
 
 
-
-
   # Header
   label_item_counts = tk.Label(master=window, text='Swap History')
   label_item_counts.pack(padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, anchor='w')
+  btn_reject = tk.Button(text='Reject',
+  font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+  btn_reject.pack()
+
 
   # Separator
   separator = ttk.Separator(window, orient='horizontal')

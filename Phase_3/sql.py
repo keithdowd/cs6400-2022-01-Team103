@@ -405,11 +405,13 @@ def sql_get_swap_history(userEmail):
 def sql_swap_title(userEmail):
   sql_swap_title = f'''
 select
-    swap_date_proposed, swapID, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, proposer_email, counterparty_itemNumber, proposer_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
+    swap_date_proposed, user_nickname, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, counterparty_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
 from
     CS6400_spr22_team103.swap as swap
 inner join
     CS6400_spr22_team103.item as item
+inner join 
+	  CS6400_spr22_team103.user as user
 on
     swap.proposer_itemNumber = item.itemNumber 
 where counterparty_email ='{userEmail}' or proposer_email = '{userEmail}'
