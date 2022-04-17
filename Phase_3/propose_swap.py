@@ -1,4 +1,3 @@
-
 from global_variables import *
 from haversine import haversine
 from sql import sql__propose_swap__item_details
