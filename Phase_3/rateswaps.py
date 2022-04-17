@@ -179,7 +179,6 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
     get_unrated_swaps(userEmail)
 
 
-#test this page
 # get_unrated_swaps(userEmail='usr071@gt.edu')
 
 # rate_swaps('usr121@gt.edu', 258,4)
