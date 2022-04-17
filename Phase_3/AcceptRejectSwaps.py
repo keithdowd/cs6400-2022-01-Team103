@@ -7,12 +7,39 @@ def accept_reject_swaps(userEmail):
     def accept_swap(swapID, date):
         # print('accept swap: index :'+str(index))
         # TBD : Create queries to insert
-        pd.read_sql_query(sql__respond_swap(swapID, date, "Accepted"), cnx)
+        accept_swap_query=sql__respond_swap(swapID, date, "Accepted")
+        mycursor = cnx.cursor()
+        mycursor.execute(accept_swap_query)
+        cnx.commit()
+        window.destroy()
+        accept_reject_swaps(userEmail)
+        #acceptswappup()
 
-    def reject_swap(swapID, date):
+    def acceptswappup():
+        win = tk.Toplevel()
+        win.geometry("210x100")
+        win.wm_title("Swap")
+
+        l = tk.Label(win, text="Swap is accepted")
+
+        l.grid(row=0, column=0)
+
+        b = ttk.Button(win, text="OK", command=win.destroy)
+        b.grid(row=1, column=0)
+    def callback(i,btn_reject):
+        btn_reject[i].destroy
+
+    def reject_swap(swapID, date,id,index,btn_reject):
         # print('reject swap: index :'+str(index))
         # TBD : Create queries to insert
-        pd.read_sql_query(sql__respond_swap(swapID, date, "Rejected"), cnx)
+        reject_swap_query=sql__respond_swap(swapID, date, "Rejected")
+        mycursor = cnx.cursor()
+        mycursor.execute(reject_swap_query)
+        cnx.commit()
+        window.destroy()
+        accept_reject_swaps(userEmail)
+        #btn_reject[index]['state']="disabled"
+        #rejectswappup()
 
     def haversine(lat1, lat2, long1, long2):
         R = 6371 * 1000
@@ -25,8 +52,19 @@ def accept_reject_swaps(userEmail):
         c = (2 * (math.atan2(math.sqrt(a), math.sqrt(1 - a))))
         d = (R * c) / 1000  # kilometers
         return d
+    def rejectswappup():
+        win = tk.Toplevel()
+        win.geometry("210x100")
+        win.wm_title("Swap")
 
-    ##############################
+        l = tk.Label(win, text="Swap is rejected")
+
+        l.grid(row=0, column=0)
+
+        b = ttk.Button(win, text="OK", command=win.destroy)
+        b.grid(row=1, column=0)
+
+    ############################
     # CONFIGURATION
     ##############################
 
@@ -36,14 +74,25 @@ def accept_reject_swaps(userEmail):
     ##############################
     # SETUP
     ##############################
-    def setup(title='My Window', width=800, height=400):
+    def setup(title='My Window', width=8000, height=400):
         window = tk.Tk()
         window.title(title)
-        window.geometry("3000x3000")
+        #window.geometry("3000x3000")
         window.geometry(f'{width}x{height}')
         return window
 
-    window = setup(title=WINDOW_TITLE, width=WINDOW_SIZE_WIDTH, height=WINDOW_SIZE_HEIGHT)
+    window = setup(title=WINDOW_TITLE, width=1500, height=WINDOW_SIZE_HEIGHT)
+    def itemtitlenullopup():
+        win = tk.Toplevel()
+        win.geometry("210x100")
+        win.wm_title("Rate Swaps ")
+
+        l = tk.Label(win, text="No Swap to be rated")
+
+        l.grid(row=0, column=0)
+
+        b = ttk.Button(win, text="OK", command=win.destroy)
+        b.grid(row=1, column=0)
 
     ##############################
     # Accept / Reject Swaps
@@ -79,7 +128,12 @@ def accept_reject_swaps(userEmail):
     their_postal = []
     their_lat = []
     their_long = []
-    df = pd.DataFrame(data_raw, columns=['swapID', 'counterparty_email', 'proposer_email', 'counterparty_itemNumber',
+    if data_raw.empty==True:
+        window.destroy()
+        itemtitlenullopup()
+
+    else:
+        df = pd.DataFrame(data_raw, columns=['swapID', 'counterparty_email', 'proposer_email', 'counterparty_itemNumber',
                                          'proposer_itemNumber', 'swap_date_proposed'])
     #print(data_raw)
     #print(df['counterparty_email'][0])
@@ -168,13 +222,13 @@ def accept_reject_swaps(userEmail):
         label_proposedItem = tk.Label(master=frame_left, text=proposed_item[index],
                                       font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
         label_proposedItem.grid(row=index + 1, column=5, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-
+        print(swapID[index])
         btn_accept = tk.Button(master=frame_left, text='Accept',
-                               command=lambda index_num=i: accept_swap(swapID[index], "4/19/2022"),
+                               command=lambda index_num=i: accept_swap(swapID[index_num], "4/19/2022"),
                                font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
         btn_accept.grid(row=i + 1, column=7, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         btn_reject = tk.Button(master=frame_left, text='Reject',
-                               command=lambda index_num=i: reject_swap(swapID[index], "4/19/2022"),
+                               command=lambda index_num=i: reject_swap(swapID[index_num], "4/19/2022",id,index,btn_reject),
                                font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
         btn_reject.grid(row=i + 1, column=8, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
         index += 1
@@ -189,4 +243,3 @@ def accept_reject_swaps(userEmail):
 #     print (accept_reject_swaps.haversine(10,20))
 
 # window.mainloop()
-
