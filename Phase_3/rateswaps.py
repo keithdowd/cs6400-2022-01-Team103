@@ -172,7 +172,7 @@ def get_unrated_swaps(userEmail):
 def rate_swaps(emailAddr, userEmail, swapID, rating):
     mycursor = cnx.cursor()
     query=sql_rate_my_unrated_swaps(emailAddr, swapID, rating)
-    print(query)
+    # print(query)
     mycursor.execute(query)
     cnx.commit()
     mycursor.close()
