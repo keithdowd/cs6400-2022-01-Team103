@@ -263,6 +263,23 @@ INNER JOIN
   return sql__propose_swap__item_details
 
 ##############################
+# propose_swap_confirm.py
+##############################
+def sql__propose_swap_confirm__items_for_swap(emailAddr):
+  sql__propose_swap_confirm__items_for_swap = f'''
+    SELECT
+      itemNumber,
+      itemtype_name,
+      item_title,
+      item_condition
+      FROM
+        {DATABASE}.item
+     WHERE
+      email = '{emailAddr}'
+  '''
+  return sql__propose_swap_confirm__items_for_swap
+
+##############################
 # view_items.py
 ##############################
 def sql__view_items__item_details(item_number):
@@ -498,10 +515,24 @@ def sql__search__items_by_keyword(keyword):
   sql__search__items_by_keyword = f'''
     SELECT
       itemNumber
-      FROM {DATABASE}.item
+      FROM {DATABASE}.item as item
      WHERE 
-      item_title like '%{keyword}%'
-      OR lower(item_description) like '%{keyword}%'
+      (item_title like '%{keyword}%' OR lower(item_description) like '%{keyword}%')
+      AND itemNumber NOT IN (
+        SELECT
+          DISTINCT counterparty_itemNumber
+          FROM
+            {DATABASE}.swap
+         WHERE
+            swap_status='Accepted' or swap_status IS NULL
+         UNION
+        SELECT
+        DISTINCT proposer_itemNumber
+        FROM
+          {DATABASE}.swap
+        WHERE
+          swap_status='Accepted' or swap_status IS NULL
+      )
   '''
   return sql__search__items_by_keyword
 
@@ -537,7 +568,22 @@ def sql__search__items_by_my_postal_code(email):
               ON a.email = z.email
     )
     SELECT itemNumber 
-      FROM b;
+      FROM b
+      wHERE itemNumber NOT IN (
+        SELECT
+          DISTINCT counterparty_itemNumber
+          FROM
+            {DATABASE}.swap
+         WHERE
+            swap_status='Accepted' or swap_status IS NULL
+         UNION
+        SELECT
+        DISTINCT proposer_itemNumber
+        FROM
+          {DATABASE}.swap
+        WHERE
+          swap_status='Accepted' or swap_status IS NULL
+      )
   '''
   return sql__search__items_by_my_postal_code
 
@@ -567,6 +613,21 @@ def sql__search__items_by_other_postal_code(postal_code):
 	          {DATABASE}.user 
          WHERE
           postalcode in ({postal_code})
+      )
+      AND itemNumber NOT IN (
+        SELECT
+          DISTINCT counterparty_itemNumber
+          FROM
+            {DATABASE}.swap
+         WHERE
+            swap_status='Accepted' or swap_status IS NULL
+         UNION
+        SELECT
+        DISTINCT proposer_itemNumber
+        FROM
+          {DATABASE}.swap
+        WHERE
+          swap_status='Accepted' or swap_status IS NULL
       )
   '''
   return sql__search__items_by_other_postal_code
