@@ -171,7 +171,7 @@ def accept_reject_swaps(userEmail):
 
         distance.append( str(round(float(haversine(myLat,their_lat[index],myLong,their_long[index])))) + ' kilometers')
         index += 1
-
+    
     #
     # VIEW
     #

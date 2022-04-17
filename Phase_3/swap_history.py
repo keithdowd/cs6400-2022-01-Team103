@@ -1,15 +1,11 @@
 from tkinter import *
+from tkinter.font import BOLD
 from global_variables import *
 from sql import *
 
 
 
 def swap_history(userEmail):
-
-  ##############################
-  # CONFIGURATION
-  ##############################
-
   # Window
   WINDOW_TITLE = 'Swap History'
 
@@ -23,7 +19,13 @@ def swap_history(userEmail):
 
   swap_history_columns = ['Proposed Date', 'Accepted/Rejected Date', 'Swap Status', 'My Role', 'Proposed Item', 'Desired Item', 'Other User', 'Rating', '']
 
-
+  proposed_list = []
+  date_list = []
+  swap_status_list = []
+  my_role_list = []
+  proposed_item_list = []
+  desired_item_list = []
+  other_user_list = []
   swap_summary_data = []
 
   swap_data = []
@@ -64,7 +66,7 @@ def swap_history(userEmail):
     accepted_counter = row['accepted_count']
     rejected_counter = row['rejected_count']
     percentage = (rejected_counter/total_counter)
-    store = ['Proposer', total_counter, accepted_counter, rejected_counter, percentage * 100]
+    store = ['Proposer', total_counter, accepted_counter, rejected_counter, round(percentage * 100, 2)]
     swap_summary_data.append(store)
     
 
@@ -73,10 +75,15 @@ def swap_history(userEmail):
     accepted_counter = row['accepted_count']
     rejected_counter = row['rejected_count']
     percentage = rejected_counter/total_counter
-    store = ['Counter', total_counter, accepted_counter, rejected_counter, percentage * 100]
+    store = ['Counter', total_counter, accepted_counter, rejected_counter, round(percentage * 100, 2)]
     swap_summary_data.append(store)
-      
+  
+
+
   for index, row in df.iterrows():
+      # proposed_list.append(str(pd.read_sql_query(sql_swap_title(userEmail), cnx)['swap_date_proposed'][0]))
+      # print(proposed_list[index][0])
+
       proposed_date = row['swap_date_proposed']
       accepted_rejected_date = row['swap_date_responded']
       swap_status = row['swap_status']
@@ -105,7 +112,7 @@ def swap_history(userEmail):
           proposed_item_text['item_title'],
           desired_item_text['item_title'],
           counterparty_email_text['user_nickname'],
-          OptionMenu(window, name_var, *ratings, command=lambda i=row:callback(i))
+          # OptionMenu(window, name_var, *ratings, command=lambda i=row:callback(i))
           ]
 
       swap_data.append(arr)
@@ -118,10 +125,6 @@ def swap_history(userEmail):
   # Header
   label_item_counts = tk.Label(master=window, text='Swap History')
   label_item_counts.pack(padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, anchor='w')
-  btn_reject = tk.Button(text='Reject',
-  font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-  btn_reject.pack()
-
 
   # Separator
   separator = ttk.Separator(window, orient='horizontal')
@@ -170,3 +173,5 @@ def swap_history(userEmail):
 
 userEmail = "usr001@gt.edu"
 swap_history(userEmail)
+
+# swap_history_grid("usr001@gt.edu")

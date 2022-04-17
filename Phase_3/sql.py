@@ -551,7 +551,6 @@ def sql__search_results__get_item_data_from_item_numbers(item_number):
 
 def sql__search_results__get_lat_lon_from_item_number(item_number):
     sql__search_results__get_lat_lon_from_item_number = f'''
-
   '''
     return sql__search_results__get_lat_lon_from_item_number
 
@@ -589,3 +588,12 @@ from CS6400_spr22_team103.swap
 where counterparty_email ='{userEmail}'
     '''
     return sql_rating_count_counter
+
+def sql__pull_itemname(itemNum):
+  sql__pull_itemname = f'''
+      SELECT
+        item_title
+      FROM {DATABASE}.Item
+     WHERE itemNumber='{itemNum}'
+'''
+  return sql__pull_itemname
