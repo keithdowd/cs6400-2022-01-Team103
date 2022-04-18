@@ -522,9 +522,9 @@ def sql_get_my_unrated_swaps(emailAddr):
 def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
   sql_rate_my_unrated_swaps = f'''
   UPDATE {DATABASE}.swap 
-  SET swap_counterparty_rating =
+  SET swap_proposer_rating =
   CASE when proposer_email='{emailAddr}' then {rating} end,
-	    swap_proposer_rating =
+	    swap_counterparty_rating =
   CASE when counterparty_email='{emailAddr}' then {rating} end
   where swapID = {swapID};
   '''

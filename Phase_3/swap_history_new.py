@@ -247,10 +247,180 @@ def swap_hist(userEmail):
     print(df)
     rowcnt=0
     my_items_data = []
+    my_items_data1=[]
     my_items_data_rating = []
     print(df['swap_counterparty_rating'],df['swap_proposer_rating'],df['swapid'])
+    for index, row1 in df.iterrows():
+        flag=0
+        flag1=0
+        #rowcnt=0
+        if (pd.isna(row1['swap_counterparty_rating']) == True and row1['swap_date_responded'] != '' and row1[
+            'swap_status'] == 'Accepted' and row1['counterparty_email']==userEmail) or (
+                pd.isna(row1['swap_proposer_rating']) == True and row1['swap_date_proposed'] != '' and row1[
+            'swap_status'] == 'Accepted' and row1['proposer_email']==userEmail):
+
+            flag=1
+        if pd.isna(row1['swap_proposer_rating']) == True:
+
+            flag1 = 1
+        if flag==0:
+
+        #if  (pd.isna(row1['swap_counterparty_rating']) == False ) or (pd.isna(row1['swap_proposer_rating']) == False)  :
+            print(row1['swapid'], row1['swap_counterparty_rating'], pd.isna(row1['swap_counterparty_rating']),flag)
+            print(row1['swapid'], row1['swap_proposer_rating'], pd.isna(row1['swap_proposer_rating']),flag1)
+
+            # print("start here")
+            # print(row)
+            swapid = row1['swapid']
+            proposed_date = row1['swap_date_proposed']
+            accepted_rejected_date = row1['swap_date_responded']
+            swap_status = row1['swap_status']
+            proposer_email = row1['proposer_email']
+
+            if (proposer_email == userEmail):
+                my_role_txt = 'Proposer'
+            else:
+                my_role_txt = 'Counterparty'
+            if row1['swap_counterparty_rating'] != '' or row1['swap_proposer_rating'] != '':
+                if row1['swap_counterparty_rating'] != '':
+                    rating_text = row1['swap_counterparty_rating']
+                else:
+                    rating_text = row1['swap_proposer_rating']
+
+
+            else:
+                rating_text = ''
+
+            # if row['swap_proposer_rating'] != 'null':
+
+            proposed_item = row1['proposer_itemNumber']
+            proposed_item_text = pd.read_sql_query(sql__pull_itemname(proposed_item), cnx)
+            desired_item = row1['counterparty_itemNumber']
+            desired_item_text = pd.read_sql_query(sql__pull_itemname(desired_item), cnx)
+
+            counterparty_email = row1['counterparty_email']
+            counterparty_email_text = pd.read_sql_query(sql__accept_reject_get_user_name(counterparty_email), cnx)
+            '''
+                     my_role_txt,
+                     proposed_item_text['item_title'][0],
+                     desired_item_text['item_title'][0],
+                     counterparty_email_text['user_nickname'][0],
+                     rating_text
+                     '''
+            arr = [
+                swapid,
+                proposed_date,
+                accepted_rejected_date,
+                swap_status,
+                my_role_txt,
+                proposed_item_text['item_title'][0],
+                desired_item_text['item_title'][0],
+                counterparty_email_text['user_nickname'][0],
+                '',
+                rating_text
+
+            ]
+            my_items_data1.append(arr)
+    # print("stop here")
+    ########## VIEW
+
+    # Empty row
+    empty_row = tk.Label(master=window, text='\n')
+    empty_row.grid(row=4, column=0, columnspan=10)
+
+    # Header
+    label_my_items = tk.Label(
+        master=window,
+        text='My Items',
+        font=(
+            LABEL_FONT_FAMILY,
+            LABEL_FONT_SIZE,
+            LABEL_FONT_WEIGHT_VALUE)
+    )
+    label_my_items.grid(
+        row=5,
+        column=0,
+        padx=WINDOW_PADDING_X,
+        pady=WINDOW_PADDING_Y,
+        sticky='w')
+
+    # Separator
+    separator = ttk.Separator(
+        master=window,
+        orient='horizontal')
+    separator.grid(
+        row=6,
+        columnspan=10,
+        padx=WINDOW_PADDING_X,
+        pady=WINDOW_PADDING_Y,
+        sticky='ew')
+
+    if len(my_items_data1) > 0:  # Show table view if the user has at least one item
+        # Table (Values)
+        for col_index, item_column in enumerate(my_items_columns):
+            table_my_items_header = tk.Label(
+                master=scrollable_frame,
+                text=item_column,
+                font=(
+                    LABEL_FONT_FAMILY,
+                    LABEL_FONT_SIZE,
+                    LABEL_FONT_WEIGHT_LABEL
+                ),
+                width=16)
+            table_my_items_header.grid(
+                row=7,
+                column=col_index,
+                padx=WINDOW_PADDING_X,
+                pady=WINDOW_PADDING_Y,
+                sticky='ew')
+
+        for row_index, my_item in enumerate(my_items_data1):
+            row_index += 8  # layout starts at row 8
+
+            for col_index, my_item_value in enumerate(my_item):
+                # center item number and left justify all other fields
+                if col_index == 0:
+                    anchor = 'center'
+                else:
+                    anchor = 'w'
+
+                table_my_items_value = tk.Label(
+                    master=scrollable_frame,
+                    text=my_item_value,
+                    font=(
+                        LABEL_FONT_FAMILY,
+                        LABEL_FONT_SIZE,
+                        LABEL_FONT_WEIGHT_VALUE
+                    ),
+                    width=16,
+                    wraplength=125,
+                    anchor=anchor,
+                    justify='left')
+                table_my_items_value.grid(
+                    row=row_index,
+                    column=col_index,
+                    padx=WINDOW_PADDING_X,
+                    pady=WINDOW_PADDING_Y,
+                    sticky='ne'
+                )
+            table_my_items_details_btn = tk.Button(
+                master=scrollable_frame,
+                text='Details',
+                font=(
+                    LABEL_FONT_FAMILY,
+                    LABEL_FONT_SIZE,
+                    LABEL_FONT_WEIGHT_VALUE,
+                ),
+                command=lambda item_number=my_item[rowcnt]: view_item(item_number)
+            )
+            table_my_items_details_btn.grid(
+                row=row_index,
+                column=col_index + 2,  # add button after (to the right of) the last my items column
+                sticky='e'
+            )
+            rowcnt+=1
     for index, row in df.iterrows():
-       if pd.isna(row['swap_counterparty_rating']) == True and pd.isna(row['swap_proposer_rating']) == True:
+       if (pd.isna(row['swap_counterparty_rating']) == True and row['swap_date_responded'] !='' and row['swap_status']=='Accepted'  and row['counterparty_email']==userEmail) or(pd.isna(row['swap_proposer_rating']) == True and  row['swap_date_proposed'] !=''  and row['swap_status']=='Accepted'  and row['proposer_email']==userEmail):
          print(row['swapid'], row['swap_counterparty_rating'], pd.isna(row['swap_counterparty_rating']))
          #print(row['swapid'], row['swap_proposer_rating'], pd.isna(row['swap_proposer_rating']))
 
@@ -342,6 +512,7 @@ def swap_hist(userEmail):
 
     if len(my_items_data) > 0:  # Show table view if the user has at least one item
         # Table (Header)
+        '''
         for col_index, item_column in enumerate(my_items_columns):
             table_my_items_header = tk.Label(
                 master=scrollable_frame,
@@ -358,11 +529,14 @@ def swap_hist(userEmail):
                 padx=WINDOW_PADDING_X,
                 pady=WINDOW_PADDING_Y,
                 sticky='ew')
+        '''
+        rowcnt1= rowcnt
         rowcnt=0
         # Table (Values)
         for row_index, my_item in enumerate(my_items_data):
-
-            row_index += 8  # layout starts at row 8
+            r = 12 + rowcnt1
+            row_index += r
+             # layout starts at row 8
             print(my_item)
 
 
@@ -456,170 +630,7 @@ def swap_hist(userEmail):
             pady=WINDOW_PADDING_Y,
             sticky='w')
     my_items_data1 = []
-    for index, row1 in df.iterrows():
-        flag=0
-        flag1=0
-        rowcnt=0
-        if pd.isna(row1['swap_counterparty_rating']) == True:
 
-            flag=1
-        if pd.isna(row1['swap_proposer_rating']) == True:
-
-            flag1 = 1
-
-        if  (pd.isna(row1['swap_counterparty_rating']) == False or pd.isna(row1['swap_proposer_rating']) == False)  :
-            print(row1['swapid'], row1['swap_counterparty_rating'], pd.isna(row1['swap_counterparty_rating']),flag)
-            print(row1['swapid'], row1['swap_proposer_rating'], pd.isna(row1['swap_proposer_rating']),flag1)
-
-            # print("start here")
-            # print(row)
-            swapid = row1['swapid']
-            proposed_date = row1['swap_date_proposed']
-            accepted_rejected_date = row1['swap_date_responded']
-            swap_status = row1['swap_status']
-            proposer_email = row1['proposer_email']
-
-            if (proposer_email == userEmail):
-                my_role_txt = 'Proposer'
-            else:
-                my_role_txt = 'Counterparty'
-            if row1['swap_counterparty_rating'] != '' or row1['swap_proposer_rating'] != '':
-                if row1['swap_counterparty_rating'] != '':
-                    rating_text = row1['swap_counterparty_rating']
-                else:
-                    rating_text = row1['swap_proposer_rating']
-
-
-            else:
-                rating_text = ''
-
-            # if row['swap_proposer_rating'] != 'null':
-
-            proposed_item = row1['proposer_itemNumber']
-            proposed_item_text = pd.read_sql_query(sql__pull_itemname(proposed_item), cnx)
-            desired_item = row1['counterparty_itemNumber']
-            desired_item_text = pd.read_sql_query(sql__pull_itemname(desired_item), cnx)
-
-            counterparty_email = row1['counterparty_email']
-            counterparty_email_text = pd.read_sql_query(sql__accept_reject_get_user_name(counterparty_email), cnx)
-            '''
-                     my_role_txt,
-                     proposed_item_text['item_title'][0],
-                     desired_item_text['item_title'][0],
-                     counterparty_email_text['user_nickname'][0],
-                     rating_text
-                     '''
-            arr = [
-                swapid,
-                proposed_date,
-                accepted_rejected_date,
-                swap_status,
-                my_role_txt,
-                proposed_item_text['item_title'][0],
-                desired_item_text['item_title'][0],
-                counterparty_email_text['user_nickname'][0],
-                '',
-                rating_text
-
-            ]
-            my_items_data1.append(arr)
-    # print("stop here")
-    ########## VIEW
-
-    # Empty row
-    empty_row = tk.Label(master=window, text='\n')
-    empty_row.grid(row=4, column=0, columnspan=10)
-
-    # Header
-    label_my_items = tk.Label(
-        master=window,
-        text='My Items',
-        font=(
-            LABEL_FONT_FAMILY,
-            LABEL_FONT_SIZE,
-            LABEL_FONT_WEIGHT_VALUE)
-    )
-    label_my_items.grid(
-        row=5,
-        column=0,
-        padx=WINDOW_PADDING_X,
-        pady=WINDOW_PADDING_Y,
-        sticky='w')
-
-    # Separator
-    separator = ttk.Separator(
-        master=window,
-        orient='horizontal')
-    separator.grid(
-        row=6,
-        columnspan=10,
-        padx=WINDOW_PADDING_X,
-        pady=WINDOW_PADDING_Y,
-        sticky='ew')
-
-    if len(my_items_data) > 0:  # Show table view if the user has at least one item
-        # Table (Values)
-        for row_index, my_item in enumerate(my_items_data1):
-            r=12+rowcnt
-            row_index += r # layout starts at row 8
-
-            for col_index, my_item_value in enumerate(my_item):
-                # center item number and left justify all other fields
-                if col_index == 0:
-                    anchor = 'center'
-                else:
-                    anchor = 'w'
-
-                table_my_items_value = tk.Label(
-                    master=scrollable_frame,
-                    text=my_item_value,
-                    font=(
-                        LABEL_FONT_FAMILY,
-                        LABEL_FONT_SIZE,
-                        LABEL_FONT_WEIGHT_VALUE
-                    ),
-                    width=16,
-                    wraplength=125,
-                    anchor=anchor,
-                    justify='left')
-                table_my_items_value.grid(
-                    row=row_index,
-                    column=col_index,
-                    padx=WINDOW_PADDING_X,
-                    pady=WINDOW_PADDING_Y,
-                    sticky='ne'
-                )
-            table_my_items_details_btn = tk.Button(
-                master=scrollable_frame,
-                text='Details',
-                font=(
-                    LABEL_FONT_FAMILY,
-                    LABEL_FONT_SIZE,
-                    LABEL_FONT_WEIGHT_VALUE,
-                ),
-                command=lambda item_number=my_item[rowcnt]: view_item(item_number)
-            )
-            table_my_items_details_btn.grid(
-                row=row_index,
-                column=col_index + 2,  # add button after (to the right of) the last my items column
-                sticky='e'
-            )
-
-    else:  # Show a message instead of the items table if the user has no items
-        label_my_items = tk.Label(
-            master=scrollable_frame,
-            text='You have no items.',
-            font=(
-                LABEL_FONT_FAMILY,
-                LABEL_FONT_SIZE,
-                LABEL_FONT_WEIGHT_VALUE
-            ))
-        label_my_items.grid(
-            row=7,
-            column=0,
-            padx=WINDOW_PADDING_X,
-            pady=WINDOW_PADDING_Y,
-            sticky='we')
 
     window.mainloop()
 

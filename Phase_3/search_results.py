@@ -41,10 +41,15 @@ def search_results(emailAddr, item_numbers, selection, context):
     width=WINDOW_SIZE_WIDTH-50, 
     height=350)
 
-  scrollbar = ttk.Scrollbar(
+  v_scrollbar = ttk.Scrollbar(
     container, 
     orient='vertical', 
     command=canvas.yview)
+  
+  h_scrollbar = ttk.Scrollbar(
+    container, 
+    orient='horizontal', 
+    command=canvas.xview)
     
   scrollable_frame = ttk.Frame(canvas)
 
@@ -56,11 +61,13 @@ def search_results(emailAddr, item_numbers, selection, context):
   )
 
   canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
-  canvas.configure(yscrollcommand=scrollbar.set)
+  canvas.configure(yscrollcommand=v_scrollbar.set)
+  canvas.configure(xscrollcommand=h_scrollbar.set)
 
   container.grid(row=7, column=0, columnspan=9, sticky='nesw')
   canvas.grid(row=0, column=0, sticky='nesw')
-  scrollbar.grid(row=0, column=7, sticky='nse')
+  v_scrollbar.grid(row=0, column=7, sticky='nse')
+  h_scrollbar.grid(row=10, column=0, sticky='we')
 
 
   ##############################
