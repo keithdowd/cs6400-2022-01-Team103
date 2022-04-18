@@ -1,8 +1,11 @@
 from haversine import haversine
 from global_variables import *
 from propose_swap import propose_swap
+import search
 from sql import sql__search_results__get_item_data_from_item_numbers
 from sql import sql__search__get_lat_lon_by_postal_code
+from sql import sql__search__get_postal_code_by_email
+from sql import sql__search_results__get_lat_lon_from_item_number
 
 def search_results(emailAddr, item_numbers, selection, context):
 
@@ -66,7 +69,18 @@ def search_results(emailAddr, item_numbers, selection, context):
 
   ########## DATA
 
-  print(item_numbers, selection, context)
+  def return_to_search_exec():
+    search.search(emailAddr)
+    window.destroy()
+
+  search_results_table_columns = [
+      'Item #',
+      'Game Type',
+      'Title',
+      'Condition',
+      'Description',
+      'Distance'
+    ]
 
   # Convert selection and context to a human-readable string
   def selection_to_context(selection, context):
@@ -84,10 +98,22 @@ def search_results(emailAddr, item_numbers, selection, context):
 
   def compute_distance(item_number):
     # Get users lat, lon
+    df = pd.read_sql_query(sql__search__get_postal_code_by_email(emailAddr), cnx)
+    user_postal_code = df['postalcode'].values[0]
+    df = pd.read_sql_query(sql__search__get_lat_lon_by_postal_code(user_postal_code), cnx)
+    user_lat = float(df['addr_latitude'].values[0])
+    user_lon = float(df['addr_longitude'].values[0])
+    
     # Get item numbers lat, lon
+    df = pd.read_sql_query(sql__search_results__get_lat_lon_from_item_number(item_number), cnx)
+    item_lat = float(df['addr_latitude'].values[0])
+    item_lon = float(df['addr_longitude'].values[0])
+
     # Compute distance
+    distance = round(haversine(user_lat, item_lat, user_lon, item_lon), 1)
+
     # Return distance
-    pass
+    return distance
 
   # Get item data from item numbers
   # TODO: Refactor match my_items.py and adjust description
@@ -97,23 +123,27 @@ def search_results(emailAddr, item_numbers, selection, context):
       query = sql__search_results__get_item_data_from_item_numbers(item_number)
       df = pd.read_sql_query(query, cnx)
       item = df.values[0].tolist()
-      item.append(999)
+      item.append(compute_distance(item_number))
       item_data.append(item)
     return item_data
 
   item_data = get_item_data_from_item_numbers(item_numbers)
-
-  search_results_table_columns = [
-      'Item #',
-      'Game Type',
-      'Title',
-      'Condition',
-      'Description',
-      'Distance'
-    ]
+  item_data = pd.DataFrame(item_data, columns=search_results_table_columns)
   
+  def truncate_description(description):
+    if len(description) > 100:
+      return description[0:100] + '...'
+    else:
+      return description
+  
+  item_data['Description'] = item_data['Description'].apply(truncate_description)
+
+  item_data.sort_values(by=['Distance', 'Item #'], ascending=True, inplace=True)
+  item_data = item_data.values.tolist()
+
   def propose_swap_exec(emailAddr, item_number):
     propose_swap(emailAddr, item_number)
+    window.destroy()
 
   ########## VIEW
 
@@ -182,6 +212,7 @@ def search_results(emailAddr, item_numbers, selection, context):
             LABEL_FONT_SIZE,
             LABEL_FONT_WEIGHT_VALUE     
           ), 
+          bg='cyan' if selection == 1 and isinstance(my_item_value, str) and my_item_value.lower().find(context) >= 0 else None,
           width=16,
           wraplength=125,
           anchor=anchor,
@@ -212,18 +243,36 @@ def search_results(emailAddr, item_numbers, selection, context):
   else: # Show a message instead of the items table if the user has no items
     label_my_items = tk.Label(
       master=scrollable_frame,
-      text='No items were returned by your search criteria.', 
+      text='Sorry, no results found!', 
       font=(
         LABEL_FONT_FAMILY,
         LABEL_FONT_SIZE,
         LABEL_FONT_WEIGHT_VALUE
     ))
     label_my_items.grid(
-      row=7, 
+      row=2, 
       column=0, 
       padx=WINDOW_PADDING_X, 
       pady=WINDOW_PADDING_Y, 
       sticky='w')
+    
+    return_to_search_btn = tk.Button(
+        master=scrollable_frame, 
+        text='Return to Search',
+        font=(
+          LABEL_FONT_FAMILY,
+          LABEL_FONT_SIZE,
+          LABEL_FONT_WEIGHT_VALUE,
+        ),
+        command=return_to_search_exec
+      )
+    return_to_search_btn.grid(
+      row=3,
+      column=0,
+      padx=WINDOW_PADDING_X,
+      pady=WINDOW_PADDING_Y,
+      sticky='w'
+    )
 
 
 ##############################

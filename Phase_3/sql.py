@@ -218,9 +218,11 @@ def sql__propose_swap__item_details(emailAddr, item_number):
     item.itemtype_platform,
     item.itemtype_media,
     item.item_condition,
+    item.item_description,
+    item.itemtype_piece_count,
     CONCAT(user.user_firstname, ' ', SUBSTRING(user.user_lastname, 1, 1), '.') AS offered_by,
+    user.email AS offered_by_email,
     CONCAT(useraddress.addr_city, ', ', useraddress.addr_state, ' ', useraddress.postalcode) AS location,
-    user.user_rating as other_rating,
     useraddress.addr_latitude AS other_addr_lat,
     useraddress.addr_longitude AS other_addr_lon,
     (
@@ -261,6 +263,39 @@ INNER JOIN
     item.itemNumber={item_number}
   '''
   return sql__propose_swap__item_details
+
+##############################
+# propose_swap_confirm.py
+##############################
+def sql__propose_swap_confirm__items_for_swap(emailAddr):
+  sql__propose_swap_confirm__items_for_swap = f'''
+    SELECT
+      itemNumber,
+      itemtype_name,
+      item_title,
+      item_condition
+      FROM
+        {DATABASE}.item
+     WHERE
+      email = '{emailAddr}'
+      AND itemNumber NOT IN (
+        SELECT
+          DISTINCT counterparty_itemNumber
+          FROM
+            {DATABASE}.swap
+         WHERE
+            swap_status='Accepted' or swap_status IS NULL
+         UNION
+        SELECT
+        DISTINCT proposer_itemNumber
+        FROM
+          {DATABASE}.swap
+        WHERE
+          swap_status='Accepted' or swap_status IS NULL
+      )
+  ORDER BY itemNumber ASC
+  '''
+  return sql__propose_swap_confirm__items_for_swap
 
 ##############################
 # view_items.py
@@ -498,10 +533,27 @@ def sql__search__items_by_keyword(keyword):
   sql__search__items_by_keyword = f'''
     SELECT
       itemNumber
-      FROM {DATABASE}.item
+      FROM {DATABASE}.item as item
      WHERE 
-      item_title like '%{keyword}%'
-      OR lower(item_description) like '%{keyword}%'
+      (item_title like '%{keyword}%' 
+        OR lower(item_description) like '%{keyword}%'
+        OR lower(item_condition) like '%{keyword}%'
+        OR lower(itemtype_name) like '%{keyword}%')
+      AND itemNumber NOT IN ( 
+        SELECT
+          DISTINCT counterparty_itemNumber
+          FROM
+            {DATABASE}.swap
+         WHERE
+            swap_status='Accepted' or swap_status IS NULL
+         UNION
+        SELECT
+        DISTINCT proposer_itemNumber
+        FROM
+          {DATABASE}.swap
+        WHERE
+          swap_status='Accepted' or swap_status IS NULL
+      )
   '''
   return sql__search__items_by_keyword
 
@@ -537,7 +589,22 @@ def sql__search__items_by_my_postal_code(email):
               ON a.email = z.email
     )
     SELECT itemNumber 
-      FROM b;
+      FROM b
+      wHERE itemNumber NOT IN (
+        SELECT
+          DISTINCT counterparty_itemNumber
+          FROM
+            {DATABASE}.swap
+         WHERE
+            swap_status='Accepted' or swap_status IS NULL
+         UNION
+        SELECT
+        DISTINCT proposer_itemNumber
+        FROM
+          {DATABASE}.swap
+        WHERE
+          swap_status='Accepted' or swap_status IS NULL
+      )
   '''
   return sql__search__items_by_my_postal_code
 
@@ -567,6 +634,21 @@ def sql__search__items_by_other_postal_code(postal_code):
 	          {DATABASE}.user 
          WHERE
           postalcode in ({postal_code})
+      )
+      AND itemNumber NOT IN (
+        SELECT
+          DISTINCT counterparty_itemNumber
+          FROM
+            {DATABASE}.swap
+         WHERE
+            swap_status='Accepted' or swap_status IS NULL
+         UNION
+        SELECT
+        DISTINCT proposer_itemNumber
+        FROM
+          {DATABASE}.swap
+        WHERE
+          swap_status='Accepted' or swap_status IS NULL
       )
   '''
   return sql__search__items_by_other_postal_code
@@ -608,6 +690,21 @@ def sql__search_results__get_item_data_from_item_numbers(item_number):
 
 def sql__search_results__get_lat_lon_from_item_number(item_number):
     sql__search_results__get_lat_lon_from_item_number = f'''
+      SELECT
+        useraddress.addr_latitude,
+        useraddress.addr_longitude
+        FROM
+          {DATABASE}.item AS item
+  INNER JOIN
+          {DATABASE}.user AS user
+          ON 
+          item.email=user.email
+  INNER JOIN
+          {DATABASE}.useraddress AS useraddress
+          ON
+          user.postalcode=useraddress.postalcode
+       WHERE
+          item.itemNumber={item_number};
   '''
     return sql__search_results__get_lat_lon_from_item_number
 

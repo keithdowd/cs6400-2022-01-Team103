@@ -157,6 +157,8 @@ def search(emailAddr='usr117@gt.edu'):
 
       search_results(emailAddr, item_numbers, selection, context)
 
+      window.destroy()
+
 
   ########## VIEW
 
