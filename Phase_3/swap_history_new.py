@@ -1,6 +1,7 @@
 from global_variables import *
 from sql import *
-from view_item import view_item
+# from view_item import view_item
+from swap_history_detail import view_item
 
 def my_items(userEmail):
   ##############################
@@ -179,7 +180,7 @@ def my_items(userEmail):
     print(counter_item_counts.values())
     counter_table_item_counts_value = tk.Label(
       master=window, 
-      text=item_count, 
+      text=item_count, bg=('red' if col_index==4 and counter_item_counts['Rejected %'] >= 50.0 else None),
       font=(
         LABEL_FONT_FAMILY,
         LABEL_FONT_SIZE,
@@ -210,6 +211,8 @@ def my_items(userEmail):
     'Rating'
   ]
 
+  swapID_data = []
+
   # df = pd.read_sql_query(sql__my_items__list_of_all_items(userEmail), cnx)
   df = pd.read_sql_query(sql_swap_title(userEmail), cnx)
 
@@ -237,6 +240,10 @@ def my_items(userEmail):
   
       counterparty_email = row['counterparty_email']
       counterparty_email_text = pd.read_sql_query(sql__accept_reject_get_user_name(counterparty_email),cnx)
+      swapID = row['swapID']
+      swap_ID_arry = [
+        swapID
+      ]
       arr = [
           proposed_date,
           accepted_rejected_date,
@@ -247,6 +254,8 @@ def my_items(userEmail):
           counterparty_email_text['user_nickname'][0],
           proposed_date
       ]
+      swapID_data.append(swap_ID_arry)
+      print(swapID_data)
       my_items_data.append(arr)
   # print("stop here")
   ########## VIEW
@@ -302,8 +311,9 @@ def my_items(userEmail):
         sticky='ew')
 
     # Table (Values)
-    for row_index, my_item in enumerate(my_items_data):
+    for row_index, my_item, in enumerate(my_items_data):
       row_index += 8 # layout starts at row 8
+
       
       for col_index, my_item_value in enumerate(my_item):
         # center item number and left justify all other fields
@@ -339,7 +349,7 @@ def my_items(userEmail):
           LABEL_FONT_SIZE,
           LABEL_FONT_WEIGHT_VALUE,
         ),
-        command=lambda item_number=my_item[0]: view_item(item_number)
+        command=lambda swapID_number=swapID_data[0]: view_item(swapID_number) 
       )
       table_my_items_details_btn.grid(
         row=row_index,
