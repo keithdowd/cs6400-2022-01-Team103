@@ -1,0 +1,2 @@
+Phase_3/sql.py
+The above is the file where our team placed all our SQL queries.
