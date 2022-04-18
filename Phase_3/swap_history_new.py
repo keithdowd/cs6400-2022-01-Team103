@@ -431,7 +431,7 @@ def swap_hist(userEmail):
                     LABEL_FONT_SIZE,
                     LABEL_FONT_WEIGHT_VALUE,
                 ),
-                command=lambda item_number=my_item[0]: view_item(item_number)
+                command=lambda item_number=my_item[rowcnt]: view_item(item_number)
             )
             table_my_items_details_btn.grid(
                 row=row_index,
@@ -459,6 +459,7 @@ def swap_hist(userEmail):
     for index, row1 in df.iterrows():
         flag=0
         flag1=0
+        rowcnt=0
         if pd.isna(row1['swap_counterparty_rating']) == True:
 
             flag=1
