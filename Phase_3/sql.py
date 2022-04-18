@@ -615,7 +615,7 @@ def sql__search_results__get_lat_lon_from_item_number(item_number):
 def sql_swap_title(userEmail):
     sql_swap_title = f'''
 select
-    swap_date_proposed, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, counterparty_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
+    swapID, swap_date_proposed, swap_counterparty_rating, swap_proposer_rating, swap_date_responded, swap_status, counterparty_itemNumber, item.item_title, item.itemNumber, proposer_itemNumber, proposer_email, counterparty_email
 from
     CS6400_spr22_team103.swap as swap
 inner join
