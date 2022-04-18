@@ -3,6 +3,8 @@ from haversine import haversine
 from propose_swap_confirm import propose_swap_confirm
 from sql import sql__propose_swap__item_details
 from sql import sql__myrating__fetch
+from sql import sql_get_my_unrated_swaps
+from sql import sql__unacceptedswaps__fetch
 
 def propose_swap(emailAddr, item_number):
 
@@ -66,6 +68,12 @@ def propose_swap(emailAddr, item_number):
       return 'red'
 
   distance_bgcolor = get_distance_bgcolor(distance)
+
+  df_unrated_swaps = pd.read_sql_query(sql_get_my_unrated_swaps(emailAddr), cnx)
+  count_unrated_swaps = df_unrated_swaps.shape[0]
+  
+  df_unaccepted_swaps = pd.read_sql_query(sql__unacceptedswaps__fetch(emailAddr), cnx)
+  count_unaccepted_swaps = df_unaccepted_swaps.shape[0]
 
   ########## VIEW
 
@@ -152,8 +160,9 @@ def propose_swap(emailAddr, item_number):
     label_distance_value = tk.Label(master=frame_right, text=f'{distance} miles', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE), bg=distance_bgcolor)
     label_distance_value.grid(row=3, column=1, padx=WINDOW_PADDING_X+WINDOW_PADDING_X_OFFSET, pady=WINDOW_PADDING_Y, sticky='w')
 
-  button_propose_swap = tk.Button(master=frame_right, text='Propose Swap', command=propose_swap_confirm_exec, height=2, font=(BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE, BUTTON_FONT_WEIGHT), fg='white', bg='blue')
-  button_propose_swap.grid(row=4, columnspan=2, pady=25)
+  if count_unrated_swaps <= 2 and count_unaccepted_swaps <= 5:
+    button_propose_swap = tk.Button(master=frame_right, text='Propose Swap', command=propose_swap_confirm_exec, height=2, font=(BUTTON_FONT_FAMILY, BUTTON_FONT_SIZE, BUTTON_FONT_WEIGHT), fg='white', bg='blue')
+    button_propose_swap.grid(row=4, columnspan=2, pady=25)
 
   ##############################
   # EVENT LOOP
