@@ -8,6 +8,7 @@ from my_Items import my_items
 from rateswaps import get_unrated_swaps
 from AcceptRejectSwaps import accept_reject_swaps
 from search import search
+from swap_history_new import swap_hist
 from UpdateMyInfo import update_my_info
 def MainMenuObject(user_email):
 #if __name__ == '__main__':
@@ -104,7 +105,7 @@ def MainMenuObject(user_email):
             get_unrated_swaps(user_email)
             #os.system('rateswaps.py')
     def swaphistory():
-        os.system('swaphistory.py')
+        swap_hist(user_email)
     def updatemyinfo():
         update_my_info(user_email)
 
