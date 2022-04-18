@@ -781,3 +781,11 @@ def sql__pull_itemname(itemNum):
      WHERE itemNumber='{itemNum}'
 '''
   return sql__pull_itemname
+
+  def sql_swap_history_detail(swapID):
+    sql_swap_history_detail = f'''
+      SELECT
+        item_title
+      FROM {DATABASE}.Item
+     WHERE itemNumber='{itemNum}'
+'''
