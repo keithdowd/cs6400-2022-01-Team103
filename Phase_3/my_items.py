@@ -25,7 +25,7 @@ def my_items(emailAddr='usr001@gt.edu'):
   window = setup(
     title=WINDOW_TITLE, 
     width=WINDOW_SIZE_WIDTH+50, 
-    height=WINDOW_SIZE_HEIGHT)
+    height=WINDOW_SIZE_HEIGHT+25)
 
   # Create scrollable window for my items table
   container = ttk.Frame(window)
@@ -35,10 +35,15 @@ def my_items(emailAddr='usr001@gt.edu'):
     width=800, 
     height=200)
 
-  scrollbar = ttk.Scrollbar(
+  v_scrollbar = ttk.Scrollbar(
     container, 
     orient='vertical', 
     command=canvas.yview)
+  
+  h_scrollbar = ttk.Scrollbar(
+    container, 
+    orient='horizontal', 
+    command=canvas.xview)
 
   scrollable_frame = ttk.Frame(canvas, width=800)
 
@@ -50,11 +55,13 @@ def my_items(emailAddr='usr001@gt.edu'):
   )
 
   canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
-  canvas.configure(yscrollcommand=scrollbar.set)
+  canvas.configure(yscrollcommand=v_scrollbar.set)
+  canvas.configure(yscrollcommand=h_scrollbar.set)
 
   container.grid(row=7, column=0, columnspan=9, sticky='nesw')
   canvas.grid(row=0, column=0, sticky='nesw')
-  scrollbar.grid(row=0, column=9, sticky='nse')
+  v_scrollbar.grid(row=0, column=9, sticky='nse')
+  h_scrollbar.grid(row=10, column=0, sticky='we')
 
 
   ##############################
