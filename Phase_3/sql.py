@@ -338,7 +338,9 @@ def sql__view_items__item_details(item_number):
         itemtype_name,
         itemtype_platform,
         itemtype_media,
-        item_condition
+        item_condition,
+        item_description,
+        itemtype_piece_count
       FROM {DATABASE}.item
      WHERE itemNumber='{item_number}'
     '''
