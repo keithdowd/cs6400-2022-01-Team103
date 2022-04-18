@@ -1,2 +1,9 @@
+Team103:
+Uros Milojkovic    email: umilojkovic3@gatech.edu
+Keith Dowd 	   email: kdowd8@gatech.edu
+Pradeep Nijasure   email: pnijasure3@gatech.edu
+Yaojie Wang    	   email: ywang3581@gatech.edu
+Danny Bui	   email: dbui44@gatech.edu
+
 Phase_3/sql.py
 The above is the file where our team placed all our SQL queries.
