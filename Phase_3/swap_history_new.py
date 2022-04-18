@@ -242,7 +242,10 @@ def my_items(userEmail):
       counterparty_email_text = pd.read_sql_query(sql__accept_reject_get_user_name(counterparty_email),cnx)
       swapID = row['swapID']
       swap_ID_arry = [
-        swapID
+        swapID,
+        proposed_item,
+        desired_item,
+        my_role_txt
       ]
       arr = [
           proposed_date,
@@ -312,6 +315,7 @@ def my_items(userEmail):
 
     # Table (Values)
     for row_index, my_item, in enumerate(my_items_data):
+      org_row_index = row_index
       row_index += 8 # layout starts at row 8
 
       
@@ -349,7 +353,7 @@ def my_items(userEmail):
           LABEL_FONT_SIZE,
           LABEL_FONT_WEIGHT_VALUE,
         ),
-        command=lambda swapID_number=swapID_data[0]: view_item(swapID_number) 
+        command=lambda swapID_number=swapID_data[org_row_index]: view_item(swapID_number) 
       )
       table_my_items_details_btn.grid(
         row=row_index,

@@ -1,7 +1,12 @@
 from global_variables import *
 from sql import sql__view_items__item_details
 
-def view_item(swapID):
+def view_item(swapID, counterparty_number, proposer_number, role):
+    # item_number = 1
+    # if role == "Proposer":
+    #     item_number = proposer_number 
+    # else:
+    #     item_number = counterparty_number
 
   ##############################
   # CONFIGURATION
@@ -32,8 +37,7 @@ def view_item(swapID):
 # desired_item_text = pd.read_sql_query(sql__pull_itemname(desired_item), cnx)
 # counterparty_email_text = pd.read_sql_query(sql__accept_reject_get_user_name(counterparty_email),cnx)
 # pd.read_sql_query(sql_swap_title(userEmail), cnx)
-
-  print(swapID)
+  
   itemNumber = df['itemNumber'].values[0]
   item_title = df['item_title'].values[0]
   itemtype_name = df['itemtype_name'].values[0]
