@@ -95,6 +95,21 @@ def sql__my_items__count_of_item_type(emailAddr):
           count(*) as count
       FROM {DATABASE}.item
      WHERE email='{emailAddr}'
+      AND itemNumber NOT IN ( 
+          SELECT
+            DISTINCT counterparty_itemNumber
+            FROM
+              {DATABASE}.swap
+          WHERE
+              swap_status='Accepted' or swap_status IS NULL
+          UNION
+          SELECT
+          DISTINCT proposer_itemNumber
+          FROM
+            {DATABASE}.swap
+          WHERE
+            swap_status='Accepted' or swap_status IS NULL
+        )
   GROUP BY itemtype_name
   '''
   return sql__my_items__count_of_item_type
@@ -108,6 +123,21 @@ def sql__my_items__list_of_all_items(emailAddr):
         item_condition,
         item_description
     FROM {DATABASE}.item where email='{emailAddr}'
+      AND itemNumber NOT IN ( 
+          SELECT
+            DISTINCT counterparty_itemNumber
+            FROM
+              {DATABASE}.swap
+          WHERE
+              swap_status='Accepted' or swap_status IS NULL
+          UNION
+          SELECT
+          DISTINCT proposer_itemNumber
+          FROM
+            {DATABASE}.swap
+          WHERE
+            swap_status='Accepted' or swap_status IS NULL
+        )
 ORDER BY itemNumber ASC 
 '''
    return sql__my_items__list_of_all_items
