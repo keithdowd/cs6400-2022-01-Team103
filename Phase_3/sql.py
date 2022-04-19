@@ -101,14 +101,14 @@ def sql__my_items__count_of_item_type(emailAddr):
             FROM
               {DATABASE}.swap
           WHERE
-              swap_status='Accepted' or swap_status IS NULL
+              swap_status='Accepted' or swap_status = ''
           UNION
           SELECT
           DISTINCT proposer_itemNumber
           FROM
             {DATABASE}.swap
           WHERE
-            swap_status='Accepted' or swap_status IS NULL
+            swap_status='Accepted' or swap_status = ''
         )
   GROUP BY itemtype_name
   '''
@@ -116,27 +116,28 @@ def sql__my_items__count_of_item_type(emailAddr):
 
 def sql__my_items__list_of_all_items(emailAddr):
    sql__my_items__list_of_all_items = f'''
-  SELECT
+    SELECT 
         itemNumber,
         itemtype_name,
         item_title,
         item_condition,
         item_description
-    FROM {DATABASE}.item where email='{emailAddr}'
+      FROM {DATABASE}.item
+     WHERE email='{emailAddr}'
       AND itemNumber NOT IN ( 
           SELECT
             DISTINCT counterparty_itemNumber
             FROM
               {DATABASE}.swap
           WHERE
-              swap_status='Accepted' or swap_status IS NULL
+              swap_status='Accepted' or swap_status = ''
           UNION
           SELECT
           DISTINCT proposer_itemNumber
           FROM
             {DATABASE}.swap
           WHERE
-            swap_status='Accepted' or swap_status IS NULL
+            swap_status='Accepted' or swap_status = ''
         )
 ORDER BY itemNumber ASC 
 '''
@@ -314,18 +315,36 @@ def sql__propose_swap_confirm__items_for_swap(emailAddr):
           FROM
             {DATABASE}.swap
          WHERE
-            swap_status='Accepted' or swap_status IS NULL
+            swap_status='Accepted' or swap_status = ''
          UNION
         SELECT
         DISTINCT proposer_itemNumber
         FROM
           {DATABASE}.swap
         WHERE
-          swap_status='Accepted' or swap_status IS NULL
+          swap_status='Accepted' or swap_status = ''
       )
   ORDER BY itemNumber ASC
   '''
   return sql__propose_swap_confirm__items_for_swap
+
+##############################
+# propose_swap_confirm_insert.py
+##############################
+
+def sql__propose_swap_confirm__insert_swap(
+  proposer_email,
+  swap_date_proposed,
+  swap_status,
+  counterparty_email,
+  proposer_itemNumber,
+  counterparty_itemNumber
+):
+  sql__propose_swap_confirm__insert_swap = f'''
+  INSERT INTO {DATABASE}.swap (proposer_email, swap_date_proposed, swap_status, counterparty_email, proposer_itemNumber, counterparty_itemNumber)
+    VALUES ('{proposer_email}', '{swap_date_proposed}', '{swap_status}', '{counterparty_email}', '{proposer_itemNumber}', '{counterparty_itemNumber}')
+  '''
+  return sql__propose_swap_confirm__insert_swap
 
 ##############################
 # view_items.py
@@ -505,12 +524,12 @@ def sql_get_my_unrated_swaps(emailAddr):
       (SELECT * 
       FROM
         (SELECT swapID, swap_date_proposed, swap_date_responded, counterparty_email as user_email, counterparty_itemNumber as item_number from {DATABASE}.swap
-          WHERE swap_status="accepted" AND swap_proposer_rating is null AND proposer_email='{emailAddr}') 
+          WHERE swap_status="Accepted" AND swap_proposer_rating is null AND proposer_email='{emailAddr}') 
           AS table1 
         UNION
         (SELECT swapID, swap_date_proposed, swap_date_responded, proposer_email as user_email, proposer_itemNumber 
           AS item_number from {DATABASE}.swap
-          WHERE swap_status="accepted" AND swap_counterparty_rating is null AND counterparty_email='{emailAddr}')) 
+          WHERE swap_status="Accepted" AND swap_counterparty_rating is null AND counterparty_email='{emailAddr}')) 
       AS unrated_swaps 
       JOIN
       (SELECT * FROM {DATABASE}.item) 
@@ -561,7 +580,7 @@ def sql_get_swap_history(userEmail):
 ##############################
 # search.py
 ##############################
-def sql__search__items_by_keyword(keyword):
+def sql__search__items_by_keyword(emailAddr, keyword):
   sql__search__items_by_keyword = f'''
     SELECT
       itemNumber
@@ -577,15 +596,16 @@ def sql__search__items_by_keyword(keyword):
           FROM
             {DATABASE}.swap
          WHERE
-            swap_status='Accepted' or swap_status IS NULL
+            swap_status='Accepted' or swap_status = ''
          UNION
         SELECT
         DISTINCT proposer_itemNumber
         FROM
           {DATABASE}.swap
         WHERE
-          swap_status='Accepted' or swap_status IS NULL
+          swap_status='Accepted' or swap_status = ''
       )
+      AND item.email <> '{emailAddr}'
   '''
   return sql__search__items_by_keyword
 
@@ -628,14 +648,14 @@ def sql__search__items_by_my_postal_code(email):
           FROM
             {DATABASE}.swap
          WHERE
-            swap_status='Accepted' or swap_status IS NULL
+            swap_status='Accepted' or swap_status = ''
          UNION
         SELECT
         DISTINCT proposer_itemNumber
         FROM
           {DATABASE}.swap
         WHERE
-          swap_status='Accepted' or swap_status IS NULL
+          swap_status='Accepted' or swap_status = ''
       )
   '''
   return sql__search__items_by_my_postal_code
@@ -652,7 +672,7 @@ def sql__search__get_lat_lon_by_postal_code(postal_code):
   '''
   return sql__search__get_lat_lon_by_postal_code
 
-def sql__search__items_by_other_postal_code(postal_code):
+def sql__search__items_by_other_postal_code(emailAddr, postal_code):
   sql__search__items_by_other_postal_code = f'''
     SELECT
 	    itemNumber
@@ -666,6 +686,7 @@ def sql__search__items_by_other_postal_code(postal_code):
 	          {DATABASE}.user 
          WHERE
           postalcode in ({postal_code})
+          AND email <> '{emailAddr}'
       )
       AND itemNumber NOT IN (
         SELECT
@@ -673,14 +694,14 @@ def sql__search__items_by_other_postal_code(postal_code):
           FROM
             {DATABASE}.swap
          WHERE
-            swap_status='Accepted' or swap_status IS NULL
+            swap_status='Accepted' or swap_status = ''
          UNION
         SELECT
         DISTINCT proposer_itemNumber
         FROM
           {DATABASE}.swap
         WHERE
-          swap_status='Accepted' or swap_status IS NULL
+          swap_status='Accepted' or swap_status = ''
       )
   '''
   return sql__search__items_by_other_postal_code

@@ -83,7 +83,7 @@ def MainMenuObject(user_email):
 
     def myitems():
         my_items(user_email)
-        #os.system('my_Items.py')
+        #os.system('my_items.py')
 
     def additem():
        additemobject(user_email)

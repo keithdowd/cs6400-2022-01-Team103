@@ -1,6 +1,7 @@
 from global_variables import *
 from haversine import haversine
-from propose_swap_confirm import propose_swap_confirm
+import propose_swap_confirm
+import search
 from sql import sql__propose_swap__item_details
 from sql import sql__myrating__fetch
 from sql import sql_get_my_unrated_swaps
@@ -32,8 +33,12 @@ def propose_swap(emailAddr, item_number):
 
   ########## DATA
 
+  def return_to_search_exec():
+    search.search(emailAddr)
+    window.destroy()
+
   def propose_swap_confirm_exec():
-    propose_swap_confirm(emailAddr, item_title, distance)
+    propose_swap_confirm.propose_swap_confirm(emailAddr, offered_by_email, itemNumber, item_title, distance)
     window.destroy()
 
   df = pd.read_sql_query(sql__propose_swap__item_details(emailAddr, item_number), cnx)
@@ -134,6 +139,23 @@ def propose_swap(emailAddr, item_number):
     label_piece_count.grid(row=7, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
     label_piece_count_value = tk.Label(master=frame_left, text=f'{itemtype_piece_count}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
     label_piece_count_value.grid(row=7, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+
+  # Close button
+  close_button = tk.Button(
+    master=window, 
+    text='Close',
+    font=(
+      LABEL_FONT_FAMILY,
+      LABEL_FONT_SIZE,
+      LABEL_FONT_WEIGHT_VALUE,
+    ),
+    command=return_to_search_exec)
+  close_button.grid(
+    row=10, 
+    column=0,
+    padx=WINDOW_PADDING_X, 
+    pady=WINDOW_PADDING_Y+20,  
+    sticky='w')
 
   # Right column
   frame_right = tk.Frame(master=window)
