@@ -89,7 +89,7 @@ def additemobject(user_email):
             menu_computer_platformtype.config(state='disabled')
 
             menu_mediatype.config(state='disabled')
-            menu_computer_platformtype.config(state='normal')
+            menu_computer_platformtype.config(state='disabled')
 
         if x in('Video Game'):
             s_piece_cnt.config(state='disabled')
@@ -203,9 +203,6 @@ def additemobject(user_email):
             mycursor = cnx.cursor()
             mycursor.execute(add_item_query)
             cnx.commit()
-            mycursor.close()
-            cnx.close()
-            
             itemadditionpopup()
             '''
             listitem_fetch_query = "Select count(1) cnt from  CS6400_spr22_team103.item  where item_title=  " + "'" + e_title.get() + "'"
