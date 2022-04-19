@@ -782,10 +782,37 @@ def sql__pull_itemname(itemNum):
 '''
   return sql__pull_itemname
 
-  def sql_swap_history_detail(swapID):
-    sql_swap_history_detail = f'''
-      SELECT
-        item_title
-      FROM {DATABASE}.Item
-     WHERE itemNumber='{itemNum}'
+def sql__swap_history_detail(swapID, userEmail):
+  sql__swap_history_detail = f'''
+Select swap_date_responded as Accepted_Rejected_Date,swap_date_proposed, 'Counterparty' myrole,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user,swap_counterparty_rating,
+p_item.itemnumber p_item_no,c_item.itemnumber c_item_no ,p_item.itemtype_name p_item_type,c_item.itemtype_name c_item_type,p_item.item_condition p_item_cond,c_item.item_condition c_item_cond,p_item.item_description p_item_desc,s.swap_counterparty_rating
+, case when s.swap_status='Accepted' then p_user.user_firstname|| ' '|| p_user.user_lastname  else null end other_user_name,
+case when s.swap_status='Accepted' then p_user.email  else null end other_user_email,
+case when s.swap_status='Accepted' then p_user.phone_number  else null end other_user_phone_number
+,d_addr.addr_longitude,d_addr.addr_latitude ,p_addr.addr_longitude,p_addr.addr_latitude
+from CS6400_spr22_team103.swap s 
+join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
+join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
+join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
+join CS6400_spr22_team103.user p_user on s.proposer_email=p_user.email
+join CS6400_spr22_team103.useraddress d_addr on d_user.postalcode=d_addr.postalcode
+join CS6400_spr22_team103.useraddress p_addr on p_user.postalcode=p_addr.postalcode
+ where s.counterparty_email='{userEmail}' and swapid={swapID}
+UNION
+
+ Select swap_date_responded as Accepted_Rejected_Date,swap_date_proposed, 'Proposer' myrole,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user,swap_counterparty_rating,
+p_item.itemnumber p_item_no,c_item.itemnumber c_item_no ,p_item.itemtype_name p_item_type,c_item.itemtype_name c_item_type,p_item.item_condition p_item_cond,c_item.item_condition c_item_cond,p_item.item_description p_item_desc,s.swap_counterparty_rating
+, case when s.swap_status='Accepted' then d_user.user_firstname|| ' '|| p_user.user_lastname  else null end other_user_name,
+case when s.swap_status='Accepted' then d_user.email  else null end other_user_email,
+case when s.swap_status='Accepted' then d_user.phone_number  else null end other_user_phone_number
+,d_addr.addr_longitude,d_addr.addr_latitude ,p_addr.addr_longitude,p_addr.addr_latitude
+from CS6400_spr22_team103.swap s 
+join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
+join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
+join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
+join CS6400_spr22_team103.user p_user on s.proposer_email=p_user.email
+join CS6400_spr22_team103.useraddress d_addr on d_user.postalcode=d_addr.postalcode
+join CS6400_spr22_team103.useraddress p_addr on p_user.postalcode=p_addr.postalcode
+ where s.proposer_email='{userEmail}' and swapid={swapID}
 '''
+  return sql__swap_history_detail

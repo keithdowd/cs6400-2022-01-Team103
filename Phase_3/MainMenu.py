@@ -4,11 +4,11 @@ from sql import sql__myrating__fetch
 from sql import sql__unacceptedswaps__fetch
 from sql import sql__fivedayoldswap__fetch
 from sql import sql__unratedswaps__fetch
-from my_Items import my_items
+from my_items import my_items
 from rateswaps import get_unrated_swaps
 from AcceptRejectSwaps import accept_reject_swaps
 from search import search
-from swap_history_new import swap_hist
+from swap_history import swap_hist
 from UpdateMyInfo import update_my_info
 def MainMenuObject(user_email):
 #if __name__ == '__main__':
