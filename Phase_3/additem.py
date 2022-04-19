@@ -166,13 +166,24 @@ def additemobject(user_email):
         l1.grid(row=2, column=0)
         b = ttk.Button(win, text="OK", command=win.destroy)
         b.grid(row=4, column=0)
+
+    def nulltitlepopup():
+        win = tk.Toplevel()
+        win.geometry("210x100")
+        win.wm_title("Error")
+        l1 = tk.Label(win, text="Null Title for the item or Invalid gametype")
+        l1.grid(row=2, column=0)
+        b = ttk.Button(win, text="OK", command=win.destroy)
+        b.grid(row=4, column=0)
+
+        l = tk.Label(win, text="Your item has been listed")
     def additeminsert():
         display(master.piece_cnt_txt)
         display(master.platformtype_text)
         display(master.video_media_type_txt)
 
-        if e_title.get()=="" :
-            p.set("Please enter valid title")
+        if (e_title.get()=="" or master.game_type_txt=='') :
+            nulltitlepopup()
         else:
             add_item_query = "insert into CS6400_spr22_team103.item (item_title, item_condition, item_description, itemtype_name, itemtype_platform, itemtype_media, itemtype_piece_count, email) values " + "('" + e_title.get() + "','" + option_condition.get() + "','" + e_description.get() + "','" + master.game_type_txt + "','" + master.platformtype_text + "','" + master.video_media_type_txt + "','" + str(
                 master.piece_cnt_txt) + "','" + user_email + "')"
@@ -202,7 +213,9 @@ def additemobject(user_email):
                 p.set("Item Title Exists Please list with different title") '''
 
     listitembtn1 = Button(master, text="List Item", bg='blue', fg='white', borderless=1,command=additeminsert)
-    listitembtn1.place(x=360, y=605,)
+    listitembtn1.place(x=360, y=605)
+    close_button = Button(master, text="Close", bg='blue', fg='white', borderless=1, command=logout)
+    close_button.place(x=100, y=800)
 
 
     tk.mainloop()
