@@ -524,12 +524,12 @@ def sql_get_my_unrated_swaps(emailAddr):
       (SELECT * 
       FROM
         (SELECT swapID, swap_date_proposed, swap_date_responded, counterparty_email as user_email, counterparty_itemNumber as item_number from {DATABASE}.swap
-          WHERE swap_status="Accepted" AND swap_proposer_rating is null AND proposer_email='{emailAddr}') 
+          WHERE swap_status="Accepted" AND swap_counterparty_rating is null AND proposer_email='{emailAddr}') 
           AS table1 
         UNION
         (SELECT swapID, swap_date_proposed, swap_date_responded, proposer_email as user_email, proposer_itemNumber 
           AS item_number from {DATABASE}.swap
-          WHERE swap_status="Accepted" AND swap_counterparty_rating is null AND counterparty_email='{emailAddr}')) 
+          WHERE swap_status="Accepted" AND swap_proposer_rating is null AND counterparty_email='{emailAddr}')) 
       AS unrated_swaps 
       JOIN
       (SELECT * FROM {DATABASE}.item) 
@@ -548,6 +548,7 @@ def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
   where swapID = {swapID};
   '''
   return sql_rate_my_unrated_swaps
+
 
 def sql_rate_my_unrated_swaps_proposer(emailAddr, swapID, rating):
   sql_rate_my_unrated_swaps_proposer = f'''
