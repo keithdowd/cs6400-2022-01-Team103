@@ -810,7 +810,7 @@ p_item.itemnumber p_item_no,c_item.itemnumber c_item_no ,p_item.itemtype_name p_
 , case when s.swap_status='Accepted' then p_user.user_firstname|| ' '|| p_user.user_lastname  else null end other_user_name,
 case when s.swap_status='Accepted' then p_user.email  else null end other_user_email,
 case when s.swap_status='Accepted' then p_user.phone_number  else null end other_user_phone_number
-,d_addr.addr_longitude,d_addr.addr_latitude ,p_addr.addr_longitude,p_addr.addr_latitude
+,d_addr.addr_longitude as long2 ,d_addr.addr_latitude as lat1 ,p_addr.addr_longitude as long1 ,p_addr.addr_latitude as lat2
 from CS6400_spr22_team103.swap s 
 join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
 join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber

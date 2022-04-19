@@ -33,15 +33,19 @@ def view_item(swapID, userEmail):
   ########## DATA
   df = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
   pf = pd.read_sql_query(sql__myrating__fetch(userEmail), cnx)
-  df_number = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
+  # df_number = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
   swap_proposed_text = df['swap_date_proposed'][0]
   accepted_rejected_text = df['Accepted_Rejected_Date'][0]
   status_text = df['myrole'][0]
   rating_left_text = pf['user_rating'][0]
-  print((df['addr_latitude']))
-  print((df['addr_longitude']))
+  # print(df['addr_latitude'])
+  # print((df['addr_longitude']))
+  lat1 = float(df['lat1'][0])
+  lat2 = float(df['lat2'][0])
+  long1 = float(df['long1'][0])
+  long2 = float(df['long2'][0])
   user_detail_nickname_text = df['other_user'][0]
-  distance_text = "lkio"
+  distance_text = haversine(lat1, lat2, long1, long2)
   user_detail_name_text = df['other_user_name'][0]
   user_detail_email_text = df['other_user_email'][0]
   user_detail_phone_text = df['other_user_phone_number'][0]
@@ -211,4 +215,4 @@ def view_item(swapID, userEmail):
   table_close_btn.place(x=500,y=500)
   window.mainloop()
 
-# view_item(1, 'usr001@gt.edu')
+view_item(1, 'usr001@gt.edu')
