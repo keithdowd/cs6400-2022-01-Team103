@@ -84,6 +84,12 @@ def additemobject(user_email):
             master.piece_cnt_txt = s_piece_cnt.get()
             master.platformtype_text = ""
             master.video_media_type_txt = ""
+            menu_mediatype.config(state='disabled')
+            menu_video_platformtype.config(state='disabled')
+            menu_computer_platformtype.config(state='disabled')
+
+            menu_mediatype.config(state='disabled')
+            menu_computer_platformtype.config(state='normal')
 
         if x in('Video Game'):
             s_piece_cnt.config(state='disabled')
@@ -98,6 +104,8 @@ def additemobject(user_email):
             master.platformtype_text = option_computer_platform_type.get()
             master.piece_cnt_txt = 0
             master.video_media_type_txt = ""
+            menu_mediatype.config(state='disabled')
+            menu_video_platformtype.config(state='disabled')
 
             s_piece_cnt.config(state='disabled')
             menu_mediatype.config(state='disabled')
@@ -107,7 +115,10 @@ def additemobject(user_email):
             master.piece_cnt_txt = 0
             master.platformtype_text = ""
             master.video_media_type_txt = ""
-
+            menu_mediatype.config(state='disabled')
+            menu_video_platformtype.config(state='disabled')
+            menu_computer_platformtype.config(state='disabled')
+            s_piece_cnt.config(state='disabled')
 
     label_title = tk.Label(master, text="New Item Listing")
     label_title.place(width=250, height=35, x=50, y=50)
