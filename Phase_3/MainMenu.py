@@ -4,7 +4,7 @@ from sql import sql__myrating__fetch
 from sql import sql__unacceptedswaps__fetch
 from sql import sql__fivedayoldswap__fetch
 from sql import sql__unratedswaps__fetch
-from my_Items import my_items
+from my_items import my_items
 from rateswaps import get_unrated_swaps
 from AcceptRejectSwaps import accept_reject_swaps
 from search import search
@@ -83,7 +83,7 @@ def MainMenuObject(user_email):
 
     def myitems():
         my_items(user_email)
-        #os.system('my_Items.py')
+        #os.system('my_items.py')
 
     def additem():
        additemobject(user_email)
