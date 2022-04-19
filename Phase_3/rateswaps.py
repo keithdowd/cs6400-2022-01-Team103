@@ -172,7 +172,7 @@ def get_unrated_swaps(userEmail):
             LABEL_FONT_WEIGHT_VALUE,
         ),
         command=window.destroy)
-    table_close_btn.place(x=780,y=300)
+    table_close_btn.place(x=780,y=340)
 
     ##############################
     # EVENT LOOP 
