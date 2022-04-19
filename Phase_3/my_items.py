@@ -82,6 +82,9 @@ def my_items(emailAddr='usr001@gt.edu'):
 
   df = pd.read_sql_query(sql__my_items__count_of_item_type(emailAddr), cnx)
 
+  print(emailAddr)
+  print(df)
+
   board_games_cnt = 0 if df[df['itemtype_name'] == 'Board Game'].empty else df[df['itemtype_name'] == 'Board Game']['count'].reset_index(drop=True)[0]
   card_games_cnt = 0 if df[df['itemtype_name'] == 'Card Game'].empty else df[df['itemtype_name'] == 'Card Game']['count'].reset_index(drop=True)[0]
   computer_games_cnt = 0 if df[df['itemtype_name'] == 'Computer Game'].empty else df[df['itemtype_name'] == 'Computer Game']['count'].reset_index(drop=True)[0]
@@ -175,6 +178,9 @@ def my_items(emailAddr='usr001@gt.edu'):
   ]
 
   df = pd.read_sql_query(sql__my_items__list_of_all_items(emailAddr), cnx)
+
+  print(emailAddr)
+  print(df)
 
   my_items_data = []
 
