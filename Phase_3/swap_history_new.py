@@ -294,10 +294,10 @@ def swap_hist(userEmail):
 
             if (proposer_email == userEmail):
               my_role_txt = 'Proposer'
-              rating_text = row1['swap_proposer_rating']
+              rating_text = row1['swap_counterparty_rating']
             else:
                my_role_txt = 'Counterparty'
-               rating_text = row1['swap_counterparty_rating']
+               rating_text = row1['swap_proposer_rating']
 
 
 
