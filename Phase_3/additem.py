@@ -122,10 +122,10 @@ def additemobject(user_email):
 
 
     menu_gametype = tk.OptionMenu(master, option_game_type, "Jigsaw Puzzle",
-        "Board Games",
-        "Card Games",
-        "Computer Games",
-    "Video Games",command=gametypeselection)
+        "Board Game",
+        "Card Game",
+        "Computer Game",
+    "Video Game",command=gametypeselection)
     menu_gametype.place(x=40, y=120)
     l_title = tk.Label(master, text="Title")
     l_title.place(x=40, y=155)

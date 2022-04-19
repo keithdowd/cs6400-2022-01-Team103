@@ -89,7 +89,7 @@ def MainMenuObject(user_email):
        additemobject(user_email)
       #os.system('additem.py')
     def searchitems():
-        search.search()
+        search.search(user_email)
         #os.system('searchitems.py')
 
     def acceptorrejectswaps():

@@ -9,7 +9,7 @@ from sql import sql__search__items_by_other_postal_code
 from sql import sql__search__get_all_postal_codes_lat_lon
 
 
-def search(emailAddr='usr001@gt.edu'):
+def search(emailAddr):
   ##############################
   # CONFIGURATION
   ##############################
@@ -78,6 +78,7 @@ def search(emailAddr='usr001@gt.edu'):
     elif selection == 2:
       # My postal code search
       query = sql__search__items_by_my_postal_code(emailAddr)
+      print(query, selection)
       return (query, selection)
 
     elif selection == 3:

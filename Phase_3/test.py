@@ -1,5 +1,5 @@
 from global_variables import *
-# from my_items import my_items
+from my_items import my_items
 from search import search
 
 WINDOW_TITLE = 'My Items'
