@@ -159,7 +159,7 @@ def get_unrated_swaps(userEmail):
         # clicked[i].set(5)
 
 
-        drop = OptionMenu(window, clicked[i], *ratings, command=lambda i=i:callback(i))
+        drop = OptionMenu(window, clicked[i], *ratings)
 
         drop.grid(row=i+3, column=14)
 
@@ -184,7 +184,7 @@ def get_unrated_swaps(userEmail):
     ##############################
     # EVENT LOOP 
     ##############################
-    # window.mainloop()
+    window.mainloop()
 
 
 def rate_swaps(emailAddr, userEmail, swapID, rating):
@@ -197,4 +197,4 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
     get_unrated_swaps(userEmail)
 
 
-# get_unrated_swaps(userEmail='usr074@gt.edu')
+get_unrated_swaps(userEmail='usr074@gt.edu')
