@@ -119,7 +119,7 @@ def view_item(swapID, userEmail):
 
   label_distance = tk.Label(master=frame_left, text='Distance', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
   label_distance.grid(row=1, column=3, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-  label_distance_value = tk.Label(master=frame_left, text=f'{distance_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+  label_distance_value = tk.Label(master=frame_left, text=f'{distance_text} miles', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
   label_distance_value.grid(row=1, column=5, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
   
 
