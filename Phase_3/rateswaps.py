@@ -62,7 +62,7 @@ def get_unrated_swaps(userEmail):
     ##############################
 
     # Header
-    header = tk.Label(window, text='Rate Items', font=(
+    header = tk.Label(window, text='Your Unrated Items', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
     header.grid(row=0, column=0)
 
