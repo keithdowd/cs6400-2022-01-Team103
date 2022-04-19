@@ -580,7 +580,7 @@ def sql_get_swap_history(userEmail):
 ##############################
 # search.py
 ##############################
-def sql__search__items_by_keyword(keyword):
+def sql__search__items_by_keyword(emailAddr, keyword):
   sql__search__items_by_keyword = f'''
     SELECT
       itemNumber
@@ -605,6 +605,7 @@ def sql__search__items_by_keyword(keyword):
         WHERE
           swap_status='Accepted' or swap_status = ''
       )
+      AND item.email <> '{emailAddr}'
   '''
   return sql__search__items_by_keyword
 
@@ -671,7 +672,7 @@ def sql__search__get_lat_lon_by_postal_code(postal_code):
   '''
   return sql__search__get_lat_lon_by_postal_code
 
-def sql__search__items_by_other_postal_code(postal_code):
+def sql__search__items_by_other_postal_code(emailAddr, postal_code):
   sql__search__items_by_other_postal_code = f'''
     SELECT
 	    itemNumber
@@ -685,6 +686,7 @@ def sql__search__items_by_other_postal_code(postal_code):
 	          {DATABASE}.user 
          WHERE
           postalcode in ({postal_code})
+          AND email <> '{emailAddr}'
       )
       AND itemNumber NOT IN (
         SELECT
