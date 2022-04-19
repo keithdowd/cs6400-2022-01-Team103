@@ -101,14 +101,14 @@ def sql__my_items__count_of_item_type(emailAddr):
             FROM
               {DATABASE}.swap
           WHERE
-              swap_status='Accepted' or swap_status IS NULL
+              swap_status='Accepted' or swap_status=''
           UNION
           SELECT
           DISTINCT proposer_itemNumber
           FROM
             {DATABASE}.swap
           WHERE
-            swap_status='Accepted' or swap_status IS NULL
+            swap_status='Accepted' or swap_status=''
         )
   GROUP BY itemtype_name
   '''
@@ -326,6 +326,24 @@ def sql__propose_swap_confirm__items_for_swap(emailAddr):
   ORDER BY itemNumber ASC
   '''
   return sql__propose_swap_confirm__items_for_swap
+
+##############################
+# propose_swap_confirm_insert.py
+##############################
+
+def sql__propose_swap_confirm__insert_swap(
+  proposer_email,
+  swap_date_proposed,
+  swap_status,
+  counterparty_email,
+  proposer_itemNumber,
+  counterparty_itemNumber
+):
+  sql__propose_swap_confirm__insert_swap = f'''
+  INSERT INTO {DATABASE}.swap (proposer_email, swap_date_proposed, swap_status, counterparty_email, proposer_itemNumber, counterparty_itemNumber)
+    VALUES ('{proposer_email}', '{swap_date_proposed}', '{swap_status}', '{counterparty_email}', '{proposer_itemNumber}', '{counterparty_itemNumber}')
+  '''
+  return sql__propose_swap_confirm__insert_swap
 
 ##############################
 # view_items.py

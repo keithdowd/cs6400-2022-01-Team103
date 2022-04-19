@@ -1,17 +1,23 @@
+from datetime import datetime
+
 from global_variables import *
+from propose_swap_insert import propose_swap_insert
 from sql import sql__propose_swap_confirm__items_for_swap
 
-# func
-# get emailAddr, item_title, distance
 
-def propose_swap_confirm(emailAddr, item_title, distance):
+def propose_swap_confirm(
+  emailAddr, 
+  offered_by_email,
+  itemNumber,
+  item_title, 
+  distance):
 
   ##############################
   # CONFIGURATION
   ##############################
 
   # Window
-  WINDOW_TITLE = 'Propose Swap (Confirmation)'
+  WINDOW_TITLE = 'Propose Swap'
 
 
   ##############################
@@ -59,18 +65,13 @@ def propose_swap_confirm(emailAddr, item_title, distance):
   scrollbar.grid(row=0, column=9, sticky='nse')
 
   ##############################
-  # PROPOSE SWAP
+  # PROPOSE SWAP (CONFIRM)
   ##############################
 
   ########## DATA
 
   proposed_item_title = item_title
-
-  def propose_swap_confirm_exec():
-    print(get_selection_rb_var())
-
-  def get_swap_query():
-    pass
+  proposed_item_number = itemNumber
 
   # Variables for input modals
   selection_rb_var = tk.IntVar(window)
@@ -104,6 +105,25 @@ def propose_swap_confirm(emailAddr, item_title, distance):
       ]
 
       my_items_data.append(arr)
+
+  def propose_swap_confirm_exec():
+    proposer_email = emailAddr
+    counterparty_email = offered_by_email
+    proposer_itemNumber = get_selection_rb_var()
+    counterparty_itemNumber = proposed_item_number
+    swap_status = ''
+    swap_date_proposed = datetime.today().strftime('%Y-%m-%d')
+
+    propose_swap_insert(
+      proposer_email,
+      counterparty_email,
+      proposer_itemNumber,
+      counterparty_itemNumber,
+      swap_status,
+      swap_date_proposed
+    )
+
+    window.destroy()
 
   ########## VIEW
 
@@ -269,6 +289,7 @@ def propose_swap_confirm(emailAddr, item_title, distance):
       LABEL_FONT_WEIGHT_VALUE,
     ),
     command=propose_swap_confirm_exec
+    # command=lambda item_number=get_selection_rb_var(): propose_swap_confirm_exec(item_number)
   )
   table_my_items_details_btn.grid(
     row=(row_index+21 if distance < 100.0 else row_index+2),

@@ -33,7 +33,7 @@ def propose_swap(emailAddr, item_number):
   ########## DATA
 
   def propose_swap_confirm_exec():
-    propose_swap_confirm(emailAddr, item_title, distance)
+    propose_swap_confirm(emailAddr, offered_by_email, itemNumber, item_title, distance)
     window.destroy()
 
   df = pd.read_sql_query(sql__propose_swap__item_details(emailAddr, item_number), cnx)
