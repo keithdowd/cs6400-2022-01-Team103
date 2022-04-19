@@ -1,6 +1,6 @@
 from haversine import haversine
 from global_variables import *
-from search_results import search_results
+import search_results
 from sql import sql__search__get_postal_code_by_email
 from sql import sql__search__items_by_keyword
 from sql import sql__search__get_lat_lon_by_postal_code
@@ -155,7 +155,7 @@ def search(emailAddr='usr117@gt.edu'):
         # Other postal code
         context = get_other_postal_code_entry_var()
 
-      search_results(emailAddr, item_numbers, selection, context)
+      search_results.search_results(emailAddr, item_numbers, selection, context)
 
       window.destroy()
 

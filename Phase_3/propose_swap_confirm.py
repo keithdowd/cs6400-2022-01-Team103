@@ -1,8 +1,9 @@
 from datetime import datetime
 
 from global_variables import *
-from propose_swap_insert import propose_swap_insert
-from sql import sql__propose_swap_confirm__items_for_swap
+import propose_swap_insert
+# from sql import sql__propose_swap_confirm__items_for_swap
+from sql import sql__my_items__list_of_all_items
 
 
 def propose_swap_confirm(
@@ -114,7 +115,7 @@ def propose_swap_confirm(
     swap_status = ''
     swap_date_proposed = datetime.today().strftime('%Y-%m-%d')
 
-    propose_swap_insert(
+    propose_swap_insert.propose_swap_insert(
       proposer_email,
       counterparty_email,
       proposer_itemNumber,
