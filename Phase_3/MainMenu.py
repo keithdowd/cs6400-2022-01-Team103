@@ -4,12 +4,12 @@ from sql import sql__myrating__fetch
 from sql import sql__unacceptedswaps__fetch
 from sql import sql__fivedayoldswap__fetch
 from sql import sql__unratedswaps__fetch
-from my_items import my_items
-from rateswaps import get_unrated_swaps
-from AcceptRejectSwaps import accept_reject_swaps
-from search import search
-from swap_history import swap_hist
-from UpdateMyInfo import update_my_info
+import my_items
+import rateswaps
+import AcceptRejectSwaps
+import search
+import swap_history_new
+import UpdateMyInfo
 def MainMenuObject(user_email):
 #if __name__ == '__main__':
     import tkinter as tk
@@ -82,19 +82,19 @@ def MainMenuObject(user_email):
 
 
     def myitems():
-        my_items(user_email)
+        my_items.my_items(user_email)
         #os.system('my_items.py')
 
     def additem():
        additemobject(user_email)
       #os.system('additem.py')
     def searchitems():
-        search()
+        search.search()
         #os.system('searchitems.py')
 
     def acceptorrejectswaps():
         if int(unacceptedswaps_data['unaccepted_swaps'][0]) > 0:
-            accept_reject_swaps(user_email)
+            AcceptRejectSwaps.accept_reject_swaps(user_email)
              #os.system('searchitems.py')
 
     def propose_swaps():
@@ -102,12 +102,12 @@ def MainMenuObject(user_email):
 
     def unrated_swaps():
         if int(unratedswaps_data['unrated_swaps'][0]) > 0:
-            get_unrated_swaps(user_email)
+            rateswaps.get_unrated_swaps(user_email)
             #os.system('rateswaps.py')
     def swaphistory():
-        swap_hist(user_email)
+        swap_history_new.swap_hist(user_email)
     def updatemyinfo():
-        update_my_info(user_email)
+        UpdateMyInfo.update_my_info(user_email)
 
 
 
