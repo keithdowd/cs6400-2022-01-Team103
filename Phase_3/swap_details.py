@@ -3,11 +3,6 @@ from sql import *
 from haversine import haversine
 
 def view_item(swapID, userEmail):
-    # item_number = 1
-    # if role == "Proposer":
-    #     item_number = proposer_number 
-    # else:
-    #     item_number = counterparty_number
 
   ##############################
   # CONFIGURATION
@@ -19,13 +14,16 @@ def view_item(swapID, userEmail):
   ##############################
   # SETUP
   ##############################
-  def setup(title='My Window', width=800, height=400):
+  def setup(title='My Window', width=800, height=WINDOW_SIZE_HEIGHT):
     window = tk.Tk()
     window.title(title)
     window.geometry(f'{width}x{height}')
     return window
 
-  window = setup(title=WINDOW_TITLE, width=WINDOW_SIZE_WIDTH, height=WINDOW_SIZE_HEIGHT)
+  def window_destroy():
+      window.destroy()
+  window = setup(title=WINDOW_TITLE, width=1000, height=1000)
+  window.resizable(width=False, height=False)
   item_number = 10
 
   ##############################
@@ -209,6 +207,8 @@ def view_item(swapID, userEmail):
   # EVENT LOOP
   ##############################
   # if __name__ == "__main__":
+  table_close_btn = tk.Button(master=window, text='Close', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE), command=window_destroy)
+  table_close_btn.place(x=500,y=500)
   window.mainloop()
 
-view_item(1, 'usr001@gt.edu')
+# view_item(1, 'usr001@gt.edu')
