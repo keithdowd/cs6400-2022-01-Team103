@@ -63,14 +63,21 @@ def get_unrated_swaps(userEmail):
 
     # Header
     header = tk.Label(window, text='Rate Items', font=(
-        LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE, BOLD))
-    header.grid(row=0, column=6)
+        LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+    header.grid(row=0, column=0)
 
     header.grid_configure(padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y)
 
     # Separator
-    separator = ttk.Separator(window, orient='horizontal')
-    separator.grid(row=1, column=6)
+    separator = ttk.Separator(
+        master=window,
+        orient='horizontal')
+    separator.grid(
+        row=1,
+        columnspan=22,
+        padx=WINDOW_PADDING_X,
+        pady=WINDOW_PADDING_Y,
+        sticky='ew')
 
     # columns
     label_swapID = tk.Label(window, text='Swap#', font=(
@@ -148,7 +155,7 @@ def get_unrated_swaps(userEmail):
         label_condition_value.grid(row=i+3, column=12)
 
 
-        clicked.append(StringVar(window))
+        clicked.append(StringVar())
         # clicked[i].set(5)
 
 
@@ -177,7 +184,7 @@ def get_unrated_swaps(userEmail):
     ##############################
     # EVENT LOOP 
     ##############################
-    # window.mainloop()
+    window.mainloop()
 
 
 def rate_swaps(emailAddr, userEmail, swapID, rating):
@@ -190,6 +197,6 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
     get_unrated_swaps(userEmail)
 
 
-# get_unrated_swaps(userEmail='usr071@gt.edu')
+get_unrated_swaps(userEmail='usr071@gt.edu')
 
 # rate_swaps('usr121@gt.edu','usr121@gt.edu',258,4)
