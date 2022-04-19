@@ -61,12 +61,13 @@ def view_item(swapID, userEmail):
   desired_item_title_text = df['DesiredItem'][0]
   desired_item_type_text = df['c_item_type'][0]
   desired_item_type_cond_text = df['c_item_cond'][0]
+  print(desired_item_type_cond_text)
 
 
   ########## VIEW
 
   # Header
-  label_item_counts = tk.Label(master=window, text='Swap Details                User Details', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+  label_item_counts = tk.Label(master=window, text='Swap Details                         User Details', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
   label_item_counts.grid(row=0, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
 
   # Separator
@@ -140,7 +141,7 @@ def view_item(swapID, userEmail):
 
 
   # Header
-  label_item_countsRight = tk.Label(master=window, text='Proposed Item                Desired Item', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+  label_item_countsRight = tk.Label(master=window, text='Proposed Item                         Desired Item', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
   label_item_countsRight.grid(row=6, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
 
   # Separator
@@ -205,7 +206,7 @@ def view_item(swapID, userEmail):
   label_condition = tk.Label(master=frame_left, text='Condition', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
   label_condition.grid(row=5, column=3, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
   label_condition_value = tk.Label(master=frame_left, text=f'{desired_item_type_cond_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-  label_condition_value.grid(row=3, column=5, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+  label_condition_value.grid(row=5, column=5, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
 
   ##############################
   # EVENT LOOP
