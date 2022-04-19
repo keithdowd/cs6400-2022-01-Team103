@@ -2,6 +2,7 @@ from datetime import datetime
 
 from global_variables import *
 import propose_swap_insert
+import search
 # from sql import sql__propose_swap_confirm__items_for_swap
 from sql import sql__my_items__list_of_all_items
 
@@ -71,6 +72,10 @@ def propose_swap_confirm(
 
   ########## DATA
 
+  def return_to_search_exec():
+    search.search(emailAddr)
+    window.destroy()
+
   proposed_item_title = item_title
   proposed_item_number = itemNumber
 
@@ -88,7 +93,8 @@ def propose_swap_confirm(
     'Condition',
   ]
 
-  df = pd.read_sql_query(sql__propose_swap_confirm__items_for_swap(emailAddr), cnx)
+  # df = pd.read_sql_query(sql__propose_swap_confirm__items_for_swap(emailAddr), cnx)
+  df = pd.read_sql_query(sql__my_items__list_of_all_items(emailAddr), cnx)
 
   my_items_data = []
 
@@ -293,13 +299,30 @@ def propose_swap_confirm(
     # command=lambda item_number=get_selection_rb_var(): propose_swap_confirm_exec(item_number)
   )
   table_my_items_details_btn.grid(
-    row=(row_index+21 if distance < 100.0 else row_index+2),
+    row=(row_index+21 if distance < 100.0 else row_index+20),
     column=0,
     columnspan=10,
     pady=20,
     padx=WINDOW_PADDING_X,
     sticky='w'
-    ) 
+    )
+
+  # Close button
+  close_button = tk.Button(
+    master=window, 
+    text='Close',
+    font=(
+      LABEL_FONT_FAMILY,
+      LABEL_FONT_SIZE,
+      LABEL_FONT_WEIGHT_VALUE,
+    ),
+    command=return_to_search_exec)
+  close_button.grid(
+    row=(row_index+21 if distance < 100.0 else row_index+20), 
+    column=1,
+    padx=WINDOW_PADDING_X, 
+    pady=WINDOW_PADDING_Y+20,  
+    sticky='w') 
 
 
   ##############################

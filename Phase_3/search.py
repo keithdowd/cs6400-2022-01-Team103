@@ -9,7 +9,7 @@ from sql import sql__search__items_by_other_postal_code
 from sql import sql__search__get_all_postal_codes_lat_lon
 
 
-def search(emailAddr='usr117@gt.edu'):
+def search(emailAddr='usr001@gt.edu'):
   ##############################
   # CONFIGURATION
   ##############################
@@ -69,7 +69,7 @@ def search(emailAddr='usr117@gt.edu'):
     if selection == 1:
       # Keyword search
       keyword = get_keyword_entry_var()
-      query = sql__search__items_by_keyword(keyword)
+      query = sql__search__items_by_keyword(emailAddr, keyword)
       return (query, selection)
       
     elif selection == 2:
@@ -109,14 +109,14 @@ def search(emailAddr='usr117@gt.edu'):
           postal_codes_match.append(postal_code)
       
       # Get all item numbers from postal codes that meet search criterria
-      query = sql__search__items_by_other_postal_code(','.join(postal_codes_match))
+      query = sql__search__items_by_other_postal_code(emailAddr, ','.join(postal_codes_match))
 
       return(query, selection)
 
     elif selection == 4:
       # Other postal code
       postal_code = get_other_postal_code_entry_var()
-      query = sql__search__items_by_other_postal_code(postal_code)
+      query = sql__search__items_by_other_postal_code(emailAddr, postal_code)
       return (query, selection)
     
     # Return false if no query is generated (no selection is made)
@@ -325,6 +325,24 @@ def search(emailAddr='usr117@gt.edu'):
     padx=20, 
     pady=WINDOW_PADDING_Y,  
     sticky='e') 
+  
+  # Close button
+  # search_button = tk.Button(
+  #   master=window, 
+  #   text='Close',
+  #   font=(
+  #     LABEL_FONT_FAMILY,
+  #     LABEL_FONT_SIZE,
+  #     LABEL_FONT_WEIGHT_VALUE,
+  #   ),
+  #   command=close_exec)
+  # search_button.grid(
+  #   row=7, 
+  #   column=0,
+  #   columnspan=10,
+  #   padx=20, 
+  #   pady=WINDOW_PADDING_Y,  
+  #   sticky='e') 
 
 
 ##############################
