@@ -549,6 +549,22 @@ def sql_rate_my_unrated_swaps(emailAddr, swapID, rating):
   '''
   return sql_rate_my_unrated_swaps
 
+def sql_rate_my_unrated_swaps_proposer(emailAddr, swapID, rating):
+  sql_rate_my_unrated_swaps_proposer = f'''
+  UPDATE {DATABASE}.swap 
+  SET swap_proposer_rating ={rating}
+  where swapID = {swapID}
+  and proposer_email='{emailAddr}'
+  '''
+  return sql_rate_my_unrated_swaps_proposer
+
+def sql_rate_my_unrated_swaps_counterparty(emailAddr, swapID, rating):
+  sql_rate_my_unrated_swaps_counterparty = f'''
+  UPDATE {DATABASE}.swap 
+  SET swap_counterparty_rating ={rating}
+  where swapID = {swapID} and counterparty_email='{emailAddr}';
+  '''
+  return sql_rate_my_unrated_swaps_counterparty
 ##############################
 # swap_history.py
 #############################
