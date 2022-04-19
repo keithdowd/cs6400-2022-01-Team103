@@ -25,7 +25,7 @@ def propose_swap_insert(
   # SETUP
   ##############################
 
-  def setup(title='My Window', width=800, height=400):
+  def setup(title='My Window', width=800, height=450):
     window = tk.Tk()
     window.title(title)
     window.geometry(f'{width}x{height}')
@@ -44,7 +44,6 @@ def propose_swap_insert(
   ########## DATA
 
   def return_exec():
-    search.search(proposer_email)
     window.destroy()
 
   proposer_email = proposer_email

@@ -34,7 +34,7 @@ def propose_swap_confirm(
 
   window = setup(
     title=WINDOW_TITLE, 
-    width=700, 
+    width=800, 
     height=WINDOW_SIZE_HEIGHT)
 
   # Create scrollable window for my items table
