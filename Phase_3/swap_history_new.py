@@ -98,10 +98,11 @@ def swap_hist(userEmail):
     proposer['accepted_count'].reset_index(drop=True)[0]
     proposer_rejected_count = 0 if proposer['rejected_count'].empty else \
     proposer['rejected_count'].reset_index(drop=True)[0]
-    proposer_rejected_percent = 0 if proposer_accepted_count == 0 else round(
-        (proposer_rejected_count / proposer_accepted_count) * 100)
 
     proposer_total = proposer_accepted_count + proposer_rejected_count
+    proposer_rejected_percent = 0 if proposer_accepted_count == 0 else round(
+        (proposer_rejected_count / proposer_total) * 100)
+
 
 
     counter_accepted_count = 0 if counter['accepted_count'].empty else counter['accepted_count'].reset_index(drop=True)[
@@ -646,7 +647,7 @@ def swap_hist(userEmail):
 ##############################
 # EVENT LOOP
 ##############################
-swap_hist('usr001@gt.edu')
+# swap_hist('usr001@gt.edu')
 
 
 '''    else:  # Show a message instead of the items table if the user has no items

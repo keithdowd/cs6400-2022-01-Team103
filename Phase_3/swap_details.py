@@ -36,7 +36,7 @@ def view_item(swapID, userEmail):
   pf = pd.read_sql_query(spl_pull_user(userEmail), cnx)
   user_detail_phone = pf['phone_number'][0]
   ef = pd.read_sql_query(spl_pull_user_phone_type(user_detail_phone), cnx)
-  user_detail_phone_text = '' if ef['phone_number'].empty else ef['phone_number'].reset_index(drop=True)[0]
+  user_detail_phone_text = 'None' if ef['phone_number'].empty else ef['phone_number'].reset_index(drop=True)[0]
   # pf = pd.read_sql_query(sql__myrating__fetch(userEmail), cnx)
   # df_number = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
   swap_proposed_text = df['swap_date_proposed'][0]
@@ -153,7 +153,7 @@ def view_item(swapID, userEmail):
 
 
   # Header
-  label_item_countsRight = tk.Label(master=window, text='Proposed Item                         Desired Item', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+  label_item_countsRight = tk.Label(master=window, text='Proposed Item                                      Desired Item', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
   label_item_countsRight.grid(row=6, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
 
   # Separator
@@ -229,3 +229,5 @@ def view_item(swapID, userEmail):
   table_close_btn = tk.Button(master=window, text='Close', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE), command=window_destroy)
   table_close_btn.place(x=500,y=500)
   window.mainloop()
+  
+# view_item(10, 'usr004@gt.edu')
