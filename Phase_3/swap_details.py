@@ -46,6 +46,7 @@ def view_item(swapID, userEmail):
   # if(status_text == "Proposer"):
   #   rating_left_text = df['swap_proposer_rating']
   # else:
+  print(df['swap_counterparty_rating'][0])
   rating_left_text = '' if (df['swap_counterparty_rating'][0] == 'None') else df['swap_counterparty_rating'].reset_index(drop=True)[0]
   
   lat1 = float(df['lat1'][0])
