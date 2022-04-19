@@ -79,13 +79,19 @@ def additemobject(user_email):
     def gametypeselection(x):
         master.game_type_txt=x
 
-        if x == 'JigSaw Puzzle':
+        if x == 'Jigsaw Puzzle':
             s_piece_cnt.config(state='normal')
             master.piece_cnt_txt = s_piece_cnt.get()
             master.platformtype_text = ""
             master.video_media_type_txt = ""
+            menu_mediatype.config(state='disabled')
+            menu_video_platformtype.config(state='disabled')
+            menu_computer_platformtype.config(state='disabled')
 
-        if x in('Video Games'):
+            menu_mediatype.config(state='disabled')
+            menu_computer_platformtype.config(state='disabled')
+
+        if x in('Video Game'):
             s_piece_cnt.config(state='disabled')
             menu_mediatype.config(state='normal')
             menu_video_platformtype.config(state='normal')
@@ -94,20 +100,25 @@ def additemobject(user_email):
             master.piece_cnt_txt = 0
             master.video_media_type_txt = option_media_type.get()
 
-        if x in('Computer Games'):
+        if x in('Computer Game'):
             master.platformtype_text = option_computer_platform_type.get()
             master.piece_cnt_txt = 0
             master.video_media_type_txt = ""
+            menu_mediatype.config(state='disabled')
+            menu_video_platformtype.config(state='disabled')
 
             s_piece_cnt.config(state='disabled')
             menu_mediatype.config(state='disabled')
             menu_computer_platformtype.config(state='normal')
 
-        if x in  ('Board Games','Card Games'):
+        if x in  ('Board Game','Card Game'):
             master.piece_cnt_txt = 0
             master.platformtype_text = ""
             master.video_media_type_txt = ""
-
+            menu_mediatype.config(state='disabled')
+            menu_video_platformtype.config(state='disabled')
+            menu_computer_platformtype.config(state='disabled')
+            s_piece_cnt.config(state='disabled')
 
     label_title = tk.Label(master, text="New Item Listing")
     label_title.place(width=250, height=35, x=50, y=50)
@@ -121,11 +132,11 @@ def additemobject(user_email):
     #option_game_type.set("JigSaw Puzzle")
 
 
-    menu_gametype = tk.OptionMenu(master, option_game_type, "JigSaw Puzzle",
-        "Board Games",
-        "Card Games",
-        "Computer Games",
-    "Video Games",command=gametypeselection)
+    menu_gametype = tk.OptionMenu(master, option_game_type, "Jigsaw Puzzle",
+        "Board Game",
+        "Card Game",
+        "Computer Game",
+    "Video Game",command=gametypeselection)
     menu_gametype.place(x=40, y=120)
     l_title = tk.Label(master, text="Title")
     l_title.place(x=40, y=155)
@@ -144,8 +155,7 @@ def additemobject(user_email):
     e_description.place(width=300,height=60,x=40, y=585)
     p = tk.StringVar()
     p.set("")
-    label_title_validate=tk.Label(master, textvariable=p)
-    label_title_validate.place(x=40, y=650)
+    tk.Label(master, textvariable=p).place(x=40, y=650)
     def itemadditionpopup():
         win = tk.Toplevel()
         win.geometry("210x100")
@@ -168,27 +178,23 @@ def additemobject(user_email):
         b = ttk.Button(win, text="OK", command=win.destroy)
         b.grid(row=4, column=0)
 
-    def itemtitlenullopup():
+    def nulltitlepopup():
         win = tk.Toplevel()
         win.geometry("210x100")
-        win.wm_title("Item title ")
-
-        l = tk.Label(win, text="Blank Title not allowed")
-
-        l.grid(row=0, column=0)
-
+        win.wm_title("Error")
+        l1 = tk.Label(win, text="Null Title for the item or Invalid gametype")
+        l1.grid(row=2, column=0)
         b = ttk.Button(win, text="OK", command=win.destroy)
-        b.grid(row=1, column=0)
+        b.grid(row=4, column=0)
 
+        l = tk.Label(win, text="Your item has been listed")
     def additeminsert():
         display(master.piece_cnt_txt)
         display(master.platformtype_text)
         display(master.video_media_type_txt)
 
-        if e_title.get()=="" :
-            print("inside null title")
-            p.set("Please enter valid title")
-            itemtitlenullopup()
+        if (e_title.get()=="" or master.game_type_txt=='') :
+            nulltitlepopup()
         else:
             add_item_query = "insert into CS6400_spr22_team103.item (item_title, item_condition, item_description, itemtype_name, itemtype_platform, itemtype_media, itemtype_piece_count, email) values " + "('" + e_title.get() + "','" + option_condition.get() + "','" + e_description.get() + "','" + master.game_type_txt + "','" + master.platformtype_text + "','" + master.video_media_type_txt + "','" + str(
                 master.piece_cnt_txt) + "','" + user_email + "')"
@@ -218,7 +224,9 @@ def additemobject(user_email):
                 p.set("Item Title Exists Please list with different title") '''
 
     listitembtn1 = Button(master, text="List Item", bg='blue', fg='white', borderless=1,command=additeminsert)
-    listitembtn1.place(x=360, y=605,)
+    listitembtn1.place(x=360, y=605)
+    close_button = Button(master, text="Close", bg='blue', fg='white', borderless=1, command=logout)
+    close_button.place(x=100, y=800)
 
 
     tk.mainloop()
