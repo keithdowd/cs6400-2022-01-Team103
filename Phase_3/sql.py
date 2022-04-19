@@ -833,8 +833,8 @@ def sql__pull_itemname(itemNum):
 
 def sql__swap_history_detail(swapID, userEmail):
   sql__swap_history_detail = f'''
-Select swap_date_responded as Accepted_Rejected_Date,swap_date_proposed, 'Counterparty' myrole,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user,swap_counterparty_rating,
-p_item.itemnumber p_item_no,c_item.itemnumber c_item_no ,p_item.itemtype_name p_item_type,c_item.itemtype_name c_item_type,p_item.item_condition p_item_cond,c_item.item_condition c_item_cond,p_item.item_description p_item_desc,s.swap_counterparty_rating
+Select swap_date_responded as Accepted_Rejected_Date,swap_date_proposed, 'Counterparty' myrole,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user,swap_counterparty_rating,null swap_proposer_rating,
+p_item.itemnumber p_item_no,c_item.itemnumber c_item_no ,p_item.itemtype_name p_item_type,c_item.itemtype_name c_item_type,p_item.item_condition p_item_cond,c_item.item_condition c_item_cond,p_item.item_description p_item_desc
 , case when s.swap_status='Accepted' then p_user.user_firstname|| ' '|| p_user.user_lastname  else null end other_user_name,
 case when s.swap_status='Accepted' then p_user.email  else null end other_user_email,
 case when s.swap_status='Accepted' then p_user.phone_number  else null end other_user_phone_number
@@ -848,9 +848,8 @@ join CS6400_spr22_team103.useraddress d_addr on d_user.postalcode=d_addr.postalc
 join CS6400_spr22_team103.useraddress p_addr on p_user.postalcode=p_addr.postalcode
  where s.counterparty_email='{userEmail}' and swapid={swapID}
 UNION
-
- Select swap_date_responded as Accepted_Rejected_Date,swap_date_proposed, 'Proposer' myrole,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user,swap_counterparty_rating,
-p_item.itemnumber p_item_no,c_item.itemnumber c_item_no ,p_item.itemtype_name p_item_type,c_item.itemtype_name c_item_type,p_item.item_condition p_item_cond,c_item.item_condition c_item_cond,p_item.item_description p_item_desc,s.swap_counterparty_rating
+ Select swap_date_responded as Accepted_Rejected_Date,swap_date_proposed, 'Proposer' myrole,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user,null ,swap_proposer_rating,
+p_item.itemnumber p_item_no,c_item.itemnumber c_item_no ,p_item.itemtype_name p_item_type,c_item.itemtype_name c_item_type,p_item.item_condition p_item_cond,c_item.item_condition c_item_cond,p_item.item_description p_item_desc
 , case when s.swap_status='Accepted' then d_user.user_firstname|| ' '|| p_user.user_lastname  else null end other_user_name,
 case when s.swap_status='Accepted' then d_user.email  else null end other_user_email,
 case when s.swap_status='Accepted' then d_user.phone_number  else null end other_user_phone_number
