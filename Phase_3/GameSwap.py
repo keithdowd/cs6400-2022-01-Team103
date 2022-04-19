@@ -31,6 +31,8 @@ master.resizable(width=False, height=False)
 # sets the geometry of main
 # root window
 master.geometry("500x400")
+
+
 def RegisterWindow():
     RegisterModule = Toplevel(master)
     RegisterModule.geometry("700x700")
@@ -100,6 +102,8 @@ def RegisterWindow():
     nickname_label_error.place(x=170, y=500)
     Label(RegisterModule, textvariable=p).place(x=170, y=520)
 
+    def quit_registerwindow():
+        RegisterModule.destroy()
     def checkRegisterValidations():
         email_validated = 0
         password_validated = 0
@@ -262,6 +266,8 @@ def RegisterWindow():
 
 
     Registerbtn1 = Button(RegisterModule,text="Register", bg='blue', fg='white', borderless=1,command=checkRegisterValidations).place(x=40,y=380)
+    Closebtn = Button(RegisterModule, text="Close", bg='blue', fg='white', borderless=1, command=quit_registerwindow)
+    Closebtn.place(x=150, y=380)
 
 global clickvalue
 
@@ -364,6 +370,7 @@ Loginbtn.place(x=200,y=240)
 Registerbtn = Button(master,
              text="Register", bg='blue',fg='white', borderless=1, command=RegisterWindow)
 Registerbtn.place(x=200,y=300)
+
 #Registerbtn.pack(pady=10)
 #master.label_error = Label(master, foreground='red')
 #master.label_error.place(x=170,y=350)
