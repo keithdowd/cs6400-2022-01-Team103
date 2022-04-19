@@ -480,13 +480,14 @@ def sql__unratedswaps__fetch(emailAddr):
         Select count(1) unrated_swaps from (Select swap_date_responded as acceptancedatee, 'Proposer' my_role,p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname other_user from CS6400_spr22_team103.swap s join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
 join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
 join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
- where proposer_email='{emailAddr}' and swap_status='Accepted' and swap_proposer_rating is null 
+ where proposer_email='{emailAddr}' and swap_status='Accepted' and swap_counterparty_rating is null 
 Union
 Select swap_date_responded as acceptancedatee, 'Counterparty',p_item.item_title ProposedItem, c_item.item_title DesiredItem,d_user.user_nickname from CS6400_spr22_team103.swap s join CS6400_spr22_team103.item p_item on s.proposer_itemNumber=p_item.itemNumber
 join CS6400_spr22_team103.item c_item on s.counterparty_itemNumber=c_item.itemNumber
 join CS6400_spr22_team103.user d_user on s.counterparty_email=d_user.email
- where counterparty_email='{emailAddr}'and swap_counterparty_rating is null and swap_status='Accepted') a   '''
+ where counterparty_email='{emailAddr}'and swap_proposer_rating is null and swap_status='Accepted') a   '''
   return sql__unratedswaps__fetch
+
 
 ##############################
 # additem.py
