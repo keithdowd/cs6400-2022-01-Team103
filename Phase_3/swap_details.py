@@ -15,7 +15,7 @@ def view_item(swapID, userEmail):
   ##############################
   # SETUP
   ##############################
-  def setup(title='My Window', width=800, height=WINDOW_SIZE_HEIGHT):
+  def setup(title='My Window', width=800, height=450):
     window = tk.Tk()
     window.title(title)
     window.geometry(f'{width}x{height}')
@@ -23,7 +23,7 @@ def view_item(swapID, userEmail):
 
   def window_destroy():
       window.destroy()
-  window = setup(title=WINDOW_TITLE, width=1000, height=1000)
+  window = setup(title=WINDOW_TITLE)
   window.resizable(width=False, height=False)
 
 
@@ -34,18 +34,22 @@ def view_item(swapID, userEmail):
   ########## DATA
   df = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
   pf = pd.read_sql_query(spl_pull_user(userEmail), cnx)
+  user_detail_phone = pf['phone_number'][0]
+  ef = pd.read_sql_query(spl_pull_user_phone_type(user_detail_phone), cnx)
+  user_detail_phone_text = '' if ef['phone_number'].empty else ef['phone_number'].reset_index(drop=True)[0]
   # pf = pd.read_sql_query(sql__myrating__fetch(userEmail), cnx)
   # df_number = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
   swap_proposed_text = df['swap_date_proposed'][0]
   accepted_rejected_text = df['Accepted_Rejected_Date'][0]
   status_text = df['myrole'][0]
+
   # if(status_text == "Proposer"):
   #   rating_left_text = df['swap_proposer_rating']
   # else:
   #   rating_left_text = df['swap_counterparty_rating']
-  rating_left_text = "lol"
+  rating_left_text = "todo"
 
-  print(df['swap_counterparty_rating'])
+  # print(df['swap_counterparty_rating'][0])
   lat1 = float(df['lat1'][0])
   lat2 = float(df['lat2'][0])
   long1 = float(df['long1'][0])
@@ -55,7 +59,10 @@ def view_item(swapID, userEmail):
 
   user_detail_name_text = pf['user_firstname'][0]
   user_detail_email_text = pf['email'][0]
-  user_detail_phone_text = pf['phone_number'][0]
+
+  user_phone_type_text = '' if ef['phone_type'].empty else (ef['phone_type'].reset_index(drop=True)[0])
+
+  # user_phone_type_text = ef['phone_type'][0]
 
   proposed_item_number_text = df['p_item_no'][0]
   proposed_item_title_text = df['ProposedItem'][0]
@@ -141,7 +148,7 @@ def view_item(swapID, userEmail):
 
   label_phone_text = tk.Label(master=frame_left, text='Phone', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
   label_phone_text.grid(row=4, column=3, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-  label_phone_text_value = tk.Label(master=frame_left, text=f'{user_detail_phone_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+  label_phone_text_value = tk.Label(master=frame_left, text=f'{user_detail_phone_text} {user_phone_type_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
   label_phone_text_value.grid(row=4, column=5, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
 
 
@@ -175,16 +182,18 @@ def view_item(swapID, userEmail):
   label_item_game_type_value = tk.Label(master=frame_left, text=f'{proposed_item_type_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
   label_item_game_type_value.grid(row=2, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
 
-  label_condition = tk.Label(master=frame_left, text='Condition', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
-  label_condition.grid(row=5, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-  label_condition_value = tk.Label(master=frame_left, text=f'{proposed_item_cond_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-  label_condition_value.grid(row=4, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
-
-
   label_title_des = tk.Label(master=frame_left, text='Description', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
   label_title_des.grid(row=4, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
   label_title_des_value = tk.Label(master=frame_left, text=f'{proposed_item_des_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
-  label_title_des_value.grid(row=5, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+  label_title_des_value.grid(row=4, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+
+  label_condition = tk.Label(master=frame_left, text='Condition', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_LABEL))
+  label_condition.grid(row=5, column=0, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+  label_condition_value = tk.Label(master=frame_left, text=f'{proposed_item_cond_text}', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
+  label_condition_value.grid(row=5, column=1, padx=WINDOW_PADDING_X, pady=WINDOW_PADDING_Y, sticky='w')
+
+
+
 
 
 #   Bottom Right column

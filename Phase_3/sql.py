@@ -815,7 +815,13 @@ def spl_pull_user(userEmail):
 select * from {DATABASE}.user where email='{userEmail}'
    '''
     return spl_pull_user
-    
+
+def spl_pull_user_phone_type(phonenumber):
+    spl_pull_user_phone_type = f'''
+select * from {DATABASE}.phone where phone_number='{phonenumber}'
+   '''
+    return spl_pull_user_phone_type
+
 def sql__pull_itemname(itemNum):
   sql__pull_itemname = f'''
       SELECT
