@@ -42,14 +42,12 @@ def view_item(swapID, userEmail):
   swap_proposed_text = df['swap_date_proposed'][0]
   accepted_rejected_text = df['Accepted_Rejected_Date'][0]
   status_text = df['myrole'][0]
-
+  
   # if(status_text == "Proposer"):
   #   rating_left_text = df['swap_proposer_rating']
   # else:
-  #   rating_left_text = df['swap_counterparty_rating']
-  rating_left_text = "todo"
-
-  # print(df['swap_counterparty_rating'][0])
+  rating_left_text = '' if (df['swap_counterparty_rating'][0] == 'None') else df['swap_counterparty_rating'].reset_index(drop=True)[0]
+  
   lat1 = float(df['lat1'][0])
   lat2 = float(df['lat2'][0])
   long1 = float(df['long1'][0])
