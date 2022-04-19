@@ -16,7 +16,7 @@ def get_unrated_swaps(userEmail):
     # Window
     WINDOW_TITLE = 'Rate Swap'
     WINDOW_HEIGHT = 400
-    WINDOW_WIDTH = 900
+    WINDOW_WIDTH = 1000
 
 
     # ratings
@@ -62,7 +62,7 @@ def get_unrated_swaps(userEmail):
     ##############################
 
     # Header
-    header = tk.Label(window, text='Your Unrated Items', font=(
+    header = tk.Label(window, text='Rate Items', font=(
         LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE))
     header.grid(row=0, column=0)
 
@@ -190,7 +190,7 @@ def get_unrated_swaps(userEmail):
 def rate_swaps(emailAddr, userEmail, swapID, rating):
     mycursor = cnx.cursor()
     query=sql_rate_my_unrated_swaps(emailAddr, swapID, rating)
-    # print(query)
+    print(query)
     mycursor.execute(query)
     cnx.commit()
     mycursor.close()
@@ -199,4 +199,4 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
 
 # get_unrated_swaps(userEmail='usr071@gt.edu')
 
-# rate_swaps('usr121@gt.edu','usr121@gt.edu',258,4)
+# rate_swaps('usr121@gt.edu', 258,4)
