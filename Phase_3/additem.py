@@ -79,7 +79,7 @@ def additemobject(user_email):
     def gametypeselection(x):
         master.game_type_txt=x
 
-        if x == 'JigSaw Puzzle':
+        if x == 'Jigsaw Puzzle':
             s_piece_cnt.config(state='normal')
             master.piece_cnt_txt = s_piece_cnt.get()
             master.platformtype_text = ""
@@ -121,7 +121,7 @@ def additemobject(user_email):
     #option_game_type.set("JigSaw Puzzle")
 
 
-    menu_gametype = tk.OptionMenu(master, option_game_type, "JigSaw Puzzle",
+    menu_gametype = tk.OptionMenu(master, option_game_type, "Jigsaw Puzzle",
         "Board Games",
         "Card Games",
         "Computer Games",
