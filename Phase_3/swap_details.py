@@ -45,7 +45,7 @@ def view_item(swapID, userEmail):
   long1 = float(df['long1'][0])
   long2 = float(df['long2'][0])
   user_detail_nickname_text = df['other_user'][0]
-  distance_text = haversine(lat1, lat2, long1, long2)
+  distance_text = round(haversine(lat1, lat2, long1, long2), 2)
   user_detail_name_text = df['other_user_name'][0]
   user_detail_email_text = df['other_user_email'][0]
   user_detail_phone_text = df['other_user_phone_number'][0]
