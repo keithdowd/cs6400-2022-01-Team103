@@ -155,7 +155,7 @@ def get_unrated_swaps(userEmail):
         label_condition_value.grid(row=i+3, column=12)
 
 
-        clicked.append(StringVar())
+        clicked.append(StringVar(window))
         # clicked[i].set(5)
 
 
@@ -184,7 +184,7 @@ def get_unrated_swaps(userEmail):
     ##############################
     # EVENT LOOP 
     ##############################
-    window.mainloop()
+    # window.mainloop()
 
 
 def rate_swaps(emailAddr, userEmail, swapID, rating):
@@ -197,6 +197,6 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
     get_unrated_swaps(userEmail)
 
 
-get_unrated_swaps(userEmail='usr071@gt.edu')
+# get_unrated_swaps(userEmail='usr071@gt.edu')
 
 # rate_swaps('usr121@gt.edu','usr121@gt.edu',258,4)
