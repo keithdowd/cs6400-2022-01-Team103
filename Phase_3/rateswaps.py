@@ -16,7 +16,7 @@ def get_unrated_swaps(userEmail):
     # Window
     WINDOW_TITLE = 'Rate Swap'
     WINDOW_HEIGHT = 400
-    WINDOW_WIDTH = 1000
+    WINDOW_WIDTH = 900
 
 
     # ratings
@@ -162,6 +162,17 @@ def get_unrated_swaps(userEmail):
                 LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE, BOLD), 
                 command=lambda i=i: buttonclick(rating=callback(i), userEmail=userEmail, emailAddr=row[3], swapID=row[0] ))
         submit.grid(row=i+3, column=16)
+
+    table_close_btn = tk.Button(
+        master=window,
+        text='Close',
+        font=(
+            LABEL_FONT_FAMILY,
+            LABEL_FONT_SIZE,
+            LABEL_FONT_WEIGHT_VALUE,
+        ),
+        command=window.destroy)
+    table_close_btn.place(x=780,y=300)
 
     ##############################
     # EVENT LOOP 
