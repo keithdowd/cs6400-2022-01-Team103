@@ -56,7 +56,7 @@ def my_items(emailAddr='usr001@gt.edu'):
 
   canvas.create_window((0, 0), window=scrollable_frame, anchor='nw')
   canvas.configure(yscrollcommand=v_scrollbar.set)
-  canvas.configure(yscrollcommand=h_scrollbar.set)
+  canvas.configure(xscrollcommand=h_scrollbar.set)
 
   container.grid(row=7, column=0, columnspan=9, sticky='nesw')
   canvas.grid(row=0, column=0, sticky='nesw')
