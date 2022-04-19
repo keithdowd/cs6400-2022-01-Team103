@@ -100,15 +100,18 @@ def swap_hist(userEmail):
     proposer['rejected_count'].reset_index(drop=True)[0]
     proposer_rejected_percent = 0 if proposer_accepted_count == 0 else round(
         (proposer_rejected_count / proposer_accepted_count) * 100)
+
     proposer_total = proposer_accepted_count + proposer_rejected_count
+
 
     counter_accepted_count = 0 if counter['accepted_count'].empty else counter['accepted_count'].reset_index(drop=True)[
         0]
     counter_rejected_count = 0 if counter['rejected_count'].empty else counter['rejected_count'].reset_index(drop=True)[
         0]
-    counter_rejected_percent = 0 if counter_accepted_count == 0 else round(
-        (counter_rejected_count / counter_accepted_count) * 100)
     counter_total = counter_accepted_count + counter_rejected_count
+    counter_rejected_percent = 0 if counter_accepted_count == 0 else round(
+        (counter_rejected_count / counter_total) * 100)
+
 
     print("REJECT COUNTER HERE")
     print(counter_rejected_count)
@@ -255,7 +258,7 @@ def swap_hist(userEmail):
 
     # df = pd.read_sql_query(sql__my_items__list_of_all_items(userEmail), cnx)
     df = pd.read_sql_query(sql_swap_title(userEmail), cnx)
-    print(df)
+    #print(df)
     rowcnt=0
     my_items_data = []
     my_items_data1=[]
@@ -272,28 +275,24 @@ def swap_hist(userEmail):
 
             flag=1
         if pd.isna(row1['swap_proposer_rating']) == True:
-
             flag1 = 1
         if flag==0:
 
-        #if  (pd.isna(row1['swap_counterparty_rating']) == False ) or (pd.isna(row1['swap_proposer_rating']) == False)  :
+
             print(row1['swapID'], row1['swap_counterparty_rating'], pd.isna(row1['swap_counterparty_rating']),flag)
             print(row1['swapID'], row1['swap_proposer_rating'], pd.isna(row1['swap_proposer_rating']),flag1)
-
-            # print("start here")
-            # print(row)
             swapid = row1['swapID']
             proposed_date = row1['swap_date_proposed']
             accepted_rejected_date = row1['swap_date_responded']
             swap_status = row1['swap_status']
             proposer_email = row1['proposer_email']
 
-        if (proposer_email == userEmail):
-            my_role_txt = 'Proposer'
-            rating_text = row1['swap_proposer_rating']
-        else:
-            my_role_txt = 'Counterparty'
-            rating_text = row1['swap_counterparty_rating']
+            if (proposer_email == userEmail):
+              my_role_txt = 'Proposer'
+              rating_text = row1['swap_proposer_rating']
+            else:
+               my_role_txt = 'Counterparty'
+               rating_text = row1['swap_counterparty_rating']
 
 
 
@@ -385,9 +384,10 @@ def swap_hist(userEmail):
             #rowcnt=0
             row_index += 8  # layout starts at row 8
             row_index_cnt=row_index
-            print('swapID',my_items_data1[rowcnt2][0])
+
 
             for col_index, my_item_value in enumerate(my_item):
+                print(my_item_value)
                 # center item number and left justify all other fields
                 if col_index == 0:
                     anchor = 'center'
@@ -433,12 +433,13 @@ def swap_hist(userEmail):
             )
             rowcnt2+=1
     for index, row in df.iterrows():
+       print(row)
        if (pd.isna(row['swap_counterparty_rating']) == True and row['swap_date_responded'] !='' and row['swap_status']=='Accepted'  and row['counterparty_email']==userEmail) or(pd.isna(row['swap_proposer_rating']) == True and  row['swap_date_proposed'] !=''  and row['swap_status']=='Accepted'  and row['proposer_email']==userEmail):
          print(row['swapID'], row['swap_counterparty_rating'], pd.isna(row['swap_counterparty_rating']))
          #print(row['swapid'], row['swap_proposer_rating'], pd.isna(row['swap_proposer_rating']))
 
           # print("start here")
-          # print(row)
+
          swapid=row['swapID']
          proposed_date = row['swap_date_proposed']
          accepted_rejected_date = row['swap_date_responded']
@@ -615,7 +616,6 @@ def swap_hist(userEmail):
                     LABEL_FONT_SIZE,
                     LABEL_FONT_WEIGHT_VALUE,
                 ),
-                
                 command=lambda swapid=my_item[0]: swap_details.view_item(swapid,userEmail=userEmail)
             )
             table_my_items_details_btn.grid(
@@ -625,21 +625,7 @@ def swap_hist(userEmail):
             )
             rowcnt += 1
 
-    else:  # Show a message instead of the items table if the user has no items
-        label_my_items = tk.Label(
-            master=scrollable_frame,
-            text='You have no items.',
-            font=(
-                LABEL_FONT_FAMILY,
-                LABEL_FONT_SIZE,
-                LABEL_FONT_WEIGHT_VALUE
-            ))
-        label_my_items.grid(
-            row=7,
-            column=0,
-            padx=WINDOW_PADDING_X,
-            pady=WINDOW_PADDING_Y,
-            sticky='w')
+
     my_items_data1 = []
     table_close_btn = tk.Button(
         master=window,
@@ -658,4 +644,21 @@ def swap_hist(userEmail):
 ##############################
 # EVENT LOOP
 ##############################
-swap_hist('usr001@gt.edu')
+#swap_hist('usr001@gt.edu')
+
+
+'''    else:  # Show a message instead of the items table if the user has no items
+        label_my_items = tk.Label(
+            master=scrollable_frame,
+            text='You have no items.',
+            font=(
+                LABEL_FONT_FAMILY,
+                LABEL_FONT_SIZE,
+                LABEL_FONT_WEIGHT_VALUE
+            ))
+        label_my_items.grid(
+            row=7,
+            column=0,
+            padx=WINDOW_PADDING_X,
+            pady=WINDOW_PADDING_Y,
+            sticky='w')'''
