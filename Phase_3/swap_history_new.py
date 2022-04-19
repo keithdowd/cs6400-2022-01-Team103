@@ -1,8 +1,8 @@
 from global_variables import *
 from sql import *
-from swap_details import view_item
+#from swap_details import view_item
 from tkinter import ttk, StringVar, OptionMenu, Button
-
+import swap_details
 
 def swap_hist(userEmail):
     ##############################
@@ -16,16 +16,20 @@ def swap_hist(userEmail):
     # SETUP
     ##############################
 
-    def setup(title='Swap History', width=3000, height=1000):
+    def setup(title='Swap History', width=3000, height=700):
         window = tk.Tk()
         window.title(title)
         window.geometry(f'{width}x{height}')
+        window.resizable(width=False, height=False)
         return window
+
+    def window_destroy():
+        window.destroy()
 
     window = setup(
         title=WINDOW_TITLE,
-        width=3000,
-        height=1000)
+        width=1200,
+        height=700)
 
     # Create scrollable window for my my items table
     container = ttk.Frame(window)
@@ -226,7 +230,8 @@ def swap_hist(userEmail):
         print("rating changed to:", rating)
         return rating
 
-
+    def dummy( swapID,userEmail):
+        print(swapID)
 
     def buttonclick(rating,swapid):
         print("inside")
@@ -234,7 +239,13 @@ def swap_hist(userEmail):
         print(swapid)
         window.destroy()
         mycursor = cnx.cursor()
-        query = sql_rate_my_unrated_swaps(userEmail, swapid, rating)
+        query = sql_rate_my_unrated_swaps_counterparty(userEmail, swapid, rating)
+        print(query)
+        mycursor.execute(query)
+        cnx.commit()
+        mycursor.close()
+        mycursor = cnx.cursor()
+        query = sql_rate_my_unrated_swaps_proposer(userEmail, swapid, rating)
         print(query)
         mycursor.execute(query)
         cnx.commit()
@@ -277,19 +288,15 @@ def swap_hist(userEmail):
             swap_status = row1['swap_status']
             proposer_email = row1['proposer_email']
 
-            if (proposer_email == userEmail):
-                my_role_txt = 'Proposer'
-            else:
-                my_role_txt = 'Counterparty'
-            if row1['swap_counterparty_rating'] != '' or row1['swap_proposer_rating'] != '':
-                if row1['swap_counterparty_rating'] != '':
-                    rating_text = row1['swap_counterparty_rating']
-                else:
-                    rating_text = row1['swap_proposer_rating']
+        if (proposer_email == userEmail):
+            my_role_txt = 'Proposer'
+            rating_text = row1['swap_proposer_rating']
+        else:
+            my_role_txt = 'Counterparty'
+            rating_text = row1['swap_counterparty_rating']
 
 
-            else:
-                rating_text = ''
+
 
             # if row['swap_proposer_rating'] != 'null':
 
@@ -373,9 +380,12 @@ def swap_hist(userEmail):
                 padx=WINDOW_PADDING_X,
                 pady=WINDOW_PADDING_Y,
                 sticky='ew')
-
+        rowcnt2 = 0
         for row_index, my_item in enumerate(my_items_data1):
+            #rowcnt=0
             row_index += 8  # layout starts at row 8
+            row_index_cnt=row_index
+            print('swapID',my_items_data1[rowcnt2][0])
 
             for col_index, my_item_value in enumerate(my_item):
                 # center item number and left justify all other fields
@@ -411,14 +421,17 @@ def swap_hist(userEmail):
                     LABEL_FONT_SIZE,
                     LABEL_FONT_WEIGHT_VALUE,
                 ),
-                command=lambda item_number=my_item[rowcnt]: view_item(item_number)
+                #command=lambda rowcnt=rowcnt: buttonclick(rating=callback(rowcnt), swapid=my_items_data[rowcnt][0])
+                #command= lambda rowcnt=rowcnt: swap_details.view_item(swapID=my_items_data1[rowcnt][0],userEmail=userEmail)
+                #lambda item_number=my_item[0]: view_item(item_number)
+                command=lambda swapid=my_item[0]: swap_details.view_item(swapid,userEmail=userEmail)
             )
             table_my_items_details_btn.grid(
                 row=row_index,
                 column=col_index + 2,  # add button after (to the right of) the last my items column
                 sticky='e'
             )
-            rowcnt+=1
+            rowcnt2+=1
     for index, row in df.iterrows():
        if (pd.isna(row['swap_counterparty_rating']) == True and row['swap_date_responded'] !='' and row['swap_status']=='Accepted'  and row['counterparty_email']==userEmail) or(pd.isna(row['swap_proposer_rating']) == True and  row['swap_date_proposed'] !=''  and row['swap_status']=='Accepted'  and row['proposer_email']==userEmail):
          print(row['swapID'], row['swap_counterparty_rating'], pd.isna(row['swap_counterparty_rating']))
@@ -434,17 +447,14 @@ def swap_hist(userEmail):
 
          if (proposer_email == userEmail):
             my_role_txt = 'Proposer'
+            rating_text = row['swap_proposer_rating']
          else:
             my_role_txt = 'Counterparty'
-         if row['swap_counterparty_rating'] !='' or row['swap_proposer_rating'] !='' :
-            if row['swap_counterparty_rating'] !='':
-                rating_text=row['swap_counterparty_rating']
-            else:
-                rating_text=row['swap_proposer_rating']
+            rating_text = row['swap_counterparty_rating']
 
 
-         else:
-               rating_text=''
+
+
 
         # if row['swap_proposer_rating'] != 'null':
 
@@ -530,7 +540,7 @@ def swap_hist(userEmail):
                 pady=WINDOW_PADDING_Y,
                 sticky='ew')
         '''
-        rowcnt1= rowcnt
+        rowcnt1= row_index_cnt
         rowcnt=0
         # Table (Values)
         for row_index, my_item in enumerate(my_items_data):
@@ -605,7 +615,7 @@ def swap_hist(userEmail):
                     LABEL_FONT_SIZE,
                     LABEL_FONT_WEIGHT_VALUE,
                 ),
-                command=lambda item_number=my_item[rowcnt]: view_item(item_number)
+                command=lambda swapid=my_item[0]: swap_details.view_item(swapid,userEmail=userEmail)
             )
             table_my_items_details_btn.grid(
                 row=row_index,
@@ -630,7 +640,16 @@ def swap_hist(userEmail):
             pady=WINDOW_PADDING_Y,
             sticky='w')
     my_items_data1 = []
-
+    table_close_btn = tk.Button(
+        master=window,
+        text='Close',
+        font=(
+            LABEL_FONT_FAMILY,
+            LABEL_FONT_SIZE,
+            LABEL_FONT_WEIGHT_VALUE,
+        ),
+        command=window_destroy)
+    table_close_btn.place(x=500,y=500)
 
     window.mainloop()
 
