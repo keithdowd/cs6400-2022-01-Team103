@@ -25,7 +25,7 @@ def propose_swap(emailAddr, item_number):
     window.geometry(f'{width}x{height}')
     return window
 
-  window = setup(title=WINDOW_TITLE, width=WINDOW_SIZE_WIDTH, height=WINDOW_SIZE_HEIGHT)
+  window = setup(title=WINDOW_TITLE, width=700, height=350)
 
   ##############################
   # VIEW ITEM
@@ -143,7 +143,7 @@ def propose_swap(emailAddr, item_number):
   # Close button
   close_button = tk.Button(
     master=window, 
-    text='Close',
+    text='Return to Search',
     font=(
       LABEL_FONT_FAMILY,
       LABEL_FONT_SIZE,
@@ -152,10 +152,10 @@ def propose_swap(emailAddr, item_number):
     command=return_to_search_exec)
   close_button.grid(
     row=10, 
-    column=0,
+    columnspan=2,
     padx=WINDOW_PADDING_X, 
     pady=WINDOW_PADDING_Y+20,  
-    sticky='w')
+    sticky='e')
 
   # Right column
   frame_right = tk.Frame(master=window)

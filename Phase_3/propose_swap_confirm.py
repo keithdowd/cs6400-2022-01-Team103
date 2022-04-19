@@ -289,7 +289,7 @@ def propose_swap_confirm(
   # Confirm button
   table_my_items_details_btn = tk.Button(
     master=window, 
-    text='Confirm',
+    text='Confirm!',
     font=(
       LABEL_FONT_FAMILY,
       LABEL_FONT_SIZE,
@@ -304,13 +304,13 @@ def propose_swap_confirm(
     columnspan=10,
     pady=20,
     padx=WINDOW_PADDING_X,
-    sticky='w'
+    sticky='e'
     )
 
   # Close button
   close_button = tk.Button(
     master=window, 
-    text='Close',
+    text='Return to Search',
     font=(
       LABEL_FONT_FAMILY,
       LABEL_FONT_SIZE,
@@ -319,10 +319,11 @@ def propose_swap_confirm(
     command=return_to_search_exec)
   close_button.grid(
     row=(row_index+21 if distance < 100.0 else row_index+20), 
-    column=1,
-    padx=WINDOW_PADDING_X, 
-    pady=WINDOW_PADDING_Y+20,  
-    sticky='w') 
+    column=0,
+    columnspan=10,
+    padx=WINDOW_PADDING_X+90, 
+    pady=20,  
+    sticky='e') 
 
 
   ##############################

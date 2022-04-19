@@ -33,7 +33,7 @@ def propose_swap_insert(
 
   window = setup(
     title=WINDOW_TITLE, 
-    width=700, 
+    width=400, 
     height=WINDOW_SIZE_HEIGHT)
 
 
@@ -117,7 +117,7 @@ def propose_swap_insert(
 # Confirm button
   return_btn = tk.Button(
     master=window, 
-    text='Return to Search',
+    text='Return to Main Menu',
     font=(
       LABEL_FONT_FAMILY,
       LABEL_FONT_SIZE,

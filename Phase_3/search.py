@@ -41,6 +41,9 @@ def search(emailAddr='usr001@gt.edu'):
 
   ########## DATA
 
+  def close_exec():
+    window.destroy()
+
   # Variables for input modals
   selection_rb_var = tk.IntVar(window)
   keyword_entry_var = tk.StringVar(window)
@@ -327,22 +330,22 @@ def search(emailAddr='usr001@gt.edu'):
     sticky='e') 
   
   # Close button
-  # search_button = tk.Button(
-  #   master=window, 
-  #   text='Close',
-  #   font=(
-  #     LABEL_FONT_FAMILY,
-  #     LABEL_FONT_SIZE,
-  #     LABEL_FONT_WEIGHT_VALUE,
-  #   ),
-  #   command=close_exec)
-  # search_button.grid(
-  #   row=7, 
-  #   column=0,
-  #   columnspan=10,
-  #   padx=20, 
-  #   pady=WINDOW_PADDING_Y,  
-  #   sticky='e') 
+  search_button = tk.Button(
+    master=window, 
+    text='Return to Main Menu',
+    font=(
+      LABEL_FONT_FAMILY,
+      LABEL_FONT_SIZE,
+      LABEL_FONT_WEIGHT_VALUE,
+    ),
+    command=close_exec)
+  search_button.grid(
+    row=7, 
+    column=0,
+    columnspan=10,
+    padx=100, 
+    pady=WINDOW_PADDING_Y,  
+    sticky='e') 
 
 
 ##############################

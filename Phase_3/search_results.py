@@ -14,7 +14,7 @@ def search_results(emailAddr, item_numbers, selection, context):
   ##############################
 
   # Window
-  WINDOW_SIZE_HEIGHT = 450
+  WINDOW_SIZE_HEIGHT = 460
   WINDOW_SIZE_WIDTH = 900
   WINDOW_TITLE = 'Search Results'
 
@@ -250,7 +250,7 @@ def search_results(emailAddr, item_numbers, selection, context):
     # Close button
     close_button = tk.Button(
       master=window, 
-      text='Close',
+      text='Return to Search',
       font=(
         LABEL_FONT_FAMILY,
         LABEL_FONT_SIZE,
@@ -259,10 +259,10 @@ def search_results(emailAddr, item_numbers, selection, context):
       command=return_to_search_exec)
     close_button.grid(
       row=10, 
-      column=0,
-      padx=20, 
+      columnspan=10,
+      padx=WINDOW_PADDING_X, 
       pady=WINDOW_PADDING_Y,  
-      sticky='w') 
+      sticky='e') 
 
   else: # Show a message instead of the items table if the user has no items
     label_my_items = tk.Label(
@@ -292,10 +292,10 @@ def search_results(emailAddr, item_numbers, selection, context):
       )
     return_to_search_btn.grid(
       row=3,
-      column=0,
+      column=10,
       padx=WINDOW_PADDING_X,
       pady=WINDOW_PADDING_Y,
-      sticky='w'
+      sticky='e'
     )
 
 
