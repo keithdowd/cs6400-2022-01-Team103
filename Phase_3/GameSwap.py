@@ -304,12 +304,13 @@ def checkUserExists():
    master.p.set(" ")
    emailText_fetch_query=sql__gameswap__email_fetch(EmailTextbox.get())
    emailText_data = []
+   emailtext=''
    emailText_data = pd.read_sql_query(emailText_fetch_query, cnx)
-   print(emailText_data)
-   if emailText_data.isna==False:
+   print("emailText_data",emailText_data)
+   if emailText_data.empty==False:
       emailtext=emailText_data['email'][0]
-   else:
-       emailtext=''
+
+   print("emailtext",emailtext)
    EmailTextbox.config(foreground="black")
    PasswordTextBox.config(foreground="black")
    display(emailtext)
@@ -348,6 +349,8 @@ def checkUserExists():
 
        #global_variables.email_text = emailText
        master.destroy()
+       print("passed on email")
+       print(emailtext)
        MainMenuObject(emailtext)
        master.v.set("Login successful")
        #master.e=getemail()
