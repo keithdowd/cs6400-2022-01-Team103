@@ -1,9 +1,10 @@
+import email
 from global_variables import *
 from sql import *
 from haversine import haversine
 
 def view_item(swapID, userEmail):
-
+  
   ##############################
   # CONFIGURATION
   ##############################
@@ -24,7 +25,7 @@ def view_item(swapID, userEmail):
       window.destroy()
   window = setup(title=WINDOW_TITLE, width=1000, height=1000)
   window.resizable(width=False, height=False)
-  item_number = 10
+
 
   ##############################
   # VIEW ITEM
@@ -32,23 +33,29 @@ def view_item(swapID, userEmail):
 
   ########## DATA
   df = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
-  pf = pd.read_sql_query(sql__myrating__fetch(userEmail), cnx)
+  pf = pd.read_sql_query(spl_pull_user(userEmail), cnx)
+  # pf = pd.read_sql_query(sql__myrating__fetch(userEmail), cnx)
   # df_number = pd.read_sql_query(sql__swap_history_detail(swapID, userEmail), cnx)
   swap_proposed_text = df['swap_date_proposed'][0]
   accepted_rejected_text = df['Accepted_Rejected_Date'][0]
   status_text = df['myrole'][0]
-  rating_left_text = pf['user_rating'][0]
-  # print(df['addr_latitude'])
-  # print((df['addr_longitude']))
+  # if(status_text == "Proposer"):
+  #   rating_left_text = df['swap_proposer_rating']
+  # else:
+  #   rating_left_text = df['swap_counterparty_rating']
+  rating_left_text = "lol"
+
+  print(df['swap_counterparty_rating'])
   lat1 = float(df['lat1'][0])
   lat2 = float(df['lat2'][0])
   long1 = float(df['long1'][0])
   long2 = float(df['long2'][0])
   user_detail_nickname_text = df['other_user'][0]
   distance_text = round(haversine(lat1, lat2, long1, long2), 2)
-  user_detail_name_text = df['other_user_name'][0]
-  user_detail_email_text = df['other_user_email'][0]
-  user_detail_phone_text = df['other_user_phone_number'][0]
+
+  user_detail_name_text = pf['user_firstname'][0]
+  user_detail_email_text = pf['email'][0]
+  user_detail_phone_text = pf['phone_number'][0]
 
   proposed_item_number_text = df['p_item_no'][0]
   proposed_item_title_text = df['ProposedItem'][0]
@@ -61,7 +68,6 @@ def view_item(swapID, userEmail):
   desired_item_title_text = df['DesiredItem'][0]
   desired_item_type_text = df['c_item_type'][0]
   desired_item_type_cond_text = df['c_item_cond'][0]
-  print(desired_item_type_cond_text)
 
 
   ########## VIEW
@@ -215,5 +221,3 @@ def view_item(swapID, userEmail):
   table_close_btn = tk.Button(master=window, text='Close', font=(LABEL_FONT_FAMILY, LABEL_FONT_SIZE, LABEL_FONT_WEIGHT_VALUE), command=window_destroy)
   table_close_btn.place(x=500,y=500)
   window.mainloop()
-
-view_item(1, 'usr001@gt.edu')

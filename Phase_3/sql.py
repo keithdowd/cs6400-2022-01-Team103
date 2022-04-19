@@ -810,6 +810,12 @@ where counterparty_email ='{userEmail}'
     '''
     return sql_rating_count_counter
 
+def spl_pull_user(userEmail):
+    spl_pull_user = f'''
+select * from {DATABASE}.user where email='{userEmail}'
+   '''
+    return spl_pull_user
+    
 def sql__pull_itemname(itemNum):
   sql__pull_itemname = f'''
       SELECT

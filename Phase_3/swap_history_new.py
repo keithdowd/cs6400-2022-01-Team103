@@ -615,6 +615,7 @@ def swap_hist(userEmail):
                     LABEL_FONT_SIZE,
                     LABEL_FONT_WEIGHT_VALUE,
                 ),
+                
                 command=lambda swapid=my_item[0]: swap_details.view_item(swapid,userEmail=userEmail)
             )
             table_my_items_details_btn.grid(
@@ -657,4 +658,4 @@ def swap_hist(userEmail):
 ##############################
 # EVENT LOOP
 ##############################
-swap_hist('usr002@gt.edu')
+swap_hist('usr003@gt.edu')
