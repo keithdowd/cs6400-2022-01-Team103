@@ -85,7 +85,7 @@ def additemobject(user_email):
             master.platformtype_text = ""
             master.video_media_type_txt = ""
 
-        if x in('Video Games'):
+        if x in('Video Game'):
             s_piece_cnt.config(state='disabled')
             menu_mediatype.config(state='normal')
             menu_video_platformtype.config(state='normal')
@@ -94,7 +94,7 @@ def additemobject(user_email):
             master.piece_cnt_txt = 0
             master.video_media_type_txt = option_media_type.get()
 
-        if x in('Computer Games'):
+        if x in('Computer Game'):
             master.platformtype_text = option_computer_platform_type.get()
             master.piece_cnt_txt = 0
             master.video_media_type_txt = ""
@@ -103,7 +103,7 @@ def additemobject(user_email):
             menu_mediatype.config(state='disabled')
             menu_computer_platformtype.config(state='normal')
 
-        if x in  ('Board Games','Card Games'):
+        if x in  ('Board Game','Card Game'):
             master.piece_cnt_txt = 0
             master.platformtype_text = ""
             master.video_media_type_txt = ""
