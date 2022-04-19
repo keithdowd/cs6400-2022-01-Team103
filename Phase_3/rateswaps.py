@@ -184,7 +184,7 @@ def get_unrated_swaps(userEmail):
     ##############################
     # EVENT LOOP 
     ##############################
-    window.mainloop()
+    # window.mainloop()
 
 
 def rate_swaps(emailAddr, userEmail, swapID, rating):
@@ -197,4 +197,4 @@ def rate_swaps(emailAddr, userEmail, swapID, rating):
     get_unrated_swaps(userEmail)
 
 
-get_unrated_swaps(userEmail='usr074@gt.edu')
+# get_unrated_swaps(userEmail='usr071@gt.edu')
