@@ -33,7 +33,7 @@ def propose_swap_insert(
 
   window = setup(
     title=WINDOW_TITLE, 
-    width=400, 
+    width=500, 
     height=WINDOW_SIZE_HEIGHT)
 
 
