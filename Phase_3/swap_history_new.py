@@ -646,7 +646,7 @@ def swap_hist(userEmail):
 ##############################
 # EVENT LOOP
 ##############################
-swap_hist('usr001@gt.edu')
+# swap_hist('usr001@gt.edu')
 
 
 '''    else:  # Show a message instead of the items table if the user has no items
