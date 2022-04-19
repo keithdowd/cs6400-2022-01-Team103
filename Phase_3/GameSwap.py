@@ -299,7 +299,11 @@ def checkUserExists():
    emailText_fetch_query=sql__gameswap__email_fetch(EmailTextbox.get())
    emailText_data = []
    emailText_data = pd.read_sql_query(emailText_fetch_query, cnx)
-   emailtext=emailText_data['email'][0]
+   print(emailText_data)
+   if emailText_data.isna==False:
+      emailtext=emailText_data['email'][0]
+   else:
+       emailtext=''
    EmailTextbox.config(foreground="black")
    PasswordTextBox.config(foreground="black")
    display(emailtext)
